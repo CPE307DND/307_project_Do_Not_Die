@@ -1,3 +1,3 @@
-The system shall provide option to pause the game at any time during gameplay.
-The system shall provide a tutorial. // nicee
-The system shall restart at a checkpoint after a death. 
+The system shall provide choices that influence the game. 
+The system shall provide the choice for a quick start or manual character setup. 
+The system shall provide location information upon user request.
