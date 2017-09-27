@@ -1,0 +1,7 @@
+Jorge Saro 
+User Stories
+
+As a user, I want to play through the text-based adventure, so that I can enjoy a unique story. 
+As a user, I want to play through every possible outcome of the text-based adventure, so that I can get ideas for a  Dungeons and Dragons campaign. 
+As a user, I want to play the text-based adventure with friends, so that I can compete with friends on who gets the better outcome. 
+
