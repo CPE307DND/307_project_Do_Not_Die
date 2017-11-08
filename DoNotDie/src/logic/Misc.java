@@ -1,10 +1,13 @@
 package logic;
 
-public class Misc extends Treasure
+import java.util.Random;
+
+class Misc extends Treasure
 {
 	Misc ()
 	{
-		Misc ((int)(Math.random () * 10));
+		Random r = new Random ();
+		new Misc (r.nextInt (300));
 	}
 	
 	Misc (int val)
@@ -34,7 +37,7 @@ public class Misc extends Treasure
 		}
 		else if (val < 70)
 		{
-			name = types [8 + (int) ((Math.random () * 30) / 10];
+			name = types [8 + (int) ((Math.random () * 30) / 10)];
 			if (name.equals (types [0]))
 				weight = 0;
 			else

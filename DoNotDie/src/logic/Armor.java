@@ -1,37 +1,87 @@
 package logic;
 
+import java.util.Random;
+
 public class Armor extends Treasure
 {
-	public Armor getArmor ()
+	Armor ()
 	{
-		int piece = (int) ((Math.random () * 40) / 10);
-		int type = (int) ((Math.random () * 100) / 10);
+		Random r = new Random ();
+		new Armor (r.nextInt (30));
+	}
+	
+	Armor (int level)
+	{
+		Random r = new Random ();
+		int piece = r.nextInt (4);
+		//True is light
+		Boolean choose = r.nextBoolean ();
 		
-		return total [piece][type];
+		if (level < 5)
+		{
+			light = 0;
+			heavy = 1;
+		}
+		else if (level < 10)
+		{
+			light = 2;
+			heavy = 3;
+		}
+		else if (level < 15)
+		{
+			light = 4;
+			heavy = 5;
+		}
+		else if (level < 20)
+		{
+			light = 6;
+			heavy = 7;
+		}
+		else if (level < 25)
+		{
+			light = 8;
+			heavy = 9;
+		}
+		else
+		{
+			light = 10;
+			heavy = 11;
+		}
+		
+		switch (piece)
+		{
+			default:
+				if (choose)
+					new Helm (material[light]);
+				else
+					new Helm (material [heavy]);
+			case (1):
+				if (choose)
+					new Cuirass (material [light]);
+				else
+					new Cuirass (material [heavy]);
+			case (2):
+				if (choose)
+					new Gauntlets (material [light]);
+				else
+					new Gauntlets (material [heavy]);
+			case (3):
+				if (choose)
+					new Greaves (material [light]);
+				else
+					new Greaves (material [heavy]);
+			case (4):
+				if (choose)
+					new Boots (material [light]);
+				else
+					new Boots (material [heavy]);
+		}
 	}
 	
-	public Armor getArmor (int piece, int type)
-	{
-		return total [piece][type];
-	}
+	private String [] material = {"Chiton", "Leather", "Iron", "Chainmail",
+			"Steel", "Elven", "Dwarvish", "Glass", "Orcish", "Ancient", "Demonic", "Platemail"};
 	
-	private Helm [] helm = {new Helm ("Leather"), new Helm ("Chiton"), new Helm ("Iron"), new Helm ("Chainmail"),
-			new Helm ("Steel"), new Helm ("Elven"), new Helm ("Dwarvish"), new Helm ("Orcish"), new Helm ("Ancient"),
-			new Helm ("Platemail"), new Helm ("Demonic")};
-	private Cuirass [] cuirass = {new Cuirass ("Leather"), new Cuirass ("Chiton"), new Cuirass ("Iron"), new Cuirass ("Chainmail"),
-			new Cuirass ("Steel"), new Cuirass ("Elven"), new Cuirass ("Dwarvish"), new Cuirass ("Orcish"), new Cuirass ("Ancient"),
-			new Cuirass ("Platemail"), new Cuirass ("Demonic")};
-	private Gauntlets [] gauntlets = {new Gauntlets ("Leather"), new Gauntlets ("Chiton"), new Gauntlets ("Iron"), new Gauntlets ("Chainmail"),
-			new Gauntlets ("Steel"), new Gauntlets ("Elven"), new Gauntlets ("Dwarvish"), new Gauntlets ("Orcish"), new Gauntlets ("Ancient"),
-			new Gauntlets ("Platemail"), new Gauntlets ("Demonic")};
-	private Greaves [] greaves = {new Greaves ("Leather"), new Greaves ("Chiton"), new Greaves ("Iron"), new Greaves ("Chainmail"),
-			new Greaves ("Steel"), new Greaves ("Elven"), new Greaves ("Dwarvish"), new Greaves ("Orcish"), new Greaves ("Ancient"),
-			new Greaves ("Platemail"), new Greaves ("Demonic")};
-	private Boots [] boots = {new Boots ("Leather"), new Boots ("Chiton"), new Boots ("Iron"), new Boots ("Chainmail"),
-			new Boots ("Steel"), new Boots ("Elven"), new Boots ("Dwarvish"), new Boots ("Orcish"), new Boots ("Ancient"),
-			new Boots ("Platemail"), new Boots ("Demonic")};
-	
-	private Armor [][] total = {helm, cuirass, gauntlets, greaves, boots};
+	private int light, heavy;
 	
 	public int value, ar, weight;
 	public String name;

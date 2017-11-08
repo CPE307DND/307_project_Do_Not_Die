@@ -47,6 +47,12 @@ public class Cuirass extends Armor
 			value = 60;
 			weight = 30;
 		}
+		else if (material.equals ("Glass"))
+		{
+			ar = 22;
+			value = 55;
+			weight = 15;
+		}
 		else if (material.equals ("Orcish"))
 		{
 			ar = 30;
@@ -63,7 +69,7 @@ public class Cuirass extends Armor
 		{
 			ar = 33;
 			value = 80;
-			weight = 40;
+			weight = 25;
 		}
 		else if (material.equals ("Demonic"))
 		{

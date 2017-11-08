@@ -47,6 +47,12 @@ public class Boots extends Armor
 			value = 20;
 			weight = 5;
 		}
+		else if (material.equals ("Glass"))
+		{
+			ar = 10;
+			value = 20;
+			weight = 4;
+		}
 		else if (material.equals ("Orcish"))
 		{
 			ar = 11;
