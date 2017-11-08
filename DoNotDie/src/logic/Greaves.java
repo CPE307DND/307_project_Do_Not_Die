@@ -47,6 +47,12 @@ public class Greaves extends Armor
 			value = 60;
 			weight = 28;
 		}
+		else if (material.equals ("Glass"))
+		{
+			ar = 17;
+			value = 55;
+			weight = 12;
+		}
 		else if (material.equals ("Orcish"))
 		{
 			ar = 25;
