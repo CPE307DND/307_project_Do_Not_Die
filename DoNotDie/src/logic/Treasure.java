@@ -6,13 +6,12 @@ public class Treasure
 {
 	Treasure ()
 	{
-		Random r = new Random ();
-		new Treasure (r.nextInt (30));
+		new Treasure (new Random ().nextInt (30));
 	}
 	
 	Treasure (int level)
 	{
-		int i = (int) ((Math.random () * 20) / 10);
+		int i = new Random ().nextInt ();
 		
 		switch (i)
 		{
@@ -24,4 +23,12 @@ public class Treasure
 				new logic.Weapon (level * 10);
 		}
 	}
+	
+	public Boolean equals (Treasure other)
+	{
+		return this.name.equals (other.name);
+	}
+	
+	public String name;
+	public int value, weight;
 }

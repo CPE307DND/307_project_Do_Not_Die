@@ -73,10 +73,21 @@ public class DND
 		p1.healed (100);
 		System.out.println ("Health now: " + p1.health);
 		System.out.println ("Attacked 49, dead?: " + p1.attacked (64) + ". Health left: " + p1.health);
-		System.out.println ("isDead?: " + p1.isDead ());
+		System.out.println ("isDead?: " + p1.isDead () + "\n");
+		
+		while (map.current.connections [0] != -1)
+			map.moveback ();
 		
 		//Room tests
 		for (int i = 0; i < map.current.numenemies; i++)
-			System.out.println ("enemy [" + i + "]: " + map.current.enemies [i]);
+			System.out.println ("enemy [" + i + "]:\n" + map.current.enemies [i]);
+		
+		System.out.println ();
+		
+		//Inventory tests
+		/*Weapon wpn = new Weapon (5);
+		System.out.println ("Adding sword 1: " + p1.addToInventory (wpn));
+		System.out.println ("Adding sword 2: " + p1.addToInventory (wpn));
+		System.out.println ("Sword in inventory: " + p1.inInventory (wpn));*/
 	}
 }

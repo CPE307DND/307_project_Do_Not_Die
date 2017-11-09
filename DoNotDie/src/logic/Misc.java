@@ -61,6 +61,11 @@ class Misc extends Treasure
 		}
 	}
 	
+	public Boolean equals (Misc other)
+	{
+		return (this.name.equals (other.name) && (this.value == other.value));
+	}
+	
 	private String [] types = {"Gold", "Brass Ring", "Copper Ring", "Flawed Pearl", "Silver Ring", "Pearl",
 			"Flawed Ruby", "Flawed Sapphire", "Flawed Emerald", "Gold Ring", "Copper Ingot", "Ruby",
 			"Sapphire", "Emerald", "Flawed Diamond", "Diamond", "Silver Ingot", "Gold Ingot", "Platinum Ingot"};

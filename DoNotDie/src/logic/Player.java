@@ -194,6 +194,25 @@ public class Player
 	
 	public Boolean isDead () { return (health <= 0); }
 	
+	public Boolean inInventory (Treasure item)
+	{
+		for (int i = 0; i < inventory.size (); i++)
+			if (inventory.get (i).equals (item))
+				return true;
+		return false;
+	}
+	
+	public Boolean addToInventory (Treasure item)
+	{
+		if (inInventory (item))
+			return false;
+		else
+		{
+			inventory.add (item);
+			return true;
+		}
+	}
+	
 	public int rolld20 () { return roller.nextInt (20) + 1; }
 	public int rolld12 () { return roller.nextInt (12) + 1; }
 	public int rolld10 () { return roller.nextInt (10) + 1; }

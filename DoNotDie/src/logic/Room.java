@@ -24,10 +24,12 @@ public class Room
 		connections [4] = u;
 		connections [5] = d;
 		
-		enemies = new Enemy [numenem];
 		if (numenem > 0)
+		{
+			enemies = new Enemy [numenem];
 			enemies [0] = new Enemy ("Orc", 2, true, 2, 2, 2, 2, 2, 2, 2);
-		numenemies = enemies.length;
+		}
+		numenemies = numenem;
 	}
 	
 	public String toString ()

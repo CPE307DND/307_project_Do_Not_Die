@@ -78,6 +78,11 @@ public class Armor extends Treasure
 		}
 	}
 	
+	public Boolean equals (Armor other)
+	{
+		return this.name.equals (other.name);
+	}
+	
 	private String [] material = {"Chiton", "Leather", "Iron", "Chainmail",
 			"Steel", "Elven", "Dwarvish", "Glass", "Orcish", "Ancient", "Demonic", "Platemail"};
 	
