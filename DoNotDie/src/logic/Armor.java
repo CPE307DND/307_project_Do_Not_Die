@@ -4,11 +4,7 @@ import java.util.Random;
 
 public class Armor extends Treasure
 {
-	Armor ()
-	{
-		Random r = new Random ();
-		new Armor (r.nextInt (30));
-	}
+	Armor () {}
 	
 	Armor (int level)
 	{
@@ -80,7 +76,7 @@ public class Armor extends Treasure
 	
 	public Boolean equals (Armor other)
 	{
-		return this.name.equals (other.name);
+		return name.equals (other.name);
 	}
 	
 	private String [] material = {"Chiton", "Leather", "Iron", "Chainmail",

@@ -4,11 +4,7 @@ import java.util.Random;
 
 class Misc extends Treasure
 {
-	Misc ()
-	{
-		Random r = new Random ();
-		new Misc (r.nextInt (300));
-	}
+	Misc () {}
 	
 	Misc (int val)
 	{
@@ -21,7 +17,7 @@ class Misc extends Treasure
 		}
 		else if (val < 20)
 		{
-			name = types [(int) ((Math.random () * 30) / 10)];
+			name = types [new Random ().nextInt (3)];
 			if (name.equals (types [0]))
 				weight = 0;
 			else
@@ -29,7 +25,7 @@ class Misc extends Treasure
 		}
 		else if (val < 40)
 		{
-			name = types [3 + (int) ((Math.random () * 50) / 10)];
+			name = types [3 + new Random ().nextInt (5)];
 			if (name.equals (types [0]))
 				weight = 0;
 			else
@@ -37,7 +33,7 @@ class Misc extends Treasure
 		}
 		else if (val < 70)
 		{
-			name = types [8 + (int) ((Math.random () * 30) / 10)];
+			name = types [8 + new Random ().nextInt (3)];
 			if (name.equals (types [0]))
 				weight = 0;
 			else
@@ -45,7 +41,7 @@ class Misc extends Treasure
 		}
 		else if (val < 130)
 		{
-			name = types [11 + (int) ((Math.random () * 30) /10)];
+			name = types [11 + new Random ().nextInt (3)];
 			if (name.equals (types [0]))
 				weight = 0;
 			else
@@ -53,7 +49,7 @@ class Misc extends Treasure
 		}
 		else if (val < 200)
 		{
-			name = types [14 + (int) ((Math.random () * 40) / 10)];
+			name = types [14 + new Random ().nextInt (4)];
 			if (name.equals (types [0]))
 				weight = 0;
 			else
@@ -63,7 +59,7 @@ class Misc extends Treasure
 	
 	public Boolean equals (Misc other)
 	{
-		return (this.name.equals (other.name) && (this.value == other.value));
+		return (name.equals (other.name) && (value == other.value));
 	}
 	
 	private String [] types = {"Gold", "Brass Ring", "Copper Ring", "Flawed Pearl", "Silver Ring", "Pearl",

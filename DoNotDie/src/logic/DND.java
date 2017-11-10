@@ -85,9 +85,9 @@ public class DND
 		System.out.println ();
 		
 		//Inventory tests
-		/*Weapon wpn = new Weapon (5);
+		Weapon wpn = new Weapon (5);
 		System.out.println ("Adding sword 1: " + p1.addToInventory (wpn));
 		System.out.println ("Adding sword 2: " + p1.addToInventory (wpn));
-		System.out.println ("Sword in inventory: " + p1.inInventory (wpn));*/
+		System.out.println ("Sword in inventory: " + p1.inInventory (wpn));
 	}
 }

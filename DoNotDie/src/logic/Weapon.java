@@ -4,11 +4,7 @@ import java.util.Random;
 
 public class Weapon extends Treasure
 {
-	Weapon ()
-	{
-		Random r = new Random ();
-		new Weapon (r.nextInt (30));
-	}
+	Weapon () {}
 	
 	Weapon (int level)
 	{
@@ -32,7 +28,7 @@ public class Weapon extends Treasure
 	
 	public Boolean equals (Weapon other)
 	{
-		return this.name.equals (other.name);
+		return name.equals (other.name);
 	}
 	
 	private String [] material = {"Iron", "Steel", "Elven", "Dwarvish", "Glass", "Orcish", "Ancient", "Demonic"};

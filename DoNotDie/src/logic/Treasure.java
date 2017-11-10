@@ -4,10 +4,7 @@ import java.util.Random;
 
 public class Treasure
 {
-	Treasure ()
-	{
-		new Treasure (new Random ().nextInt (30));
-	}
+	Treasure () {}
 	
 	Treasure (int level)
 	{
@@ -15,7 +12,7 @@ public class Treasure
 		
 		switch (i)
 		{
-			case (0):
+			default:
 				new logic.Misc (level * 10);
 			case (1):
 				new logic.Armor (level * 10);
@@ -24,9 +21,19 @@ public class Treasure
 		}
 	}
 	
-	public Boolean equals (Treasure other)
+	public Boolean equals (Weapon other)
 	{
-		return this.name.equals (other.name);
+		return name.equals (other.name);
+	}
+	
+	public Boolean equals (Armor other)
+	{
+		return name.equals (other.name);
+	}
+	
+	public Boolean equals (Misc other)
+	{
+		return (name.equals (other.name) && (value == other.value));
 	}
 	
 	public String name;
