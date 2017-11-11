@@ -2,8 +2,10 @@ package logic;
 
 public class Sword extends Weapon
 {
-	Sword (String type)
+	public Sword (String type)
 	{
+		System.out.println (type);
+		
 		if (type.equals ("Iron"))
 		{
 			name = "Iron Sword";
@@ -62,11 +64,21 @@ public class Sword extends Weapon
 		}
 	}
 	
-	public Boolean equals (Sword other)
+	public String toString ()
 	{
-		return this.name.equals (other.name);
+		return name + "\nValue: " + value + "\nDamage: " + damage + "\nWeight: " + weight;
 	}
 	
-	public int value, damage, weight;
-	public String name;
+	public Boolean equals (Sword other)
+	{
+		return name.equals (other.getName ());
+	}
+	
+	public int getDamage () { return damage; }
+	public int getValue () { return value; }
+	public int getWeight () { return weight; }
+	public String getName () { return name; }
+	
+	private int value = 0, damage = 0, weight = 0;
+	private String name = "";
 }

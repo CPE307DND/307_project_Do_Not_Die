@@ -6,7 +6,7 @@ public class Treasure
 {
 	Treasure () {}
 	
-	Treasure (int level)
+	public Treasure (int level)
 	{
 		int i = new Random ().nextInt ();
 		
@@ -23,19 +23,23 @@ public class Treasure
 	
 	public Boolean equals (Weapon other)
 	{
-		return name.equals (other.name);
+		return name.equals (other.getName ());
 	}
 	
 	public Boolean equals (Armor other)
 	{
-		return name.equals (other.name);
+		return name.equals (other.getName ());
 	}
 	
 	public Boolean equals (Misc other)
 	{
-		return (name.equals (other.name) && (value == other.value));
+		return (name.equals (other.getName ()) && (value == other.getValue ()));
 	}
 	
-	public String name;
-	public int value, weight;
+	public int getValue () { return value; }
+	public int getWeight () { return weight; }
+	public String getName () { return name; }
+	
+	private String name;
+	private int value, weight;
 }

@@ -2,7 +2,7 @@ package logic;
 
 public class Greaves extends Armor
 {
-	Greaves (String material)
+	public Greaves (String material)
 	{
 		if (material.equals ("Leather"))
 		{
@@ -92,9 +92,14 @@ public class Greaves extends Armor
 	
 	public Boolean equals (Greaves other)
 	{
-		return this.name.equals (other.name);
+		return name.equals (other.getName ());
 	}
 	
-	public String name;
-	public int ar, value, weight;
+	public int getAR () { return ar; }
+	public int getValue () { return value; }
+	public int getWeight () { return weight; }
+	public String getName () { return name; }
+	
+	private int ar, value, weight;
+	private String name;
 }

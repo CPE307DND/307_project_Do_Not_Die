@@ -2,7 +2,7 @@ package logic;
 
 public class Room
 {
-	Room (int numenem, int numtre, int level, int back, int l, int c, int r, int u, int d)
+	public Room (int numenem, int numtre, int level, int back, int l, int c, int r, int u, int d)
 	{
 		/*int seed;
 		for (int i = 0; i < numenem; i++)

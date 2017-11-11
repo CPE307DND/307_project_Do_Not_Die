@@ -6,7 +6,7 @@ public class Armor extends Treasure
 {
 	Armor () {}
 	
-	Armor (int level)
+	public Armor (int level)
 	{
 		Random r = new Random ();
 		int piece = r.nextInt (4);
@@ -74,16 +74,23 @@ public class Armor extends Treasure
 		}
 	}
 	
+	public String toString ()
+	{
+		return name + "\nValue: " + value + "\nArmor Rating: " + ar + "\nWeight: " + weight + "\n";
+	}
+	
 	public Boolean equals (Armor other)
 	{
-		return name.equals (other.name);
+		return name.equals (other.getName ());
 	}
+	
+	public int getAR () { return ar; }
+	public int getValue () { return value; }
+	public int getWeight () { return weight; }
+	public String getName () { return name; }
 	
 	private String [] material = {"Chiton", "Leather", "Iron", "Chainmail",
 			"Steel", "Elven", "Dwarvish", "Glass", "Orcish", "Ancient", "Demonic", "Platemail"};
-	
-	private int light, heavy;
-	
-	public int value, ar, weight;
-	public String name;
+	private int light, heavy, value, ar, weight;
+	private String name;
 }

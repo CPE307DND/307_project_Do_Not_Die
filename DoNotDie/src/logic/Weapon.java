@@ -6,33 +6,58 @@ public class Weapon extends Treasure
 {
 	Weapon () {}
 	
-	Weapon (int level)
+	public Weapon (int level)
 	{
-		Random r = new Random ();
-		int piece = r.nextInt (4);
+		/*Random r = new Random ();
+		int piece = r.nextInt (4);*/
+		int piece = 0;
 		
-		switch (piece)
+		
+		if (piece == 0)
 		{
-			default:
-				new Sword (material [level / 5]);
-			case (1):
-				new Dagger (material [level / 5]);
-			case (2):
-				new Axe (material [level / 5]);
-			case (3):
-				new Mace (material [level / 5]);
-			case (4):
-				new Warhammer (material [level / 5]);
+			System.out.println ("Making Sword");
+			new Sword (material [level / 5]);
 		}
+		else if (piece == 1)
+		{
+			System.out.println ("Making Dagger");
+			new Dagger (material [level / 5]);
+		}
+		else if (piece == 2)
+		{
+			System.out.println ("Making Axe");
+			new Axe (material [level / 5]);
+		}
+		else if (piece == 3)
+		{
+			System.out.println ("Making Mace");
+			new Mace (material [level / 5]);
+		}
+		else if (piece == 4)
+		{
+			System.out.println ("Making Warhammer");
+			new Warhammer (material [level / 5]);
+			
+		}
+	}
+	
+	public String toString ()
+	{
+		return name + "\nValue: " + value + "\nDamage: " + damage + "\nWeight: " + weight + "\n";
 	}
 	
 	public Boolean equals (Weapon other)
 	{
-		return name.equals (other.name);
+		return name.equals (other.getName ());
 	}
 	
-	private String [] material = {"Iron", "Steel", "Elven", "Dwarvish", "Glass", "Orcish", "Ancient", "Demonic"};
+	public int getDamage () { return damage; }
+	public int getValue () { return value; }
+	public int getWeight () { return weight; }
+	public String getName () { return name; }
 	
-	public int value, damage, weight;
-	public String name;
+	
+	private String [] material = {"Iron", "Steel", "Elven", "Dwarvish", "Glass", "Orcish", "Ancient", "Demonic"};
+	private int value, damage, weight;
+	private String name;
 }

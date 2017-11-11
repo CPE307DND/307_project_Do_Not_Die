@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Player
 {
-	Player (String n, int r, Boolean g, int STR, int END, int INT, int WIL, int AGL, int SPD, int LCK)
+	public Player (String n, int r, Boolean g, int STR, int END, int INT, int WIL, int AGL, int SPD, int LCK)
 	{
 		if (r == 1)
 		{
@@ -194,23 +194,42 @@ public class Player
 	
 	public Boolean isDead () { return (health <= 0); }
 	
-	public Boolean inInventory (Treasure item)
+	public int inInventory (Treasure item)
 	{
 		for (int i = 0; i < inventory.size (); i++)
 			if (inventory.get (i).equals (item))
-				return true;
-		return false;
+				return i;
+		return -1;
 	}
 	
 	public Boolean addToInventory (Treasure item)
 	{
-		if (inInventory (item))
+		if (inInventory (item) >= 0)
 			return false;
 		else
 		{
 			inventory.add (item);
 			return true;
 		}
+	}
+	
+	public Boolean removeFromInventory (Treasure item)
+	{
+		int i = inInventory (item);
+		
+		if (i >= 0)
+		{
+			inventory.remove (i);
+			return true;
+		}
+		else
+			return false;
+	}
+	
+	public void inventoryCheck ()
+	{
+		for (int i = 0; i < inventory.size (); i++)
+			System.out.println (inventory.get (i));
 	}
 	
 	public int rolld20 () { return roller.nextInt (20) + 1; }

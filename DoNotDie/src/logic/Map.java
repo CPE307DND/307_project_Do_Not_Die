@@ -2,7 +2,7 @@ package logic;
 
 public class Map
 {
-	Map ()
+	public Map ()
 	{
 		layout = new Room [11];
 		

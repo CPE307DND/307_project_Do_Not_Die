@@ -6,7 +6,7 @@ class Misc extends Treasure
 {
 	Misc () {}
 	
-	Misc (int val)
+	public Misc (int val)
 	{
 		value = val;
 		
@@ -21,7 +21,7 @@ class Misc extends Treasure
 			if (name.equals (types [0]))
 				weight = 0;
 			else
-				weight = 0.1;
+				weight = 0;
 		}
 		else if (val < 40)
 		{
@@ -29,7 +29,7 @@ class Misc extends Treasure
 			if (name.equals (types [0]))
 				weight = 0;
 			else
-				weight = 0.2;
+				weight = 1;
 		}
 		else if (val < 70)
 		{
@@ -37,7 +37,7 @@ class Misc extends Treasure
 			if (name.equals (types [0]))
 				weight = 0;
 			else
-				weight = 0.3;
+				weight = 1;
 		}
 		else if (val < 130)
 		{
@@ -45,7 +45,7 @@ class Misc extends Treasure
 			if (name.equals (types [0]))
 				weight = 0;
 			else
-				weight = 0.4;
+				weight = 2;
 		}
 		else if (val < 200)
 		{
@@ -53,8 +53,13 @@ class Misc extends Treasure
 			if (name.equals (types [0]))
 				weight = 0;
 			else
-				weight = 0.5;
+				weight = 2;
 		}
+	}
+	
+	public String toString ()
+	{
+		return name + "\nValue: " + value + "\nWeight: " + weight + "\n";
 	}
 	
 	public Boolean equals (Misc other)
@@ -62,10 +67,17 @@ class Misc extends Treasure
 		return (name.equals (other.name) && (value == other.value));
 	}
 	
+	public Boolean equals (Boots other)
+	{
+		return name.equals (other.getName ());
+	}
+	public int getValue () { return value; }
+	public int getWeight () { return weight; }
+	public String getName () { return name; }
+	
 	private String [] types = {"Gold", "Brass Ring", "Copper Ring", "Flawed Pearl", "Silver Ring", "Pearl",
 			"Flawed Ruby", "Flawed Sapphire", "Flawed Emerald", "Gold Ring", "Copper Ingot", "Ruby",
 			"Sapphire", "Emerald", "Flawed Diamond", "Diamond", "Silver Ingot", "Gold Ingot", "Platinum Ingot"};
-	public int value;
-	public double weight;
-	public String name;
+	private int value, weight;
+	private String name;
 }

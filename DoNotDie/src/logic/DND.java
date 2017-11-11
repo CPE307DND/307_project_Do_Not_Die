@@ -8,10 +8,10 @@ public class DND
 		Player p1 = new Player ("Chaos", 0, true, 2, 2, 2, 2, 2, 2, 2);
 		
 		//Player Info
-		System.out.println ("\n" + p1 + "\n");
+		//System.out.println ("\n" + p1 + "\n");
 		
 		//Room Tests
-		for (int i = 0; i < 10; i++)
+		/*for (int i = 0; i < 10; i++)
 		{
 			System.out.println (map.current);
 			map.movecenter ();
@@ -26,10 +26,10 @@ public class DND
 		System.out.println (map.current);
 		System.out.println ("Move left to 5");
 		map.moveleft ();
-		System.out.println (map.current);
+		System.out.println (map.current);*/
 		
 		//Roll Tests
-		System.out.println ("\np1 rolld20: " + p1.rolld20 ());
+		/*System.out.println ("\np1 rolld20: " + p1.rolld20 ());
 		System.out.println ("p1 rolld20: " + p1.rolld20 ());
 		System.out.println ("p1 rolld20: " + p1.rolld20 ());
 		System.out.println ("p1 rolld20: " + p1.rolld20 ());
@@ -64,10 +64,10 @@ public class DND
 		System.out.println ("p1 rolld4: " + p1.rolld4 ());
 		System.out.println ("p1 rolld4: " + p1.rolld4 ());
 		System.out.println ("p1 rolld4: " + p1.rolld4 ());
-		System.out.println ("p1 rolld4: " + p1.rolld4 ());
+		System.out.println ("p1 rolld4: " + p1.rolld4 ());*/
 
 		//attacked, isDead, healed tests
-		System.out.println ("\nAttacked 50, dead?: " + p1.attacked (65) + ". Health left: " + p1.health);
+		/*System.out.println ("\nAttacked 50, dead?: " + p1.attacked (65) + ". Health left: " + p1.health);
 		System.out.println ("isDead?: " + p1.isDead ());
 		System.out.print ("Healed 100. ");
 		p1.healed (100);
@@ -76,18 +76,22 @@ public class DND
 		System.out.println ("isDead?: " + p1.isDead () + "\n");
 		
 		while (map.current.connections [0] != -1)
-			map.moveback ();
+			map.moveback ();*/
 		
 		//Room tests
-		for (int i = 0; i < map.current.numenemies; i++)
+		/*for (int i = 0; i < map.current.numenemies; i++)
 			System.out.println ("enemy [" + i + "]:\n" + map.current.enemies [i]);
 		
-		System.out.println ();
+		System.out.println ();*/
 		
 		//Inventory tests
 		Weapon wpn = new Weapon (5);
-		System.out.println ("Adding sword 1: " + p1.addToInventory (wpn));
-		System.out.println ("Adding sword 2: " + p1.addToInventory (wpn));
-		System.out.println ("Sword in inventory: " + p1.inInventory (wpn));
+		Sword sword = new Sword ("Steel");
+		System.out.println ("Adding weapon 1: " + p1.addToInventory (wpn));
+		System.out.println ("Adding weapon 2: " + p1.addToInventory (wpn));
+		System.out.println ("Adding steel sword: " + p1.addToInventory (sword));
+		System.out.println ("Weapon in inventory: " + p1.inInventory (wpn) + "\n");
+		
+		p1.inventoryCheck ();
 	}
 }

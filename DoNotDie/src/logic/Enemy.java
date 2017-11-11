@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Enemy
 {
-	Enemy (String n, int t, Boolean g, int STR, int END, int INT, int WIL, int AGL, int SPD, int LCK)
+	public Enemy (String n, int t, Boolean g, int STR, int END, int INT, int WIL, int AGL, int SPD, int LCK)
 	{
 		if (t == 1)
 		{

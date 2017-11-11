@@ -2,8 +2,10 @@ package logic;
 
 public class Mace extends Weapon
 {
-	Mace (String type)
+	public Mace (String type)
 	{
+		System.out.println (type);
+		
 		if (type.equals ("Iron"))
 		{
 			name = "Iron Mace";
@@ -62,11 +64,21 @@ public class Mace extends Weapon
 		}
 	}
 	
-	public Boolean equals (Mace other)
+	public String toString ()
 	{
-		return this.name.equals (other.name);
+		return name + "\nValue: " + value + "\nDamage: " + damage + "\nWeight: " + weight;
 	}
 	
-	public int value, damage, weight;
-	public String name;
+	public Boolean equals (Mace other)
+	{
+		return name.equals (other.getName ());
+	}
+	
+	public int getDamage () { return damage; }
+	public int getValue () { return value; }
+	public int getWeight () { return weight; }
+	public String getName () { return name; }
+	
+	private int value, damage, weight;
+	private String name;
 }
