@@ -1,0 +1,5 @@
+1. The system shall provide a difficulty setting in the options.
+
+2. The system shall provide optional content meant to test logic and problem solving skills.
+
+3. The system shall save the user's game progress.

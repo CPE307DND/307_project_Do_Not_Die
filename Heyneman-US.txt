@@ -1,0 +1,4 @@
+1. As a user, I want to be able to play the game without needing much skill, so that I can finish the game.
+2. As a user, I want the game to have challenges, so that the game does not become boring.
+3. As a user, I want to be able to save my progress, so that I
+can take breaks while playing.
