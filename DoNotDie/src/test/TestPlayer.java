@@ -1,7 +1,14 @@
+/*
+ * Author: Cristian Rangel
+ */
+
+
 package test;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 
 public class TestPlayer
@@ -100,6 +107,42 @@ public class TestPlayer
 	{
 		p1.removeFromInventory (item);
 		assertEquals (false, p1.removeFromInventory (item));
+	}
+	
+	@Test
+	public void testRollD20 ()
+	{
+		assertTrue (p1.rolld20 () <= 20);
+	}
+	
+	@Test
+	public void testRollD12 ()
+	{
+		assertTrue (p1.rolld12 () <= 12);
+	}
+	
+	@Test
+	public void testRollD10 ()
+	{
+		assertTrue (p1.rolld10 () <= 10);
+	}
+	
+	@Test
+	public void testRollD8 ()
+	{
+		assertTrue (p1.rolld8 () <= 8);
+	}
+	
+	@Test
+	public void testRollD6 ()
+	{
+		assertTrue (p1.rolld6 () <= 6);
+	}
+	
+	@Test
+	public void testRollD4 ()
+	{
+		assertTrue (p1.rolld4 () <= 4);
 	}
 	
 	logic.Player p1;
