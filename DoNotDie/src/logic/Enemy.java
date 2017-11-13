@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Enemy
 {
-	public Enemy (String n, int t, Boolean g, int STR, int END, int INT, int WIL, int AGL, int SPD, int LCK)
+	public Enemy (int t, Boolean g, int STR, int END, int INT, int WIL, int AGL, int SPD, int LCK)
 	{
 		if (t == 1)
 		{
@@ -156,8 +156,6 @@ public class Enemy
 			Willpower++;
 			Agility++;
 		}
-		
-		name = n;
 		health += (Endurance * 5);
 		maxhealth = health;
 		damage += ((Strength * 5) + (Intelligence * 3)) / 2;
@@ -167,8 +165,7 @@ public class Enemy
 	
 	public String toString ()
 	{
-		String ret = "Name: " + name;
-		ret += "\nRace: " + race;
+		String ret = "Type: " + race;
 		if (gender)
 			ret += "\nGender: Male";
 		else

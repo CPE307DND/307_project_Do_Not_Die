@@ -4,8 +4,6 @@ public class Mace extends Weapon
 {
 	public Mace (String type)
 	{
-		System.out.println (type);
-		
 		if (type.equals ("Iron"))
 		{
 			name = "Iron Mace";

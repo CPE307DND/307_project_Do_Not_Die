@@ -3,7 +3,7 @@ package logic;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Player
+public class Player implements Comparable <Enemy>
 {
 	public Player (String n, int r, Boolean g, int STR, int END, int INT, int WIL, int AGL, int SPD, int LCK)
 	{
@@ -197,8 +197,16 @@ public class Player
 	public int inInventory (Treasure item)
 	{
 		for (int i = 0; i < inventory.size (); i++)
-			if (inventory.get (i).equals (item))
-				return i;
+			if (inventory.get (i).getClass ().getName ().equals ("logic.Weapon") && item.getClass ().getName ().equals ("logic.Weapon"))
+			{
+				if (((Weapon) inventory.get (i)).getType ().getClass ().equals (((Weapon) item).getType ().getClass ()))
+				{
+					if (inventory.get (i).equals (((Weapon) item).getType ()))
+					{
+						return i;
+					}
+				}
+			}
 		return -1;
 	}
 	
@@ -232,12 +240,30 @@ public class Player
 			System.out.println (inventory.get (i));
 	}
 	
+	public int initiative ()
+	{
+		initiative = rolld20 ();
+		return initiative;
+	}
+	
 	public int rolld20 () { return roller.nextInt (20) + 1; }
 	public int rolld12 () { return roller.nextInt (12) + 1; }
 	public int rolld10 () { return roller.nextInt (10) + 1; }
 	public int rolld8 () { return roller.nextInt (8) + 1; }
 	public int rolld6 () { return roller.nextInt (6) + 1; }
 	public int rolld4 () { return roller.nextInt (4) + 1; }
+	
+	
+	@Override
+	public int compareTo (Enemy o)
+	{
+		if (initiative > o.initiative)
+			return 1;
+		else if (initiative == o.initiative)
+			return 0;
+		else
+			return -1;
+	}
 	
 	public int maxhealth = 50, health = 50, damage = 20, AC, initiative;
 	public ArrayList <Treasure> inventory;

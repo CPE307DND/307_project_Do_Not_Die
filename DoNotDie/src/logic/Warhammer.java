@@ -4,8 +4,6 @@ public class Warhammer extends Weapon
 {
 	public Warhammer (String type)
 	{
-		System.out.println (type);
-		
 		if (type.equals ("Iron"))
 		{
 			name = "Iron Warhammer";

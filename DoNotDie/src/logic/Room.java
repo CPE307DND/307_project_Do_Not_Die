@@ -27,7 +27,7 @@ public class Room
 		if (numenem > 0)
 		{
 			enemies = new Enemy [numenem];
-			enemies [0] = new Enemy ("Orc", 2, true, 2, 2, 2, 2, 2, 2, 2);
+			enemies [0] = new Enemy (2, true, 2, 2, 2, 2, 2, 2, 2);
 		}
 		numenemies = numenem;
 	}

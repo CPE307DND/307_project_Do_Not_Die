@@ -4,8 +4,6 @@ public class Axe extends Weapon
 {
 	public Axe (String type)
 	{
-		System.out.println (type);
-		
 		if (type.equals ("Iron"))
 		{
 			name = "Iron Axe";

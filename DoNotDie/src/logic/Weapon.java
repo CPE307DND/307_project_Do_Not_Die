@@ -1,5 +1,6 @@
 package logic;
 
+import java.util.Random;
 
 public class Weapon extends Treasure
 {
@@ -7,35 +8,93 @@ public class Weapon extends Treasure
 	
 	public Weapon (int level)
 	{
-
-		int piece = 0;
+		Random r = new Random ();
+		int piece = r.nextInt (4);
 		
 		
 		if (piece == 0)
 		{
-			System.out.println ("Making Sword");
-			new Sword (material [level / 5]);
+			w = new Sword (material [level / 5]);
+			name = w.getName ();
+			value = w.getValue ();
+			damage = w.getDamage ();
+			weight = w.getWeight ();
 		}
 		else if (piece == 1)
 		{
-			System.out.println ("Making Dagger");
-			new Dagger (material [level / 5]);
+			w = new Dagger (material [level / 5]);
+			name = w.getName ();
+			value = w.getValue ();
+			damage = w.getDamage ();
+			weight = w.getWeight ();
 		}
 		else if (piece == 2)
 		{
-			System.out.println ("Making Axe");
-			new Axe (material [level / 5]);
+			w = new Axe (material [level / 5]);
+			name = w.getName ();
+			value = w.getValue ();
+			damage = w.getDamage ();
+			weight = w.getWeight ();
 		}
 		else if (piece == 3)
 		{
-			System.out.println ("Making Mace");
-			new Mace (material [level / 5]);
+			w = new Mace (material [level / 5]);
+			name = w.getName ();
+			value = w.getValue ();
+			damage = w.getDamage ();
+			weight = w.getWeight ();
 		}
 		else if (piece == 4)
 		{
-			System.out.println ("Making Warhammer");
-			new Warhammer (material [level / 5]);
-			
+			w = new Warhammer (material [level / 5]);
+			name = w.getName ();
+			value = w.getValue ();
+			damage = w.getDamage ();
+			weight = w.getWeight ();
+		}
+	}
+	
+	public Weapon (int level, int piece)
+	{
+		if (piece == 0)
+		{
+			w = new Sword (material [level / 5]);
+			name = w.getName ();
+			value = w.getValue ();
+			damage = w.getDamage ();
+			weight = w.getWeight ();
+		}
+		else if (piece == 1)
+		{
+			w = new Dagger (material [level / 5]);
+			name = w.getName ();
+			value = w.getValue ();
+			damage = w.getDamage ();
+			weight = w.getWeight ();
+		}
+		else if (piece == 2)
+		{
+			w = new Axe (material [level / 5]);
+			name = w.getName ();
+			value = w.getValue ();
+			damage = w.getDamage ();
+			weight = w.getWeight ();
+		}
+		else if (piece == 3)
+		{
+			w = new Mace (material [level / 5]);
+			name = w.getName ();
+			value = w.getValue ();
+			damage = w.getDamage ();
+			weight = w.getWeight ();
+		}
+		else if (piece == 4)
+		{
+			w = new Warhammer (material [level / 5]);
+			name = w.getName ();
+			value = w.getValue ();
+			damage = w.getDamage ();
+			weight = w.getWeight ();
 		}
 	}
 	
@@ -53,9 +112,11 @@ public class Weapon extends Treasure
 	public int getValue () { return value; }
 	public int getWeight () { return weight; }
 	public String getName () { return name; }
+	public Weapon getType () { return w; }
 	
 	
 	private String [] material = {"Iron", "Steel", "Elven", "Dwarvish", "Glass", "Orcish", "Ancient", "Demonic"};
+	private Weapon w;
 	private int value, damage, weight;
 	private String name;
 }
