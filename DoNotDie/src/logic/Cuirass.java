@@ -90,6 +90,11 @@ public class Cuirass extends Armor
 		}
 	}
 	
+	public String toString ()
+	{
+		return name + "\nAR: " + ar + "\nValue: " + value + "\nWeight: " + weight;
+	}
+	
 	public Boolean equals (Cuirass other)
 	{
 		return name.equals (other.getName ());

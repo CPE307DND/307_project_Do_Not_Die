@@ -90,6 +90,11 @@ public class Gauntlets extends Armor
 		}
 	}
 	
+	public String toString ()
+	{
+		return name + "\nAR: " + ar + "\nValue: " + value + "\nWeight: " + weight;
+	}
+	
 	public Boolean equals (Gauntlets other)
 	{
 		return name.equals (other.getName ());

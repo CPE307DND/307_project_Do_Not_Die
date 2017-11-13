@@ -1,6 +1,5 @@
 package logic;
 
-import java.util.Random;
 
 public class Weapon extends Treasure
 {
@@ -8,8 +7,7 @@ public class Weapon extends Treasure
 	
 	public Weapon (int level)
 	{
-		/*Random r = new Random ();
-		int piece = r.nextInt (4);*/
+
 		int piece = 0;
 		
 		
