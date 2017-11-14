@@ -6,9 +6,6 @@
 package test;
 
 import org.junit.Test;
-
-import logic.Gauntlets;
-
 import static org.junit.Assert.assertEquals;
 
 public class TestGauntlets
@@ -18,7 +15,7 @@ public class TestGauntlets
 		chiton = new logic.Gauntlets ("Chiton");
 		chiton2 = new logic.Gauntlets ("Chiton");
 		iron = new logic.Gauntlets ("Iron");
-		ironstring = "Iron Boots\nAR: 7\nValue: 15\nWeight: 4";
+		ironstring = "Iron Gauntlets\nValue: 15\nArmor Rating: 7\nWeight: 4";
 	}
 	
 	@Test

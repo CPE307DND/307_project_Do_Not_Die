@@ -15,7 +15,7 @@ public class TestCuirass
 		chiton = new logic.Cuirass ("Chiton");
 		chiton2 = new logic.Cuirass ("Chiton");
 		iron = new logic.Cuirass ("Iron");
-		ironstring = "Iron Boots\nAR: 7\nValue: 15\nWeight: 4";
+		ironstring = "Iron Cuirass\nValue: 15\nArmor Rating: 7\nWeight: 4";
 	}
 	
 	@Test

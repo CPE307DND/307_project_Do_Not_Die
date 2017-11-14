@@ -89,10 +89,10 @@ public class Boots extends Armor
 			weight = 6;
 		}
 	}
-	
+
 	public String toString ()
 	{
-		return name + "\nAR: " + ar + "\nValue: " + value + "\nWeight: " + weight;
+		return name + "\nValue: " + value + "\nArmor Rating: " + ar + "\nWeight: " + weight;
 	}
 	
 	public Boolean equals (Boots other)

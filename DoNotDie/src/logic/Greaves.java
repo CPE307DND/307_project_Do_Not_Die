@@ -89,6 +89,11 @@ public class Greaves extends Armor
 			weight = 45;
 		}
 	}
+
+	public String toString ()
+	{
+		return name + "\nValue: " + value + "\nArmor Rating: " + ar + "\nWeight: " + weight;
+	}
 	
 	public Boolean equals (Greaves other)
 	{

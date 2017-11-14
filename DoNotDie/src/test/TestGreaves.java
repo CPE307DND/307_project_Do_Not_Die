@@ -15,7 +15,7 @@ public class TestGreaves
 		chiton = new logic.Greaves ("Chiton");
 		chiton2 = new logic.Greaves ("Chiton");
 		iron = new logic.Greaves ("Iron");
-		ironstring = "Iron Boots\nAR: 7\nValue: 15\nWeight: 4";
+		ironstring = "Iron Greaves\nValue: 35\nArmor Rating: 15\nWeight: 13";
 	}
 	
 	@Test

@@ -15,7 +15,7 @@ public class TestBoots
 		chiton = new logic.Boots ("Chiton");
 		chiton2 = new logic.Boots ("Chiton");
 		iron = new logic.Boots ("Iron");
-		ironstring = "Iron Boots\nAR: 7\nValue: 15\nWeight: 4";
+		ironstring = "Iron Boots\nValue: 15\nArmor Rating: 7\nWeight: 4";
 	}
 	
 	@Test

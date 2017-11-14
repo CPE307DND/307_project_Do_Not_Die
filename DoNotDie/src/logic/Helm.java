@@ -90,6 +90,11 @@ public class Helm extends Armor
 		}
 	}
 	
+	public String toString ()
+	{
+		return name + "\nValue: " + value + "\nArmor Rating: " + ar + "\nWeight: " + weight;
+	}
+	
 	public Boolean equals (Helm other)
 	{
 		return name.equals (other.getName ());

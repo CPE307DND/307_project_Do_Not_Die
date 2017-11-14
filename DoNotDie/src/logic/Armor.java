@@ -239,7 +239,7 @@ public class Armor extends Treasure
 	
 	public String toString ()
 	{
-		return name + "\nValue: " + value + "\nArmor Rating: " + ar + "\nWeight: " + weight + "\n";
+		return name + "\nValue: " + value + "\nArmor Rating: " + ar + "\nWeight: " + weight;
 	}
 	
 	public Boolean equals (Armor other)
