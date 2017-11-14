@@ -69,8 +69,9 @@ class Misc extends Treasure
 	
 	public Boolean equals (Boots other)
 	{
-		return name.equals (other.getName ());
+		return name.equals (other.getName ()) && value == other.getValue ();
 	}
+	
 	public int getValue () { return value; }
 	public int getWeight () { return weight; }
 	public String getName () { return name; }

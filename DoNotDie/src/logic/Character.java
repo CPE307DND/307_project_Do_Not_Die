@@ -3,9 +3,9 @@ package logic;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Player implements Comparable <Enemy>
+public class Character implements Comparable <Character>
 {
-	public Player (String n, int r, Boolean g, int STR, int END, int INT, int WIL, int AGL, int SPD, int LCK)
+	public Character (String n, int r, Boolean g, int STR, int END, int INT, int WIL, int AGL, int SPD, int LCK)
 	{
 		if (r == 1)
 		{
@@ -167,6 +167,14 @@ public class Player implements Comparable <Enemy>
 	
 	public String toString ()
 	{
+		if (name == null)
+			return printEnemy ();
+		else
+			return printPlayer ();
+	}
+	
+	public String printPlayer ()
+	{
 		String ret = "Name: " + name;
 		ret += "\nRace: " + race;
 		if (gender)
@@ -177,15 +185,31 @@ public class Player implements Comparable <Enemy>
 		ret += "\nMax Health: " + maxhealth;
 		ret += "\nDamage: " + damage;
 		ret += "\nAC: " + AC;
-		ret += "\nStrength: " + Strength;
-		ret += "\nEndurance: " + Endurance;
-		ret += "\nIntelligence: " + Intelligence;
-		ret += "\nWillpower: " + Willpower;
-		ret += "\nAgility: " + Agility;
-		ret += "\nSpeed: " + Speed;
-		ret += "\nLuck: " + Luck;
+		ret += printStats ();
 		
 		return ret;
+	}
+	
+	public String printEnemy ()
+	{
+		String ret = "Race: " + race;
+		if (gender)
+			ret += "\nGender: Male";
+		else
+			ret += "\nGender: Female";
+		ret += "\nHealth: " + health;
+		ret += "\nMax Health: " + maxhealth;
+		ret += "\nDamage: " + damage;
+		ret += "\nAC: " + AC;
+		ret += printStats ();
+		
+		return ret;
+	}
+	
+	public String printStats ()
+	{
+		return "STR: " + Strength + "\nEND: " + Endurance + "\nINT: " + Intelligence +
+				"\nWIL: " + Willpower + "\nAGL: " + Agility + "\nSPD: " + Speed +  "\nLCK: " + Luck;
 	}
 	
 	public Boolean attacked (int dmg) { return ((health -= dmg) <= 0); }
@@ -205,6 +229,20 @@ public class Player implements Comparable <Enemy>
 					{
 						return i;
 					}
+				}
+			}
+			else if (inventory.get (i).getClass ().getName ().equals ("logic.Armor") && item.getClass ().getName ().equals ("logic.Armor"))
+			{
+				if (inventory.get (i).equals (((Armor) item).getType ()))
+				{
+					return i;
+				}
+			}
+			else if (inventory.get (i).getClass ().getName ().equals ("logic.Misc") && item.getClass ().getName ().equals ("logic.Misc"))
+			{
+				if (inventory.get (i).equals (item))
+				{
+					return i;
 				}
 			}
 		return -1;
@@ -254,8 +292,7 @@ public class Player implements Comparable <Enemy>
 	public int rolld4 () { return roller.nextInt (4) + 1; }
 	
 	
-	@Override
-	public int compareTo (Enemy o)
+	public int compareTo (Character o)
 	{
 		if (initiative > o.initiative)
 			return 1;
@@ -265,12 +302,30 @@ public class Player implements Comparable <Enemy>
 			return -1;
 	}
 	
-	public int maxhealth = 50, health = 50, damage = 20, AC, initiative;
+	/*public Boolean equals (Character o)
+	{
+		return race.equals (o.getRace ()) && ;
+	}*/
+	
+	public int getInd () { return ind; }
+	public void setInd (int i) { ind = i; } 
+	public int getHealth () { return health; }
+	public void setHealth (int h) { health = h; }
+	public int getMaxHealth () { return maxhealth; }
+	public void setMaxHealth (int mh) { maxhealth = mh; }
+	public int getDamage () { return damage; }
+	public void setDamage (int d) { damage = d; }
+	public int getAC () { return AC; }
+	public void getAC (int ac) { AC = ac; }
+	public int getInitiative () { return initiative; }
+	public String getName () { return name; }
+	public String getRace () { return race; }
+	public String getGender () { return gender? "Male" : "Female"; }
+	
 	public ArrayList <Treasure> inventory;
-	public String name;
-	private String race;
+	private String name, race;
 	//True is male
 	private Boolean gender;
-	private int Strength, Endurance, Intelligence, Willpower, Agility, Speed, Luck;
+	private int ind, health = 50, damage = 20, AC, initiative, maxhealth = 50, Strength, Endurance, Intelligence, Willpower, Agility, Speed, Luck;
 	private Random roller;
 }

@@ -11,15 +11,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
-public class TestPlayer
+public class TestCharacter
 {
-	public TestPlayer ()
+	public TestCharacter ()
 	{
 		overdamage = 1000;
 		underdamage = 1;
 		overheals = 1000;
 		underheals = 1;
-		p1 = new logic.Player ("Chaos", 2, true, 2, 2, 2, 2, 2, 2, 2);
+		p1 = new logic.Character ("Chaos", 2, true, 2, 2, 2, 2, 2, 2, 2);
 		item = new logic.Sword ("Steel");
 	}
 	
@@ -32,37 +32,37 @@ public class TestPlayer
 	@Test
 	public void testAttackedUnder ()
 	{
-		p1.health = p1.maxhealth;
+		p1.setHealth (p1.getMaxHealth ());
 		assertEquals (false, p1.attacked (underdamage));
 	}
 
 	@Test
 	public void testHealedOver ()
 	{
-		p1.health = 1;
+		p1.setHealth (1);
 		p1.healed (overheals);
-		assertEquals (p1.maxhealth, p1.health);
+		assertEquals (p1.getMaxHealth (), p1.getHealth ());
 	}
 
 	@Test
 	public void testHealedUnder ()
 	{
-		p1.health = 1;
+		p1.setHealth (1);
 		p1.healed (underheals);
-		assertEquals (p1.health, 2);
+		assertEquals (p1.getHealth (), 2);
 	}
 
 	@Test
 	public void testIsDeadYes ()
 	{
-		p1.health = 0;
+		p1.setHealth (0);
 		assertEquals (true, p1.isDead ());
 	}
 
 	@Test
 	public void testIsDeadNo ()
 	{
-		p1.health = p1.maxhealth;
+		p1.setHealth (p1.getMaxHealth ());
 		assertEquals (false, p1.isDead ());
 	}
 
@@ -145,7 +145,7 @@ public class TestPlayer
 		assertTrue (p1.rolld4 () <= 4);
 	}
 	
-	logic.Player p1;
+	logic.Character p1;
 	int overdamage, underdamage, overheals, underheals;
 	logic.Treasure item;
 }

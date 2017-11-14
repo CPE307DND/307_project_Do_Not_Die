@@ -1,21 +1,38 @@
 package logic;
 
+import java.util.Random;
+
 public class Room
 {
 	public Room (int numenem, int numtre, int level, int back, int l, int c, int r, int u, int d)
 	{
-		/*int seed;
-		for (int i = 0; i < numenem; i++)
-			enemies [i] = new Enemy (level);
+		Random rand = new Random ();
+		int seed = rand.nextInt (3), race;
+		Boolean g = rand.nextBoolean ();
+		
+		if (numenem > 0)
+		{
+			enemies = new Character [numenem];
+			enemydead = new Boolean [numenem];
+			
+			for (int i = 0; i < numenem; i++)
+			{
+				race = rand.nextInt (10);
+				enemies [i] = new Character (null, race, g, level - seed, level - seed, level - seed, level - seed, level - seed, level - seed, level - seed);
+				enemies [i].setInd (i);
+				enemydead [i] = false;
+			}
+		}
+		
 		for (int i = 0; i < numtre; i++)
 		{
-			if ((seed = (int) ((Math.random () * 20) / 10)) == 0)
-				treasures [i] = new Misc (level * 10);
+			if (seed == 0)
+				treasures [i] = new Misc ((level * 10) + 1);
 			else if (seed == 1)
-				treasures [i] = new Weapon (level * 10);
+				treasures [i] = new Weapon (level);
 			else
-				treasures [i] = Armor.getArmor (level * 10);
-		}*/
+				treasures [i] = new Armor (level);
+		}
 		
 		connections [0] = back;
 		connections [1] = l;
@@ -23,25 +40,46 @@ public class Room
 		connections [3] = r;
 		connections [4] = u;
 		connections [5] = d;
-		
-		if (numenem > 0)
-		{
-			enemies = new Enemy [numenem];
-			enemies [0] = new Enemy (2, true, 2, 2, 2, 2, 2, 2, 2);
-		}
+
 		numenemies = numenem;
 	}
 	
 	public String toString ()
 	{
-		return "Room back: " + connections [0] + " Room forward: " + connections [2];
+		String ret = "Connections:";
+		if (connections [0] != -1)
+			ret += "\nBack: " + connections [0];
+		if (connections [1] != -1)
+			ret += "\nLeft: " + connections [1];
+		if (connections [2] != -1)
+			ret += "\nCenter: " + connections [2];
+		if (connections [3] != -1)
+			ret += "\nRight: " + connections [3];
+		if (connections [4] != -1)
+			ret += "\nUp: " + connections [4];
+		if (connections [5] != -1)
+			ret += "\nDown: " + connections [5];
+		
+		return ret;
 	}
+	
+	public Boolean roomCleared ()
+	{
+		if (numenemies > 0)
+			for (int i = 0; i < numenemies; i++)
+				if (!enemydead [i])
+					return false;
+		return true;
+	}
+	
+	public void enemyKilled (int i) { enemydead [i] = true; }
 	
 	
 	public String description;
-	public Enemy [] enemies;
+	public Character [] enemies;
 	public Treasure [] treasures;
 	//There will be a back, left, center, right, up, down, in that order
 	public int [] connections = {-1, -1, -1, -1, -1, -1};
 	public int numenemies;
+	private Boolean [] enemydead;
 }
