@@ -11,9 +11,9 @@ public class DND
 	public static void main (String [] args)
 	{
 		Map map = new Map ();
-		Character p1 = new Character ("Chaos", 0, true, 2, 2, 2, 2, 2, 2, 2), enemy;
+		Character p1 = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2), enemy, hold = null;
 		PriorityQueue <Character> orderq = new PriorityQueue <Character> ();
-		Character [] order = new Character [4];
+		Character [] order = new Character [4], aselect = new Character [4];
 		int turn = 0, roll = 0;
 		String input = "";
 		
@@ -30,6 +30,13 @@ public class DND
 		
 		System.out.println ("\nThe order is: ");
 		orderq.toArray (order);
+		/*orderq.toArray (aselect);
+		
+		for (int i = 0; i < aselect.length; i++)
+		{
+			if (aselect [i].getName() != null && )
+		}*/
+		
 		
 		for (int i = 0; i < order.length && order [i] != null; i++)
 			if (order [i].getName () != null)
@@ -55,8 +62,11 @@ public class DND
 					{
 						System.out.println ("Attack who?");
 						for (int i = 0; i < map.current.enemies.length; i++)
-							System.out.println (map.current.enemies [i].printEnemy());
+							if (!map.current.enemyDead (i))
+								System.out.println (map.current.enemies [i].printEnemy());
+						
 						input = input ();
+						
 						for (int i = 0; i < map.current.enemies.length; i++)
 							if (map.current.enemies [i].equals (input))
 							{
@@ -70,7 +80,7 @@ public class DND
 									if (enemy.attacked (p1.getDamage ()))
 									{
 										System.out.println ("\nThe weapon swung true\nThe " + enemy.getRace () + " fell\nA fatal blow\nTo the left pinky toe.");
-										map.current.enemyKilled (order [turn].getInd ());
+										map.current.enemyKilled (enemy.getInd ());
 									}
 									else
 										System.out.println (enemy.getRace () + " has " + enemy.getHealth () + " health left.");
@@ -112,16 +122,9 @@ public class DND
 		BufferedReader br = new BufferedReader (new InputStreamReader (System.in));
 		String ret = null;
 		
-		try
-		{
-			ret = br.readLine ();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		try { ret = br.readLine (); }
+		catch (IOException e) { e.printStackTrace(); }
 		
-			
 		return ret;
 	}
 }

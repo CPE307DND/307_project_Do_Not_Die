@@ -65,11 +65,21 @@ public class Room
 	
 	public Boolean roomCleared ()
 	{
-		if (numenemies > 0)
-			for (int i = 0; i < numenemies; i++)
-				if (!enemydead [i])
-					return false;
+		for (int i = 0; i < numenemies; i++)
+		{
+			if (!enemydead [i])
+				return false;
+		}
 		return true;
+	}
+	
+	public void enemiesAlive ()
+	{
+		for (int i = 0; i < numenemies; i++)
+		{
+			if (!enemydead [i])
+				System.out.println (enemies [i]);
+		}
 	}
 	
 	public void enemyKilled (int i) { enemydead [i] = true; }

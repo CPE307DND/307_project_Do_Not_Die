@@ -20,7 +20,7 @@ public class TestCharacter
 		overheals = 1000;
 		underheals = 1;
 		p1 = new logic.Character ("Chaos", 2, true, 2, 2, 2, 2, 2, 2, 2);
-		item = new logic.Sword ("Steel");
+		item = new logic.Weapon (5, 0);
 	}
 	
 	@Test
