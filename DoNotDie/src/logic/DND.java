@@ -4,16 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.PriorityQueue;
-import java.util.Scanner;
 
 public class DND
 {
 	public static void main (String [] args)
 	{
 		Map map = new Map ();
-		Character p1 = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2), enemy, hold = null;
+		Character p1 = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2), enemy; //, hold = null;
 		PriorityQueue <Character> orderq = new PriorityQueue <Character> ();
-		Character [] order = new Character [4], aselect = new Character [4];
+		Character [] order = new Character [4]; //aselect = new Character [4]; was not used
 		int turn = 0, roll = 0;
 		String input = "";
 		
