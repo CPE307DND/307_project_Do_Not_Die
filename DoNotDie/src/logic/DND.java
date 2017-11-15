@@ -10,10 +10,10 @@ public class DND
 	public static void main (String [] args)
 	{
 		Map map = new Map ();
-		Character p1 = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2), enemy; //, hold = null;
+		Character p1 = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2), enemy, hold = null;
 		PriorityQueue <Character> orderq = new PriorityQueue <Character> ();
-		Character [] order = new Character [4]; //aselect = new Character [4]; was not used
-		int turn = 0, roll = 0, aselected, infiniteloopstopper = 0;
+		Character [] order = new Character [4], aselect = new Character [4];
+		int turn = 0, roll = 0, aselected;
 		String input = "";
 		
 		p1.addToInventory (new Weapon (5));
@@ -53,9 +53,8 @@ public class DND
 				System.out.println (order [i].getRace ());
 		
 		//Battle manager
-		while (!p1.isDead () && !map.current.roomCleared () && infiniteloopstopper < 25)
+		while (!p1.isDead () && !map.current.roomCleared ())
 		{
-			infiniteloopstopper++;
 			if (order [turn] == null)
 			{
 				System.out.println ("\nTop of the order again.\n");
