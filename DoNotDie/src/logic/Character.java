@@ -182,29 +182,14 @@ public class Character implements Comparable <Character>
 		else
 			ret += "\nGender: Female";
 		ret += "\nHealth: " + health;
-		ret += "\nMax Health: " + maxhealth;
+		ret += "/" + maxhealth;
 		ret += "\nDamage: " + damage;
 		ret += "\nAC: " + AC;
-		ret += printStats ();
 		
 		return ret;
 	}
 	
-	public String printEnemy ()
-	{
-		String ret = "Race: " + race;
-		if (gender)
-			ret += "\nGender: Male";
-		else
-			ret += "\nGender: Female";
-		ret += "\nHealth: " + health;
-		ret += "\nMax Health: " + maxhealth;
-		ret += "\nDamage: " + damage;
-		ret += "\nAC: " + AC;
-		ret += printStats ();
-		
-		return ret;
-	}
+	public String printEnemy () { return "Race: " + race + "\nHealth: " + health; }
 	
 	public String printStats ()
 	{
@@ -212,7 +197,15 @@ public class Character implements Comparable <Character>
 				"\nWIL: " + Willpower + "\nAGL: " + Agility + "\nSPD: " + Speed +  "\nLCK: " + Luck;
 	}
 	
-	public Boolean attacked (int dmg) { return ((health -= dmg) <= 0); }
+	public Boolean attacked (int dmg)
+	{
+		if ((health -= dmg) <= 0)
+		{
+			health = 0;
+			return true;
+		}
+		return false;
+	}
 	
 	public void healed (int heals) { if ((health += heals) > maxhealth) health = maxhealth; }
 	
@@ -302,10 +295,8 @@ public class Character implements Comparable <Character>
 			return -1;
 	}
 	
-	/*public Boolean equals (Character o)
-	{
-		return race.equals (o.getRace ()) && ;
-	}*/
+	public Boolean equals (Character o) { return race.equals (o.getRace ()) && health == o.getHealth (); }
+	public Boolean equals (String str) { return race.equals (str); }
 	
 	public int getInd () { return ind; }
 	public void setInd (int i) { ind = i; } 

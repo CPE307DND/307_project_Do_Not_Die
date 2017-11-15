@@ -73,6 +73,7 @@ public class Room
 	}
 	
 	public void enemyKilled (int i) { enemydead [i] = true; }
+	public Boolean enemyDead (int i) { return enemydead [i]; }
 	
 	
 	public String description;
