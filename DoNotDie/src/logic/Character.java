@@ -165,6 +165,7 @@ public class Character implements Comparable <Character>
 		roller = new Random ();
 	}
 	
+	// Methods for printing
 	public String toString ()
 	{
 		if (name == null)
@@ -172,7 +173,6 @@ public class Character implements Comparable <Character>
 		else
 			return printPlayer ();
 	}
-	
 	public String printPlayer ()
 	{
 		String ret = "Name: " + name;
@@ -188,15 +188,15 @@ public class Character implements Comparable <Character>
 		
 		return ret;
 	}
-	
-	public String printEnemy () { return race + "\nHealth: " + health; }
-	
+	public String printEnemy () { return String.format ("%11s", race) + ":\tHP (" +
+	String.format ("%3d", health) + "/" + String.format ("%3d", maxhealth) + ")"; }
 	public String printStats ()
 	{
 		return "STR: " + Strength + "\nEND: " + Endurance + "\nINT: " + Intelligence +
 				"\nWIL: " + Willpower + "\nAGL: " + Agility + "\nSPD: " + Speed +  "\nLCK: " + Luck;
 	}
 	
+	// Methods for battle
 	public Boolean attacked (int dmg)
 	{
 		if ((health -= dmg) <= 0)
@@ -206,11 +206,21 @@ public class Character implements Comparable <Character>
 		}
 		return false;
 	}
-	
 	public void healed (int heals) { if ((health += heals) > maxhealth) health = maxhealth; }
-	
 	public Boolean isDead () { return (health <= 0); }
+	public int initiative ()
+	{
+		initiative = rolld20 ();
+		return initiative;
+	}
+	public int rolld20 () { return roller.nextInt (20) + 1; }
+	public int rolld12 () { return roller.nextInt (12) + 1; }
+	public int rolld10 () { return roller.nextInt (10) + 1; }
+	public int rolld8 () { return roller.nextInt (8) + 1; }
+	public int rolld6 () { return roller.nextInt (6) + 1; }
+	public int rolld4 () { return roller.nextInt (4) + 1; }
 	
+	//Methods for inventory
 	public int inInventory (Treasure item)
 	{
 		for (int i = 0; i < inventory.size (); i++)
@@ -240,7 +250,6 @@ public class Character implements Comparable <Character>
 			}
 		return -1;
 	}
-	
 	public Boolean addToInventory (Treasure item)
 	{
 		if (inInventory (item) >= 0)
@@ -251,7 +260,6 @@ public class Character implements Comparable <Character>
 			return true;
 		}
 	}
-	
 	public Boolean removeFromInventory (Treasure item)
 	{
 		int i = inInventory (item);
@@ -264,25 +272,14 @@ public class Character implements Comparable <Character>
 		else
 			return false;
 	}
-	
 	public void inventoryCheck ()
 	{
-		for (int i = 0; i < inventory.size (); i++)
-			System.out.println (inventory.get (i));
+		if (inventory.size () > 0)
+			for (int i = 0; i < inventory.size (); i++)
+				System.out.println (inventory.get (i));
+		else
+			System.out.println ("You have nothing in your inventory.\n");
 	}
-	
-	public int initiative ()
-	{
-		initiative = rolld20 ();
-		return initiative;
-	}
-	
-	public int rolld20 () { return roller.nextInt (20) + 1; }
-	public int rolld12 () { return roller.nextInt (12) + 1; }
-	public int rolld10 () { return roller.nextInt (10) + 1; }
-	public int rolld8 () { return roller.nextInt (8) + 1; }
-	public int rolld6 () { return roller.nextInt (6) + 1; }
-	public int rolld4 () { return roller.nextInt (4) + 1; }
 	
 	
 	public int compareTo (Character o)
@@ -294,7 +291,6 @@ public class Character implements Comparable <Character>
 		else
 			return -1;
 	}
-	
 	public Boolean equals (Character o) { return race.equals (o.getRace ()) && health == o.getHealth (); }
 	public Boolean equals (String str) { return race.equals (str); }
 	
