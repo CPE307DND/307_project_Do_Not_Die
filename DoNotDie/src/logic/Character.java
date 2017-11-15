@@ -250,16 +250,7 @@ public class Character implements Comparable <Character>
 			}
 		return -1;
 	}
-	public Boolean addToInventory (Treasure item)
-	{
-		if (inInventory (item) >= 0)
-			return false;
-		else
-		{
-			inventory.add (item);
-			return true;
-		}
-	}
+	public void addToInventory (Treasure item) { inventory.add (item); }
 	public Boolean removeFromInventory (Treasure item)
 	{
 		int i = inInventory (item);

@@ -67,19 +67,6 @@ public class TestCharacter
 	}
 
 	@Test
-	public void testAddToInventorySingleAdd ()
-	{
-		assertEquals (true, p1.addToInventory (item));
-	}
-
-	@Test
-	public void testAddToInventoryDoubleAdd ()
-	{
-		p1.addToInventory (item);
-		assertEquals (false, p1.addToInventory (item));
-	}
-
-	@Test
 	public void testInInventoryIsThere ()
 	{
 		p1.addToInventory (item);

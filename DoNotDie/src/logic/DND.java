@@ -18,7 +18,7 @@ public class DND
 		String CTRMSG = "\t[Move (F)orward]", BCKMSG = "\t[Move (B)ackward]";
 		String [] msgs = {BCKMSG, LEFMSG, CTRMSG, RGTMSG, UPMSG, DWNMSG};
 		
-		while (input != null)
+		while (inputvalid (input))
 		{
 			// Fight enemies in the room before you can do anything else
 			if (map.current.numenemies > 0 && !map.current.roomCleared ())
@@ -41,24 +41,37 @@ public class DND
 			}
 			
 			System.out.println (prompt);
-			input = input ();
+			input = input ().toLowerCase ();
 			
-			if (input == null || input.toLowerCase().equals ("quit") ||
-					input.toLowerCase().equals ("q") || input.toLowerCase().equals ("exit") ||
-					input.toLowerCase().equals ("e"))
+			if (!inputvalid (input))
 			{
 				input = null;
 				continue;
 			}
 			
-			switch (input.toLowerCase ())
+			switch (input)
 			{
 				case ("i"):
 				{
-					if (map.current.hasTreasure ())
+					if (map.current.hasTreasures ())
 					{
 						System.out.println ("Treasures:\n");
 						map.current.listTreasures ();
+						System.out.println ("What do you want to pick up?\n");
+						while (inputvalid (input = input()))
+						{
+							if (map.current.hasTreasure (input))
+							{
+								p1.addToInventory (map.current.getTreasure (input));
+								break;
+							}
+							else
+							{
+								System.out.println ("That's not an item you can pick up.");
+								System.out.println ("Pick-uppable items:" + map.current.treasures [0] + "\nCan get: " + map.current.hasTreasure (map.current.treasures [0].getName ()));
+							}
+						}
+						
 					}
 					else
 						System.out.println ("Nothing in the room.");
@@ -188,13 +201,15 @@ public class DND
 				turn = 0;
 			}
 			
+			input = input.toLowerCase ();
+			
 			if (order [turn].getName () != null)
 			{
-				while (!input.toLowerCase().equals ("a") && !input.toLowerCase().equals ("attack"))
+				while (!input.equals ("a") && !input.equals ("attack"))
 				{
 					System.out.println ("\nIt's your turn, what do you want to do?\n[(A)ttack][(C)heck Bag]");
-					input = input ();
-					if (input.toLowerCase().equals ("a") || input.toLowerCase().equals ("attack"))
+					input = input ().toLowerCase ();
+					if (input.equals ("a") || input.equals ("attack"))
 					{
 						System.out.println ("Attack who?");
 						for (int i = 0; i < aselect.length && aselect [i] != null; i++)
@@ -224,7 +239,7 @@ public class DND
 						input = "";
 						break;
 					}
-					else if (input.toLowerCase().equals ("c") || input.toLowerCase().equals ("check"))
+					else if (input.equals ("c") || input.equals ("check"))
 						p1.inventoryCheck ();
 					else
 						System.out.println ("Invalid input");
@@ -264,4 +279,14 @@ public class DND
 		
 		return ret;
 	}
+ 	
+ 	// Checks if input is any exit keyword
+ 	static Boolean inputvalid (String input)
+ 	{
+ 		if (input == null)
+ 			return false;
+ 		input = input.toLowerCase ();
+ 		return !(input.equals ("no") || input.equals ("nothing") || input.equals ("q") ||
+ 				input.equals ("quit") || input.equals ("c") || input.equals ("cancel"));
+ 	}
 }

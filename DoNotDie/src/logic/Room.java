@@ -29,9 +29,9 @@ public class Room
 		
 		if (numtre > 0)
 		{
-			treasures = new Treasure [numtre + 1];
+			treasures = new Treasure [numtre];
 			
-			for (int i = 0; i < treasures.length; i++)
+			for (int i = 0; i < numtre; i++)
 			{
 				if (seed == 0)
 					treasures [i] = new Misc ((level * 10) + 1);
@@ -51,6 +51,7 @@ public class Room
 		connections [5] = d;
 
 		numenemies = numenem;
+		numtreasures = numtre;
 	}
 	
 	public String toString ()
@@ -94,15 +95,24 @@ public class Room
 	public Boolean enemyDead (int i) { return enemydead [i]; }
 	
 	// Methods to deal with treasures
-	public Boolean hasTreasure () { return numtreasures > 0; }
+	public Boolean hasTreasures () { return numtreasures > 0; }
+	public Boolean hasTreasure (String item)
+	{
+		for (int i = 0; i < numtreasures; i++)
+			if (treasures [i].getName().equals (item))
+				return true;
+		return false;
+	}
 	public Treasure getTreasure (String item)
 	{
+		Treasure hold;
 		for (int i = 0; i < numtreasures; i++)
 		{
 			if (treasures [i].getName ().equals (item))
 			{
+				hold = treasures [i];
 				removeTreasure (i);
-				return treasures [i];
+				return hold;
 			}
 		}
 		return null;
