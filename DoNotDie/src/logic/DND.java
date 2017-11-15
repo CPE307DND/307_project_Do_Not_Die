@@ -13,7 +13,7 @@ public class DND
 		Character p1 = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2), enemy; //, hold = null;
 		PriorityQueue <Character> orderq = new PriorityQueue <Character> ();
 		Character [] order = new Character [4]; //aselect = new Character [4]; was not used
-		int turn = 0, roll = 0;
+		int turn = 0, roll = 0, aselected, infiniteloopstopper = 0;
 		String input = "";
 		
 		p1.addToInventory (new Weapon (5));
@@ -29,22 +29,33 @@ public class DND
 		
 		System.out.println ("\nThe order is: ");
 		orderq.toArray (order);
-		/*orderq.toArray (aselect);
 		
-		for (int i = 0; i < aselect.length; i++)
+		//Removing player from order, to allow for easier target select
+		orderq.toArray (aselect);
+		for (int i = 0; i < aselect.length - 1; i++)
 		{
-			if (aselect [i].getName() != null && )
-		}*/
+			if (aselect [i] == null || (aselect [i].getName () == null && hold == null))
+				continue;
+			else
+			{
+				hold = aselect [i];
+				aselect [i] = aselect [i + 1];
+				aselect [i + 1] = hold;
+			}
+		}
+		aselect [aselect.length - 1] = null;
 		
-		
+		//Print order
 		for (int i = 0; i < order.length && order [i] != null; i++)
 			if (order [i].getName () != null)
 				System.out.println (order [i].getName ());
 			else
 				System.out.println (order [i].getRace ());
 		
-		while (!p1.isDead () && !map.current.roomCleared ())
+		//Battle manager
+		while (!p1.isDead () && !map.current.roomCleared () && infiniteloopstopper < 25)
 		{
+			infiniteloopstopper++;
 			if (order [turn] == null)
 			{
 				System.out.println ("\nTop of the order again.\n");
@@ -60,33 +71,30 @@ public class DND
 					if (input.equals ("A"))
 					{
 						System.out.println ("Attack who?");
-						for (int i = 0; i < map.current.enemies.length; i++)
+						for (int i = 0; i < aselect.length && aselect [i] != null; i++)
 							if (!map.current.enemyDead (i))
-								System.out.println (map.current.enemies [i].printEnemy());
+								System.out.println (i + ": " + aselect [i].printEnemy ());
 						
-						input = input ();
+						while (((aselected = Integer.parseInt (input ())) >= aselect.length) || aselect [aselected] == null)
+							System.out.println ("Not a valid number");
 						
-						for (int i = 0; i < map.current.enemies.length; i++)
-							if (map.current.enemies [i].equals (input))
+						enemy = aselect [aselected];
+						roll = p1.rolld20 ();
+						System.out.println ("You rolled " + roll + " verses the " + enemy.getRace () + "'s AC");
+						if (roll > enemy.getAC ())
+						{
+							System.out.println ("Attacked for " + p1.getDamage ());
+							if (enemy.attacked (p1.getDamage ()))
 							{
-								enemy = map.current.enemies [i];
-								roll = p1.rolld20 ();
-								
-								System.out.println ("Your rolled " + roll + " versus the " + enemy.getRace () + "'s AC");
-								if (roll > enemy.getAC())
-								{
-									System.out.println ("Attacked for " + p1.getDamage ());
-									if (enemy.attacked (p1.getDamage ()))
-									{
-										System.out.println ("\nThe weapon swung true\nThe " + enemy.getRace () + " fell\nA fatal blow\nTo the left pinky toe.");
-										map.current.enemyKilled (enemy.getInd ());
-									}
-									else
-										System.out.println (enemy.getRace () + " has " + enemy.getHealth () + " health left.");
-								}
-								else
-									System.out.println ("That ain't gonna cut it.");
+								System.out.println ("\nThe weapon swung true\nThe " + enemy.getRace () + " fell\nA fatal blow\nTo the left pinky toe.");
+								map.current.enemyKilled (enemy.getInd ());
 							}
+							else
+								System.out.println (enemy.getRace () + " has " + enemy.getHealth () + " health left.");
+						}
+						else
+							System.out.println ("That ain't gonna cut it.");
+						input = "";
 						break;
 					}
 					else if (input.equals ("C"))

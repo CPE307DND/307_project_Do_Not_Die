@@ -189,7 +189,7 @@ public class Character implements Comparable <Character>
 		return ret;
 	}
 	
-	public String printEnemy () { return "Race: " + race + "\nHealth: " + health; }
+	public String printEnemy () { return race + "\nHealth: " + health; }
 	
 	public String printStats ()
 	{
