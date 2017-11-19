@@ -10,15 +10,23 @@ public class DND
 	public static void main (String [] args)
 	{
 		Map map = new Map ();
-		Character p1 = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2);
+		Character p1 = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2, 1);
 		String input = "";
 		String BASEMSG = "\nWhat do you want to do?\n[(I)nspect]\t[I(N)ventory]", prompt = "";
 		String RGTMSG = "\t[Move (R)ight]", LEFMSG = "\t[Move (L)eft]";
 		String UPMSG = "\t[Move (U)p]", DWNMSG = "\t[Move (D)own]";
 		String CTRMSG = "\t[Move (F)orward]", BCKMSG = "\t[Move (B)ackward]";
+		String DIFFICULTY = "[(E)asy]\t[(M)edium]\t[(H)ard]";
 		String [] msgs = {BCKMSG, LEFMSG, CTRMSG, RGTMSG, UPMSG, DWNMSG};
+		int choice;
 		
-		while (inputvalid (input))
+		System.out.println ("Welcome to Do Not Die, 1st Edition!!\n");
+		System.out.println ("Set Difficulty:\n" + DIFFICULTY);
+		input = input ().toLowerCase ();
+		
+		System.out.println (input);
+		
+		while (inputvalid (input) && !map.allCleared ())
 		{
 			// Fight enemies in the room before you can do anything else
 			if (map.current.numenemies > 0 && !map.current.roomCleared ())
@@ -60,18 +68,36 @@ public class DND
 						System.out.println ("What do you want to pick up?\n");
 						while (inputvalid (input = input()))
 						{
-							if (map.current.hasTreasure (input))
+							try
 							{
-								p1.addToInventory (map.current.getTreasure (input));
-								break;
+								choice = Integer.parseInt (input);
+								if (map.current.hasTreasure (choice))
+								{
+									p1.addToInventory (map.current.getTreasure (choice));
+									break;
+								}
+								else
+								{
+									System.out.println ("That's not an item you can pick up.\n");
+									map.current.listTreasures ();
+									System.out.println ("What do you want to pick up?\n");
+								}
 							}
-							else
+							catch (NumberFormatException e)
 							{
-								System.out.println ("That's not an item you can pick up.");
-								System.out.println ("Pick-uppable items:" + map.current.treasures [0] + "\nCan get: " + map.current.hasTreasure (map.current.treasures [0].getName ()));
+								if (map.current.hasTreasure (input))
+								{
+									p1.addToInventory (map.current.getTreasure (input));
+									break;
+								}
+								else
+								{
+									System.out.println ("That's not an item you can pick up.\n");
+									map.current.listTreasures ();
+									System.out.println ("What do you want to pick up?\n");
+								}
 							}
 						}
-						
 					}
 					else
 						System.out.println ("Nothing in the room.");
@@ -143,7 +169,7 @@ public class DND
 	// Returns true if the player died
 	static Boolean battle (Character p1, Map map)
 	{
-		Character enemy, hold = null;
+		Character enemy = null, hold = null;
 		PriorityQueue <Character> orderq = new PriorityQueue <Character> ();
 		Character [] order = new Character [map.current.numenemies + 1], aselect = new Character [map.current.numenemies + 1];
 		int turn = 0, roll = 0, aselected;
@@ -216,10 +242,43 @@ public class DND
 							if (!map.current.enemyDead (i))
 								System.out.println (i + ": " + aselect [i].printEnemy ());
 						
-						while (((aselected = Integer.parseInt (input ())) >= aselect.length) || aselect [aselected] == null)
-							System.out.println ("Not a valid number");
+						while (inputvalid (input = input ().toLowerCase ()))
+						{
+							try
+							{
+								aselected = Integer.parseInt (input);
+								
+								if (aselected >= aselect.length || aselect [aselected] == null)
+								{
+									System.out.println ("Number not valid. Can you like be nice please?\n");
+									for (int i = 0; i < aselect.length && aselect [i] != null; i++)
+										if (!map.current.enemyDead (i))
+											System.out.println (i + ": " + aselect [i].printEnemy ());
+								}
+								else
+								{
+									enemy = aselect [aselected];
+									break;
+								}
+							}
+							catch (NumberFormatException e)
+							{
+								aselected = map.current.hasEnemy (input);
+								if (aselected < 0)
+								{
+									System.out.println ("That's not an enemy. Play nice.\n");
+									for (int i = 0; i < aselect.length && aselect [i] != null; i++)
+										if (!map.current.enemyDead (i))
+											System.out.println (i + ": " + aselect [i].printEnemy ());
+								}
+								else
+								{
+									enemy  = aselect [aselected];
+									break;
+								}
+							}
+						}
 						
-						enemy = aselect [aselected];
 						roll = p1.rolld20 ();
 						System.out.println ("\nYou rolled " + roll + " verses the " + enemy.getRace () + "'s AC");
 						if (roll > enemy.getAC ())
@@ -239,7 +298,7 @@ public class DND
 						input = "";
 						break;
 					}
-					else if (input.equals ("c") || input.equals ("check"))
+					else if (input.equals ("c") || input.equals ("check") || input.equals ("check bag"))
 						p1.inventoryCheck ();
 					else
 						System.out.println ("Invalid input");

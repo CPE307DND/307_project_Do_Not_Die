@@ -5,8 +5,9 @@ import java.util.Random;
 
 public class Character implements Comparable <Character>
 {
-	public Character (String n, int r, Boolean g, int STR, int END, int INT, int WIL, int AGL, int SPD, int LCK)
+	public Character (String n, int r, Boolean g, int STR, int END, int INT, int WIL, int AGL, int SPD, int LCK, int lvl)
 	{
+		level = lvl;
 		if (r == 1)
 		{
 			AC = 3;
@@ -272,7 +273,9 @@ public class Character implements Comparable <Character>
 			System.out.println ("You have nothing in your inventory.\n");
 	}
 	
-	
+	// CompareTo is used for the priorityqueue and nothing more
+	// CompareTo is therefore inconsistent with equals
+	@Override
 	public int compareTo (Character o)
 	{
 		if (initiative > o.initiative)
@@ -286,7 +289,9 @@ public class Character implements Comparable <Character>
 	public Boolean equals (String str) { return race.equals (str); }
 	
 	public int getInd () { return ind; }
-	public void setInd (int i) { ind = i; } 
+	public void setInd (int i) { ind = i; }
+	public int getLevel () { return level; }
+	public void setLevel (int i) { level = i; }
 	public int getHealth () { return health; }
 	public void setHealth (int h) { health = h; }
 	public int getMaxHealth () { return maxhealth; }
@@ -304,6 +309,7 @@ public class Character implements Comparable <Character>
 	private String name, race;
 	//True is male
 	private Boolean gender;
-	private int ind, health = 50, damage = 20, AC, initiative, maxhealth = 50, Strength, Endurance, Intelligence, Willpower, Agility, Speed, Luck;
+	private int ind, level, health = 50, damage = 20, AC, initiative, maxhealth = 50;
+	private int Strength, Endurance, Intelligence, Willpower, Agility, Speed, Luck;
 	private Random roller;
 }

@@ -21,7 +21,7 @@ public class Room
 				enemies [i] = new Character (null, race, g, level - rand.nextInt (4),
 						level - rand.nextInt (4), level - rand.nextInt (4),
 						level - rand.nextInt (4), level - rand.nextInt (4),
-						level - rand.nextInt (4), level - rand.nextInt (4));
+						level - rand.nextInt (4), level - rand.nextInt (4), level);
 				enemies [i].setInd (i);
 				enemydead [i] = false;
 			}
@@ -93,22 +93,33 @@ public class Room
 	}
 	public void enemyKilled (int i) { enemydead [i] = true; }
 	public Boolean enemyDead (int i) { return enemydead [i]; }
+	public int hasEnemy (String e)
+	{
+		for (int i = 0; i < numenemies; i++)
+			if (e.equals (enemies [i].getRace ().toLowerCase ()))
+				return enemies [i].getInd ();
+		return -1;
+	}
 	
 	// Methods to deal with treasures
 	public Boolean hasTreasures () { return numtreasures > 0; }
 	public Boolean hasTreasure (String item)
 	{
 		for (int i = 0; i < numtreasures; i++)
-			if (treasures [i].getName().equals (item))
+			if (treasures [i].getName().toLowerCase().equals (item.toLowerCase ()))
 				return true;
 		return false;
+	}
+	public Boolean hasTreasure (int item)
+	{
+		return item < numtreasures && item >= 0;
 	}
 	public Treasure getTreasure (String item)
 	{
 		Treasure hold;
 		for (int i = 0; i < numtreasures; i++)
 		{
-			if (treasures [i].getName ().equals (item))
+			if (treasures [i].getName ().toLowerCase().equals (item.toLowerCase()))
 			{
 				hold = treasures [i];
 				removeTreasure (i);
@@ -117,10 +128,16 @@ public class Room
 		}
 		return null;
 	}
+	public Treasure getTreasure (int item)
+	{
+		Treasure hold = treasures [item];
+		removeTreasure (item);
+		return hold;
+	}
 	public void listTreasures ()
 	{
 		for (int i = 0; i < numtreasures; i++)
-			System.out.println (treasures [i]);
+			System.out.println (i + ": " + treasures [i].getName ());
 	}
 	private void removeTreasure (int ind)
 	{

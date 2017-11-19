@@ -54,6 +54,14 @@ public class Map
 		if (current.connections [5] >= 0)
 			current = layout [current.connections [5]];
 	}
+
+	public Boolean allCleared ()
+	{
+		for (int i = 0; i < layout.length; i++)
+			if (!layout [i].roomCleared ())
+				return false;
+		return true;
+	}
 	
 	public Room current;
 	private Room [] layout;
