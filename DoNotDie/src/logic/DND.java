@@ -3,7 +3,7 @@ package logic;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.PriorityQueue;
+import java.util.concurrent.TimeUnit;
 
 public class DND
 {
@@ -12,32 +12,51 @@ public class DND
 		Map map = new Map ();
 		Character p1 = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2, 1);
 		String input = "";
-		String BASEMSG = "\nWhat do you want to do?\n[(I)nspect]\t[I(N)ventory]", prompt = "";
-		String RGTMSG = "\t[Move (R)ight]", LEFMSG = "\t[Move (L)eft]";
-		String UPMSG = "\t[Move (U)p]", DWNMSG = "\t[Move (D)own]";
-		String CTRMSG = "\t[Move (F)orward]", BCKMSG = "\t[Move (B)ackward]";
+		String BASEMSG = "\nWhat do you want to do?\n[(I)nspect]   [I(N)ventory]", prompt = "";
+		String RGTMSG = "   [Move (R)ight]", LEFMSG = "   [Move (L)eft]";
+		String UPMSG = "   [Move (U)p]", DWNMSG = "   [Move (D)own]";
+		String CTRMSG = "   [Move (F)orward]", BCKMSG = "   [Move (B)ackward]";
 		String DIFFICULTY = "[(E)asy]\t[(M)edium]\t[(H)ard]";
 		String [] msgs = {BCKMSG, LEFMSG, CTRMSG, RGTMSG, UPMSG, DWNMSG};
-		int choice;
+		int choice, slow = 0, med = 1, fast = 2, dev = 3, textchoice = dev;
+		int [] textspeed = {120, 90, 60, 0};
 		
-		System.out.println ("Welcome to Do Not Die, 1st Edition!!\n");
-		System.out.println ("Set Difficulty:\n" + DIFFICULTY);
-		input = input ().toLowerCase ();
+		slowPrint ("Welcome to Do Not Die, 1st Edition!!\n", textspeed [textchoice]);
+		slowPrint ("What would you like to do?\n[(C)hoose Character]   [C(H)oose Map]   [(S)ettings]\n> ", textspeed [textchoice]);
+		while (inputvalid (input = input ()))
+		{
+			if (input.equals ("c"))
+			{
+				p1 = chooseChar (textchoice);
+				break;
+			}
+			/*else if (input.equals ("h"))
+				chooseMap (map);
+			else if (input.equals ("s"))
+				changeSettings ();*/
+			else
+				slowPrint ("\nNot a choice, please retry:", textspeed [textchoice]);
+		}
 		
 		System.out.println (input);
 		
-		while (inputvalid (input) && !map.allCleared ())
+		slowPrint ("Set Difficulty:\n" + DIFFICULTY, textspeed [textchoice]);
+		input = input ().toLowerCase ();
+		
+		while (inputvalid (input) && !p1.isDead() && !map.allCleared ())
 		{
 			// Fight enemies in the room before you can do anything else
 			if (map.current.numenemies > 0 && !map.current.roomCleared ())
 			{
 				if (map.current.numenemies > 1)
-					System.out.println ("There are " + map.current.numenemies +
-							" enemies in the room, prepare to fight.");
+					slowPrint ("There are " + map.current.numenemies +
+							" enemies in the room, prepare to fight.", textspeed [textchoice]);
 				else
-					System.out.println ("There is an enemy in the room, prepare to fight");
+					slowPrint ("There is an enemy in the room, prepare to fight.\n", textspeed [textchoice]);
 				
 				battle (p1, map);
+				p1.setHealth (0);
+				continue;
 			}
 			
 			
@@ -48,7 +67,7 @@ public class DND
 					prompt += msgs [i];
 			}
 			
-			System.out.println (prompt);
+			slowPrint (prompt + "\n> ", textspeed [textchoice]);
 			input = input ().toLowerCase ();
 			
 			if (!inputvalid (input))
@@ -63,9 +82,9 @@ public class DND
 				{
 					if (map.current.hasTreasures ())
 					{
-						System.out.println ("Treasures:\n");
+						slowPrint ("Treasures:\n", textspeed [textchoice]);
 						map.current.listTreasures ();
-						System.out.println ("What do you want to pick up?\n");
+						slowPrint ("What do you want to pick up?\n> ", textspeed [textchoice]);
 						while (inputvalid (input = input()))
 						{
 							try
@@ -78,9 +97,9 @@ public class DND
 								}
 								else
 								{
-									System.out.println ("That's not an item you can pick up.\n");
+									slowPrint ("That's not an item you can pick up.\n", textspeed [textchoice]);
 									map.current.listTreasures ();
-									System.out.println ("What do you want to pick up?\n");
+									slowPrint ("What do you want to pick up?\n> ", textspeed [textchoice]);
 								}
 							}
 							catch (NumberFormatException e)
@@ -92,15 +111,15 @@ public class DND
 								}
 								else
 								{
-									System.out.println ("That's not an item you can pick up.\n");
+									slowPrint ("That's not an item you can pick up.\n", textspeed [textchoice]);
 									map.current.listTreasures ();
-									System.out.println ("What do you want to pick up?\n");
+									slowPrint ("What do you want to pick up?\n> ", textspeed [textchoice]);
 								}
 							}
 						}
 					}
 					else
-						System.out.println ("Nothing in the room.");
+						slowPrint ("Nothing in the room.", textspeed [textchoice]);
 					break;
 				}
 				case ("n"):
@@ -113,7 +132,7 @@ public class DND
 					if (map.current.connections [0] >= 0)
 						map.moveBack ();
 					else
-						System.out.println ("Not a valid action.");
+						slowPrint ("Not a valid action.", textspeed [textchoice]);
 					break;
 				}
 				case ("l"):
@@ -121,7 +140,7 @@ public class DND
 					if (map.current.connections [1] >= 0)
 						map.moveLeft ();
 					else
-						System.out.println ("Not a valid action.");
+						slowPrint ("Not a valid action.", textspeed [textchoice]);
 					break;
 				}
 				case ("f"):
@@ -129,7 +148,7 @@ public class DND
 					if (map.current.connections [2] >= 0)
 						map.moveCenter ();
 					else
-						System.out.println ("Not a valid action.");
+						slowPrint ("Not a valid action.", textspeed [textchoice]);
 					break;
 				}
 				case ("r"):
@@ -137,7 +156,7 @@ public class DND
 					if (map.current.connections [3] >= 0)
 						map.moveRight ();
 					else
-						System.out.println ("Not a valid action.");
+						slowPrint ("Not a valid action.", textspeed [textchoice]);
 					break;
 				}
 				case ("u"):
@@ -145,7 +164,7 @@ public class DND
 					if (map.current.connections [4] >= 0)
 						map.moveUp ();
 					else
-						System.out.println ("Not a valid action.");
+						slowPrint ("Not a valid action.", textspeed [textchoice]);
 					break;
 				}
 				case ("d"):
@@ -153,16 +172,332 @@ public class DND
 					if (map.current.connections [5] >= 0)
 						map.moveDown ();
 					else
-						System.out.println ("Not a valid action.");
+						slowPrint ("Not a valid action.", textspeed [textchoice]);
 					break;
 				}
 				default:
 				{
-					System.out.println ("Not a valid action.");
+					slowPrint ("Not a valid action.", textspeed [textchoice]);
 					break;
 				}
 			}
 		}
+	}
+	
+	static Character chooseChar (int len)
+	{
+		String input, name = "", racestr = "";
+		int race = 0, Str = 0, End = 0, Int = 0, Wil = 0, Agl = 0, Spd = 0, Lck = 0, statpoints = 10;
+		Boolean gender = true;
+		
+		slowPrint ("What would you like to do?\n[(N)ew Character]   [(C)hoose Character]   [(D)elete Character]\n> ", len);
+		
+		while (inputvalid (input = input ().toLowerCase ()))
+		{
+			switch (input)
+			{
+				case ("n"):
+				{
+					slowPrint ("New Character, Ok.\n", len);
+					slowPrint ("Let's go through the steps.\nName:\n> ", len);
+					input = input ();
+					if (inputvalid (input))
+						name = input;
+					slowPrint ("Um, " + name + "? You sure? Ok, well whatever, you're the player...\n\n", len);
+					
+					slowPrint ("Ok, Race:\n", len);
+					
+					System.out.print ("0:       Human\n1:         Elf\n2:         Orc\n3:       Gnome\n4:       Dwarf\n" +
+					"5:  Dragonborn\n6:  Half-Troll\n7: Lizard-Folk\n8:    Cat-Folk\n9:    Tiefling\n> ");
+					input = input ().toLowerCase ();
+					
+					while (inputvalid (input))
+						if (input.equals ("human") || input.equals ("0"))
+						{
+							racestr = "Human";
+							race = 0;
+							break;
+						}
+						else if (input.equals ("elf") || input.equals ("1"))
+						{
+							racestr = "Elf";
+							race = 1;
+							break;
+						}
+						else if (input.equals ("orc") || input.equals ("2"))
+						{
+							racestr = "Orc";
+							race = 2;
+							break;
+						}
+						else if (input.equals ("gnome") || input.equals ("3"))
+						{
+							racestr = "Gnome";
+							race = 3;
+							break;
+						}
+						else if (input.equals ("dwarf") || input.equals ("4"))
+						{
+							racestr = "Dwarf";
+							race = 4;
+							break;
+						}
+						else if (input.equals ("dragonborn") || input.equals ("5"))
+						{
+							racestr = "Dragonborn";
+							race = 5;
+							break;
+						}
+						else if (input.equals ("half-troll") || input.equals ("6"))
+						{
+							racestr = "Half-Troll";
+							race = 6;
+							break;
+						}
+						else if (input.equals ("lizard-folk") || input.equals ("7"))
+						{
+							racestr = "Lizard-Folk";
+							race = 7;
+							break;
+						}
+						else if (input.equals ("cat-folk") || input.equals ("8"))
+						{
+							racestr = "Cat-Folk";
+							race = 8;
+							break;
+						}
+						else if (input.equals ("tiefling") || input.equals ("9"))
+						{
+							racestr = "Tiefling";
+							race = 9;
+							break;
+						}
+						else
+						{
+							slowPrint ("Nope. That's not a race. Try again:\n> ", len);
+							input = input ().toLowerCase ();
+						}
+					slowPrint ("Oh, " + racestr + " huh?\nI kinda thought so, but " +
+							"I wanted to make sure.\n\n", len);
+					
+					slowPrint ("So um, what's.... uh, what's your gender?:\n", len);
+					System.out.print ("0: Male\n1: Female\n> ");
+					input = input ().toLowerCase ();
+					
+					while (inputvalid (input))
+						if (input.equals ("male") || input.equals ("0"))
+						{
+							gender = true;
+							break;
+						}
+						else if (input.equals ("female") || input.equals ("1"))
+						{
+							gender = false;
+							break;
+						}
+						else
+						{
+							slowPrint ("We're not that inclusive. Only male or female.\n> ", len);
+							input = input ().toLowerCase ();
+						}
+					
+					if (gender)
+						slowPrint ("You're a dude?\nOk, Ok, yes you do look manly, I didn't want to assume.\n\n", len);
+					else
+						slowPrint ("You're a dudette?\nNo, you don't look too manly, I just didn't want to assume.\n\n", len);
+					
+					slowPrint ("Ok, now you have to allocate stat points.\nYou get 10 points to" +
+							" use across all 7 stats, be wise.\n", len);
+					System.out.println ("    Strength\n   Endurance\nIntelligence\n    Willpower\n     Agility\n       Speed\n        Luck");
+					
+					while (statpoints != 0)
+					{
+						slowPrint ("Strength:\n> ", len);
+						input = input ();
+						
+						try
+						{
+							Str = Integer.parseInt (input);
+							statpoints -= Str;
+						}
+						catch (NumberFormatException e)
+						{
+							slowPrint ("That's not a number, can you put a number?\nSpecifically" +
+									" an integer less than or equal to the number of stat points left?\n", len);
+							continue;
+						}
+						
+						slowPrint ("Endurance:\n> ", len);
+						input = input ();
+						
+						try
+						{
+							End = Integer.parseInt (input);
+							if (statpoints >= End)
+								statpoints -= End;
+							else
+							{
+								statpoints = 10;
+								slowPrint ("Um, that's more points than you have...\n" +
+								"You spent too many points on Strength already.\nSTART OVER!\n", len);
+								continue;
+							}
+						}
+						catch (NumberFormatException e)
+						{
+							slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
+									" an integer less than or equal to the number of stat points left?\n", len);
+							statpoints = 10;
+							continue;
+						}
+						
+						slowPrint ("Intelligence:\n> ", len);
+						input = input ();
+						
+						try
+						{
+							Int = Integer.parseInt (input);
+							if (statpoints >= Int)
+								statpoints -= Int;
+							else
+							{
+								statpoints = 10;
+								slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+								continue;
+							}
+						}
+						catch (NumberFormatException e)
+						{
+							slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
+									" an integer less than or equal to the number of stat points left?\n", len);
+							statpoints = 10;
+							continue;
+						}
+						
+						slowPrint ("Willpower:\n> ", len);
+						input = input ();
+						
+						try
+						{
+							Wil = Integer.parseInt (input);
+							if (statpoints >= Wil)
+								statpoints -= Wil;
+							else
+							{
+								statpoints = 10;
+								slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+								continue;
+							}
+						}
+						catch (NumberFormatException e)
+						{
+							slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
+									" an integer less than or equal to the number of stat points left?\n", len);
+							statpoints = 10;
+							continue;
+						}
+						
+						slowPrint ("Agility:\n> ", len);
+						input = input ();
+						
+						try
+						{
+							Agl = Integer.parseInt (input);
+							if (statpoints >= Agl)
+								statpoints -= Agl;
+							else
+							{
+								statpoints = 10;
+								slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+								continue;
+							}
+						}
+						catch (NumberFormatException e)
+						{
+							slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
+									" an integer less than or equal to the number of stat points left?\n", len);
+							statpoints = 10;
+							continue;
+						}
+						
+						slowPrint ("Speed:\n> ", len);
+						input = input ();
+						
+						try
+						{
+							Spd = Integer.parseInt (input);
+							if (statpoints >= Spd)
+								statpoints -= Spd;
+							else
+							{
+								statpoints = 10;
+								slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+								continue;
+							}
+						}
+						catch (NumberFormatException e)
+						{
+							slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
+									" an integer less than or equal to the number of stat points left?\n", len);
+							statpoints = 10;
+							continue;
+						}
+						
+						slowPrint ("Luck:\n> ", len);
+						input = input ();
+						
+						try
+						{
+							Lck = Integer.parseInt (input);
+							if (statpoints >= Lck)
+								statpoints -= Lck;
+							else
+							{
+								statpoints = 10;
+								slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+								continue;
+							}
+						}
+						catch (NumberFormatException e)
+						{
+							slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
+									" an integer less than or equal to the number of stat points left?\n", len);
+							statpoints = 10;
+							continue;
+						}
+						
+						if (statpoints > 0)
+							slowPrint ("Um, you have " + statpoints + " point(s) left... " +
+									"Why didn't you use them?\nStart over, you scrub, and use " +
+									"all your points, that's why you get them!\n", len);
+					}
+					
+					return new Character (name, race, gender, Str, End, Int, Wil, Agl, Spd, Lck, 1);
+				}
+				case ("c"):
+				{
+					slowPrint ("Select Which Character?\n", len);
+					input = null;
+					break;
+				}
+				case ("d"):
+				{
+					slowPrint ("Delete Which Character?\n", len);
+					input = null;
+					break;
+				}
+				default:
+				{
+					slowPrint ("Invalid Input, please retry\n", len);
+					slowPrint ("What would you like to do?\n[(N)ew Character]   [(C)hoose Character]   [(D)elete Character]\n> ", len);
+					break;
+				}
+			}
+			
+			System.out.print ("Ok, what do you want to do now?\n[(N)ew Character]   " +
+					"[(C)hoose Character]   [(D)elete Character]\n> ");
+		}
+		return null;
 	}
 	
 	// Takes in the player, and the current map.
@@ -170,37 +505,58 @@ public class DND
 	static Boolean battle (Character p1, Map map)
 	{
 		Character enemy = null, hold = null;
-		PriorityQueue <Character> orderq = new PriorityQueue <Character> ();
-		Character [] order = new Character [map.current.numenemies + 1], aselect = new Character [map.current.numenemies + 1];
-		int turn = 0, roll = 0, aselected;
+		Character [] order = new Character [map.current.numenemies + 1];
+		Character [] aselect = new Character [map.current.numenemies + 1];
+		int turn = 0, roll = 0, aselected, maxinit, infiniteloopstopper = 0, slow = 0, med = 1, fast = 2, dev = 3, textchoice = dev;
+		int [] textspeed = {120, 90, 60, 0};
 		String input = "";
 		
 		// Put player and enemies into a priority queue based on initiative
-		System.out.println ("You rolled " + p1.initiative () + " for initiative.");
-		orderq.add (p1);
+		slowPrint ("You rolled " + p1.initiative () + " for initiative.", textspeed [textchoice]);
+		order [0] = p1;
 		
 		for (int i = 0; i < map.current.numenemies; i++)
 		{
 			if (map.current.numenemies > 1)
-				System.out.println (map.current.enemies[i].getRace() + " " + i + " rolled " +
-			map.current.enemies [i].initiative () + " for initiative.");
+				slowPrint (map.current.enemies[i].getRace() + " " + i + " rolled " +
+			map.current.enemies [i].initiative () + " for initiative.", textspeed [textchoice]);
 			else
-				System.out.println (map.current.enemies [i].getRace() + " rolled " +
-			map.current.enemies [i].initiative () + " for initiative.");
+				slowPrint (map.current.enemies [i].getRace() + " rolled " +
+			map.current.enemies [i].initiative () + " for initiative.", textspeed [textchoice]);
 			
-			orderq.add (map.current.enemies [i]);
+			order [i + 1] = map.current.enemies [i];
 		}
 		
-		System.out.println ("\nThe order is: ");
-		orderq.toArray (order);
+		for (int i = 0; i <= map.current.numenemies; i++)
+		{
+			maxinit = i;
+			for (int j = i; j <= map.current.numenemies && order [j] != null; j++)
+			{
+				if (order [j].compareTo (order [maxinit]) > 0)
+					maxinit = j;
+			}
+			hold = order [i];
+			order [i] = order [maxinit];
+			order [maxinit] = hold;
+		}
+		
+		hold = null;
+		
+		for (int i = 0; i < map.current.numenemies - 1; i++)
+		{
+			if (order [i].getName () == null)
+				aselect [i] = order [i];
+			else if (order [i].getName () != null)
+			{
+				aselect [i] = order [i + 1];
+				i++;
+			}
+		}
 		
 		// Removing player from order, to allow for easier target select
-		orderq.toArray (aselect);
-		for (int i = 0; i < aselect.length - 1; i++)
+		for (int i = 0; i < aselect.length - 1 && aselect [i] != null; i++)
 		{
-			if (aselect [i] == null || (aselect [i].getName () == null && hold == null))
-				continue;
-			else
+			if (!(aselect [i].getName () == null && hold == null))
 			{
 				hold = aselect [i];
 				aselect [i] = aselect [i + 1];
@@ -210,20 +566,22 @@ public class DND
 		aselect [aselect.length - 1] = null;
 		
 		
+		slowPrint ("\nThe order is: ", textspeed [textchoice]);
+		
 		// Print order
 		for (int i = 0; i < order.length && order [i] != null; i++)
 			if (order [i].getName () != null)
-				System.out.println (order [i].getName ());
+				slowPrint (order [i].getName (), textspeed [textchoice]);
 			else
-				System.out.println (order [i].getRace ());
+				slowPrint (order [i].getRace (), textspeed [textchoice]);
 		
 		
 		// Battle manager
-		while (!p1.isDead () && !map.current.roomCleared ())
+		while (!p1.isDead () && !map.current.roomCleared () && ++infiniteloopstopper < 25)
 		{
 			if (turn >= order.length || order [turn] == null)
 			{
-				System.out.println ("\nTop of the order again.\n");
+				slowPrint ("\nTop of the order again.\n", textspeed [textchoice]);
 				turn = 0;
 			}
 			
@@ -233,14 +591,15 @@ public class DND
 			{
 				while (!input.equals ("a") && !input.equals ("attack"))
 				{
-					System.out.println ("\nIt's your turn, what do you want to do?\n[(A)ttack][(C)heck Bag]");
+					slowPrint ("\nIt's your turn, what do you want to do?\n[(A)ttack][(C)heck Bag]", textspeed [textchoice]);
 					input = input ().toLowerCase ();
 					if (input.equals ("a") || input.equals ("attack"))
 					{
-						System.out.println ("Attack who?");
-						for (int i = 0; i < aselect.length && aselect [i] != null; i++)
-							if (!map.current.enemyDead (i))
-								System.out.println (i + ": " + aselect [i].printEnemy ());
+						slowPrint ("Attack who?", textspeed [textchoice]);
+						map.current.enemiesAlive ();
+						/*for (int i = 0; i < aselect.length && aselect [i] != null; i++)
+							if (aselect [i].getHealth () > 0)
+								slowPrint (i + ": " + aselect [i].printEnemy ());*/
 						
 						while (inputvalid (input = input ().toLowerCase ()))
 						{
@@ -250,10 +609,10 @@ public class DND
 								
 								if (aselected >= aselect.length || aselect [aselected] == null)
 								{
-									System.out.println ("Number not valid. Can you like be nice please?\n");
+									slowPrint ("Number not valid. Can you like be nice please?\n", textspeed [textchoice]);
 									for (int i = 0; i < aselect.length && aselect [i] != null; i++)
 										if (!map.current.enemyDead (i))
-											System.out.println (i + ": " + aselect [i].printEnemy ());
+											slowPrint (i + ": " + aselect [i].printEnemy (), textspeed [textchoice]);
 								}
 								else
 								{
@@ -266,10 +625,10 @@ public class DND
 								aselected = map.current.hasEnemy (input);
 								if (aselected < 0)
 								{
-									System.out.println ("That's not an enemy. Play nice.\n");
+									slowPrint ("That's not an enemy. Play nice.\n", textspeed [textchoice]);
 									for (int i = 0; i < aselect.length && aselect [i] != null; i++)
 										if (!map.current.enemyDead (i))
-											System.out.println (i + ": " + aselect [i].printEnemy ());
+											slowPrint (i + ": " + aselect [i].printEnemy (), textspeed [textchoice]);
 								}
 								else
 								{
@@ -280,28 +639,27 @@ public class DND
 						}
 						
 						roll = p1.rolld20 ();
-						System.out.println ("\nYou rolled " + roll + " verses the " + enemy.getRace () + "'s AC");
+						slowPrint ("\nYou rolled " + roll + " verses the " + enemy.getRace () + "'s AC", textspeed [textchoice]);
 						if (roll > enemy.getAC ())
 						{
-							System.out.println ("Attacked for " + p1.getDamage ());
+							slowPrint ("Attacked for " + p1.getDamage (), textspeed [textchoice]);
 							if (enemy.attacked (p1.getDamage ()))
 							{
-								System.out.println ("\n\nThe weapon swung true\nThe " +
-							enemy.getRace () + " fell\nA fatal blow\nTo the left pinky toe.\n");
-								map.current.enemyKilled (enemy.getInd ());
+								slowPrint ("\n\nThe weapon swung true\nThe " +
+							enemy.getRace () + " fell\nA fatal blow\nTo the left pinky toe.\n", textspeed [textchoice]);
 							}
 							else
-								System.out.println (enemy.getRace () + " has " + enemy.getHealth () + " health left.");
+								slowPrint (enemy.getRace () + " has " + enemy.getHealth () + " health left.", textspeed [textchoice]);
 						}
 						else
-							System.out.println ("That ain't gonna cut it.");
+							slowPrint ("That ain't gonna cut it.", textspeed [textchoice]);
 						input = "";
 						break;
 					}
 					else if (input.equals ("c") || input.equals ("check") || input.equals ("check bag"))
 						p1.inventoryCheck ();
 					else
-						System.out.println ("Invalid input");
+						slowPrint ("Invalid input", textspeed [textchoice]);
 				}
 			}
 			else
@@ -312,12 +670,12 @@ public class DND
 					continue;
 				}
 				else
-					System.out.println ("\nIt's " + order [turn].getRace () + "'s turn.");
+					slowPrint ("\nIt's " + order [turn].getRace () + "'s turn.", textspeed [textchoice]);
 			}
 			
 			if (((turn + 1) > order.length))
 			{
-				System.out.println ("\nTop of the order again.");
+				slowPrint ("\nTop of the order again.", textspeed [textchoice]);
 				turn = 0;
 			}
 			else
@@ -325,6 +683,18 @@ public class DND
 		}
 		
 		return p1.isDead ();
+	}
+	
+	// Print things out in a slow, epic way
+	public static void slowPrint (String str, int len)
+	{
+		for (int i = 0; i < str.length (); i++)
+		{
+			System.out.print (str.charAt (i));
+			
+			try { TimeUnit.MILLISECONDS.sleep (len); }
+			catch (InterruptedException e) { e.printStackTrace(); }
+		}
 	}
 	
 	// Gets input from the user, and returns it as a String
@@ -340,12 +710,13 @@ public class DND
 	}
  	
  	// Checks if input is any exit keyword
+ 	// returns true if not
  	static Boolean inputvalid (String input)
  	{
  		if (input == null)
  			return false;
  		input = input.toLowerCase ();
  		return !(input.equals ("no") || input.equals ("nothing") || input.equals ("q") ||
- 				input.equals ("quit") || input.equals ("c") || input.equals ("cancel"));
+ 				input.equals ("quit") || input.equals ("cancel") || input.equals ("exit"));
  	}
 }

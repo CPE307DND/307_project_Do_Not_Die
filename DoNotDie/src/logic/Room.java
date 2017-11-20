@@ -13,7 +13,6 @@ public class Room
 		if (numenem > 0)
 		{
 			enemies = new Character [numenem];
-			enemydead = new Boolean [numenem];
 			
 			for (int i = 0; i < numenem; i++)
 			{
@@ -23,7 +22,6 @@ public class Room
 						level - rand.nextInt (4), level - rand.nextInt (4),
 						level - rand.nextInt (4), level - rand.nextInt (4), level);
 				enemies [i].setInd (i);
-				enemydead [i] = false;
 			}
 		}
 		
@@ -78,7 +76,7 @@ public class Room
 	{
 		for (int i = 0; i < numenemies; i++)
 		{
-			if (!enemydead [i])
+			if (!enemyDead (i))
 				return false;
 		}
 		return true;
@@ -87,12 +85,11 @@ public class Room
 	{
 		for (int i = 0; i < numenemies; i++)
 		{
-			if (!enemydead [i])
+			if (!enemyDead (i))
 				System.out.println (enemies [i]);
 		}
 	}
-	public void enemyKilled (int i) { enemydead [i] = true; }
-	public Boolean enemyDead (int i) { return enemydead [i]; }
+	public Boolean enemyDead (int i) { return enemies [i].getHealth () == 0; }
 	public int hasEnemy (String e)
 	{
 		for (int i = 0; i < numenemies; i++)
@@ -154,6 +151,4 @@ public class Room
 	public int numenemies, numtreasures;
 	// There will be a back, left, center, right, up, down, in that order
 	public int [] connections = {-1, -1, -1, -1, -1, -1};
-	
-	private Boolean [] enemydead;
 }
