@@ -19,29 +19,35 @@ public class DND
 		String DIFFICULTY = "[(E)asy]\t[(M)edium]\t[(H)ard]";
 		String [] msgs = {BCKMSG, LEFMSG, CTRMSG, RGTMSG, UPMSG, DWNMSG};
 		int choice, slow = 0, med = 1, fast = 2, dev = 3, textchoice = dev;
-		int [] textspeed = {120, 90, 60, 0};
+		int [] textspeeds = {120, 90, 40, 0};
 		
-		slowPrint ("Welcome to Do Not Die, 1st Edition!!\n", textspeed [textchoice]);
-		slowPrint ("What would you like to do?\n[(C)hoose Character]   [C(H)oose Map]   [(S)ettings]\n> ", textspeed [textchoice]);
+		slowPrint ("Welcome to Do Not Die, 1st Edition!!\n\n", textspeeds [textchoice]);
+		slowPrint ("What would you like to do?\n", textspeeds [textchoice]);
+		System.out.print ("[(C)hoose Character]   [C(H)oose Map]   [(S)ettings]\n> ");
+		
 		while (inputvalid (input = input ()))
 		{
 			if (input.equals ("c"))
 			{
 				p1 = chooseChar (textchoice);
 				break;
-			}
-			/*else if (input.equals ("h"))
-				chooseMap (map);
+			}/*
+			else if (input.equals ("h"))
+				chooseMap (map);*/
 			else if (input.equals ("s"))
-				changeSettings ();*/
+			{
+				textchoice = changeSettings (textchoice);
+				slowPrint ("Ok, now what do you want to do?\n", textspeeds [textchoice]);
+				System.out.print ("[(C)hoose Character]   [C(H)oose Map]   [(S)ettings]\n> ");
+			}
+			else if (input.equals ("s"))
+				break;
 			else
-				slowPrint ("\nNot a choice, please retry:", textspeed [textchoice]);
+				slowPrint ("\nNot a choice, please retry:", textspeeds [textchoice]);
 		}
 		
-		System.out.println (input);
-		
-		slowPrint ("Set Difficulty:\n" + DIFFICULTY, textspeed [textchoice]);
-		input = input ().toLowerCase ();
+		/*slowPrint ("Set Difficulty:\n" + DIFFICULTY + "\n> ", textspeeds [textchoice]);
+		input = input ().toLowerCase ();*/
 		
 		while (inputvalid (input) && !p1.isDead() && !map.allCleared ())
 		{
@@ -50,13 +56,11 @@ public class DND
 			{
 				if (map.current.numenemies > 1)
 					slowPrint ("There are " + map.current.numenemies +
-							" enemies in the room, prepare to fight.", textspeed [textchoice]);
+							" enemies in the room, prepare to fight.\n", textspeeds [textchoice]);
 				else
-					slowPrint ("There is an enemy in the room, prepare to fight.\n", textspeed [textchoice]);
+					slowPrint ("There is an enemy in the room, prepare to fight.\n", textspeeds [textchoice]);
 				
 				battle (p1, map);
-				p1.setHealth (0);
-				continue;
 			}
 			
 			
@@ -67,7 +71,7 @@ public class DND
 					prompt += msgs [i];
 			}
 			
-			slowPrint (prompt + "\n> ", textspeed [textchoice]);
+			slowPrint (prompt + "\n> ", textspeeds [textchoice]);
 			input = input ().toLowerCase ();
 			
 			if (!inputvalid (input))
@@ -82,9 +86,9 @@ public class DND
 				{
 					if (map.current.hasTreasures ())
 					{
-						slowPrint ("Treasures:\n", textspeed [textchoice]);
+						slowPrint ("Treasures:\n", textspeeds [textchoice]);
 						map.current.listTreasures ();
-						slowPrint ("What do you want to pick up?\n> ", textspeed [textchoice]);
+						slowPrint ("What do you want to pick up?\n> ", textspeeds [textchoice]);
 						while (inputvalid (input = input()))
 						{
 							try
@@ -97,9 +101,9 @@ public class DND
 								}
 								else
 								{
-									slowPrint ("That's not an item you can pick up.\n", textspeed [textchoice]);
+									slowPrint ("That's not an item you can pick up.\n", textspeeds [textchoice]);
 									map.current.listTreasures ();
-									slowPrint ("What do you want to pick up?\n> ", textspeed [textchoice]);
+									slowPrint ("What do you want to pick up?\n> ", textspeeds [textchoice]);
 								}
 							}
 							catch (NumberFormatException e)
@@ -111,15 +115,15 @@ public class DND
 								}
 								else
 								{
-									slowPrint ("That's not an item you can pick up.\n", textspeed [textchoice]);
+									slowPrint ("That's not an item you can pick up.\n", textspeeds [textchoice]);
 									map.current.listTreasures ();
-									slowPrint ("What do you want to pick up?\n> ", textspeed [textchoice]);
+									slowPrint ("What do you want to pick up?\n> ", textspeeds [textchoice]);
 								}
 							}
 						}
 					}
 					else
-						slowPrint ("Nothing in the room.", textspeed [textchoice]);
+						slowPrint ("Nothing in the room.", textspeeds [textchoice]);
 					break;
 				}
 				case ("n"):
@@ -132,7 +136,7 @@ public class DND
 					if (map.current.connections [0] >= 0)
 						map.moveBack ();
 					else
-						slowPrint ("Not a valid action.", textspeed [textchoice]);
+						slowPrint ("Not a valid action.", textspeeds [textchoice]);
 					break;
 				}
 				case ("l"):
@@ -140,7 +144,7 @@ public class DND
 					if (map.current.connections [1] >= 0)
 						map.moveLeft ();
 					else
-						slowPrint ("Not a valid action.", textspeed [textchoice]);
+						slowPrint ("Not a valid action.", textspeeds [textchoice]);
 					break;
 				}
 				case ("f"):
@@ -148,7 +152,7 @@ public class DND
 					if (map.current.connections [2] >= 0)
 						map.moveCenter ();
 					else
-						slowPrint ("Not a valid action.", textspeed [textchoice]);
+						slowPrint ("Not a valid action.", textspeeds [textchoice]);
 					break;
 				}
 				case ("r"):
@@ -156,7 +160,7 @@ public class DND
 					if (map.current.connections [3] >= 0)
 						map.moveRight ();
 					else
-						slowPrint ("Not a valid action.", textspeed [textchoice]);
+						slowPrint ("Not a valid action.", textspeeds [textchoice]);
 					break;
 				}
 				case ("u"):
@@ -164,7 +168,7 @@ public class DND
 					if (map.current.connections [4] >= 0)
 						map.moveUp ();
 					else
-						slowPrint ("Not a valid action.", textspeed [textchoice]);
+						slowPrint ("Not a valid action.", textspeeds [textchoice]);
 					break;
 				}
 				case ("d"):
@@ -172,12 +176,12 @@ public class DND
 					if (map.current.connections [5] >= 0)
 						map.moveDown ();
 					else
-						slowPrint ("Not a valid action.", textspeed [textchoice]);
+						slowPrint ("Not a valid action.", textspeeds [textchoice]);
 					break;
 				}
 				default:
 				{
-					slowPrint ("Not a valid action.", textspeed [textchoice]);
+					slowPrint ("Not a valid action.", textspeeds [textchoice]);
 					break;
 				}
 			}
@@ -188,7 +192,8 @@ public class DND
 	{
 		String input, name = "", racestr = "";
 		int race = 0, Str = 0, End = 0, Int = 0, Wil = 0, Agl = 0, Spd = 0, Lck = 0, statpoints = 10;
-		Boolean gender = true;
+		Boolean gender = true, retry = true;
+		Character player;
 		
 		slowPrint ("What would you like to do?\n[(N)ew Character]   [(C)hoose Character]   [(D)elete Character]\n> ", len);
 		
@@ -308,9 +313,9 @@ public class DND
 					
 					slowPrint ("Ok, now you have to allocate stat points.\nYou get 10 points to" +
 							" use across all 7 stats, be wise.\n", len);
-					System.out.println ("    Strength\n   Endurance\nIntelligence\n    Willpower\n     Agility\n       Speed\n        Luck");
+					System.out.println ("Strength\nEndurance\nIntelligence\nWillpower\nAgility\nSpeed\nLuck\n");
 					
-					while (statpoints != 0)
+					while (statpoints != 0 && retry)
 					{
 						slowPrint ("Strength:\n> ", len);
 						input = input ();
@@ -470,15 +475,42 @@ public class DND
 							slowPrint ("Um, you have " + statpoints + " point(s) left... " +
 									"Why didn't you use them?\nStart over, you scrub, and use " +
 									"all your points, that's why you get them!\n", len);
+						
+						slowPrint ("Are you sure you're good with this?\n", len);
+						System.out.println (String.format ("%14s%2d", "Strength: ", Str));
+						System.out.println (String.format ("%14s%2d", "Endurance: ", End));
+						System.out.println (String.format ("%14s%2d", "Intelligence: ", Int));
+						System.out.println (String.format ("%14s%2d", "Willpower: ", Wil));
+						System.out.println (String.format ("%14s%2d", "Agility: ", Agl));
+						System.out.println (String.format ("%14s%2d", "Speed: ", Spd));
+						System.out.print (String.format ("%14s%2d\n> ", "Luck: ", Lck));
+						/*System.out.print ("Strength:     " + Str + "\nEndurance:    " + End +
+								"\nIntelligence: " + Int + "\nWillpower:    " + Wil + "\nAgility:      " + Agl +
+								"\nSpeed:        " + Spd + "\nLuck:         " + Lck + "\n> ")*/;
+						
+						
+						if ((input = input ().toLowerCase ()).equals ("y") || input.equals ("yes"))
+							retry = false;
+						else
+							statpoints = 10;
 					}
 					
-					return new Character (name, race, gender, Str, End, Int, Wil, Agl, Spd, Lck, 1);
+					player = new Character (name, race, gender, Str, End, Int, Wil, Agl, Spd, Lck, 1);
+					
+					saveChar (player);
+					
+					return player;
 				}
 				case ("c"):
 				{
 					slowPrint ("Select Which Character?\n", len);
-					input = null;
-					break;
+					/*
+					printSavedChars ()
+					
+					input = input ();
+					
+					player = loadChar (input);*/
+					return null;
 				}
 				case ("d"):
 				{
@@ -500,29 +532,37 @@ public class DND
 		return null;
 	}
 	
+	// Output Character to txt file, if not already there
+	static void saveChar (Character c)
+	{
+		System.out.println ("Saving Char");
+	}
+	
 	// Takes in the player, and the current map.
 	// Returns true if the player died
 	static Boolean battle (Character p1, Map map)
 	{
 		Character enemy = null, hold = null;
 		Character [] order = new Character [map.current.numenemies + 1];
-		Character [] aselect = new Character [map.current.numenemies + 1];
-		int turn = 0, roll = 0, aselected, maxinit, infiniteloopstopper = 0, slow = 0, med = 1, fast = 2, dev = 3, textchoice = dev;
-		int [] textspeed = {120, 90, 60, 0};
+		Character [] ordercpy = new Character [map.current.numenemies + 1];
+		Character [] aselect = new Character [map.current.numenemies];
+		int turn = 0, roll = 0, aselected, maxinit, infiniteloopstopper = 0;
+		int slow = 0, med = 1, fast = 2, dev = 3, textchoice = dev;
+		int [] textspeeds = {120, 90, 60, 0};
 		String input = "";
 		
 		// Put player and enemies into a priority queue based on initiative
-		slowPrint ("You rolled " + p1.initiative () + " for initiative.", textspeed [textchoice]);
+		slowPrint ("You rolled " + p1.initiative () + " for initiative.\n", textspeeds [textchoice]);
 		order [0] = p1;
 		
 		for (int i = 0; i < map.current.numenemies; i++)
 		{
 			if (map.current.numenemies > 1)
 				slowPrint (map.current.enemies[i].getRace() + " " + i + " rolled " +
-			map.current.enemies [i].initiative () + " for initiative.", textspeed [textchoice]);
+			map.current.enemies [i].initiative () + " for initiative.\n", textspeeds [textchoice]);
 			else
-				slowPrint (map.current.enemies [i].getRace() + " rolled " +
-			map.current.enemies [i].initiative () + " for initiative.", textspeed [textchoice]);
+				slowPrint ("The " + map.current.enemies [i].getRace() + " rolled " +
+			map.current.enemies [i].initiative () + " for initiative.\n", textspeeds [textchoice]);
 			
 			order [i + 1] = map.current.enemies [i];
 		}
@@ -538,50 +578,41 @@ public class DND
 			hold = order [i];
 			order [i] = order [maxinit];
 			order [maxinit] = hold;
+			ordercpy [i] = order [i];
 		}
 		
 		hold = null;
 		
-		for (int i = 0; i < map.current.numenemies - 1; i++)
-		{
-			if (order [i].getName () == null)
-				aselect [i] = order [i];
-			else if (order [i].getName () != null)
-			{
-				aselect [i] = order [i + 1];
-				i++;
-			}
-		}
 		
 		// Removing player from order, to allow for easier target select
-		for (int i = 0; i < aselect.length - 1 && aselect [i] != null; i++)
+		for (int i = 0; i < ordercpy.length - 1 && ordercpy [i] != null; i++)
 		{
-			if (!(aselect [i].getName () == null && hold == null))
+			if (!(ordercpy [i].getName () == null && hold == null))
 			{
-				hold = aselect [i];
-				aselect [i] = aselect [i + 1];
-				aselect [i + 1] = hold;
+				hold = ordercpy [i];
+				ordercpy [i] = ordercpy [i + 1];
+				ordercpy [i + 1] = hold;
 			}
+			if (i < aselect.length)
+				aselect [i] = ordercpy [i];
 		}
-		aselect [aselect.length - 1] = null;
 		
 		
-		slowPrint ("\nThe order is: ", textspeed [textchoice]);
+		slowPrint ("\nThe order is: \n", textspeeds [textchoice]);
 		
 		// Print order
 		for (int i = 0; i < order.length && order [i] != null; i++)
 			if (order [i].getName () != null)
-				slowPrint (order [i].getName (), textspeed [textchoice]);
+				slowPrint (order [i].getName () + "\n", textspeeds [textchoice]);
 			else
-				slowPrint (order [i].getRace (), textspeed [textchoice]);
-		
+				slowPrint (order [i].getRace () + "\n", textspeeds [textchoice]);
 		
 		// Battle manager
 		while (!p1.isDead () && !map.current.roomCleared () && ++infiniteloopstopper < 25)
 		{
 			if (turn >= order.length || order [turn] == null)
 			{
-				slowPrint ("\nTop of the order again.\n", textspeed [textchoice]);
+				slowPrint ("\nTop of the order again.\n", textspeeds [textchoice]);
 				turn = 0;
 			}
 			
@@ -591,15 +622,15 @@ public class DND
 			{
 				while (!input.equals ("a") && !input.equals ("attack"))
 				{
-					slowPrint ("\nIt's your turn, what do you want to do?\n[(A)ttack][(C)heck Bag]", textspeed [textchoice]);
+					slowPrint ("\nIt's your turn, what do you want to do?\n[(A)ttack][(C)heck Bag]\n> ", textspeeds [textchoice]);
 					input = input ().toLowerCase ();
 					if (input.equals ("a") || input.equals ("attack"))
 					{
-						slowPrint ("Attack who?", textspeed [textchoice]);
-						map.current.enemiesAlive ();
-						/*for (int i = 0; i < aselect.length && aselect [i] != null; i++)
-							if (aselect [i].getHealth () > 0)
-								slowPrint (i + ": " + aselect [i].printEnemy ());*/
+						slowPrint ("Attack who?\n", textspeeds [textchoice]);
+						
+						for (int i = 0; i < aselect.length && aselect [i] != null; i++)
+							if (!map.current.enemyDead (aselect [i]))
+								slowPrint (i + ": " + aselect [i].printEnemy () + "\n", textspeeds [textchoice]);
 						
 						while (inputvalid (input = input ().toLowerCase ()))
 						{
@@ -609,10 +640,10 @@ public class DND
 								
 								if (aselected >= aselect.length || aselect [aselected] == null)
 								{
-									slowPrint ("Number not valid. Can you like be nice please?\n", textspeed [textchoice]);
+									slowPrint ("Number not valid. Can you like be nice please?\n", textspeeds [textchoice]);
 									for (int i = 0; i < aselect.length && aselect [i] != null; i++)
-										if (!map.current.enemyDead (i))
-											slowPrint (i + ": " + aselect [i].printEnemy (), textspeed [textchoice]);
+										if (!map.current.enemyDead (aselect [i]))
+											slowPrint (i + ": " + aselect [i].printEnemy () + "\n", textspeeds [textchoice]);
 								}
 								else
 								{
@@ -625,10 +656,10 @@ public class DND
 								aselected = map.current.hasEnemy (input);
 								if (aselected < 0)
 								{
-									slowPrint ("That's not an enemy. Play nice.\n", textspeed [textchoice]);
+									slowPrint ("That's not an enemy. Play nice.\n", textspeeds [textchoice]);
 									for (int i = 0; i < aselect.length && aselect [i] != null; i++)
-										if (!map.current.enemyDead (i))
-											slowPrint (i + ": " + aselect [i].printEnemy (), textspeed [textchoice]);
+										if (!map.current.enemyDead (aselect [i]))
+											slowPrint (i + ": " + aselect [i].printEnemy () + "\n", textspeeds [textchoice]);
 								}
 								else
 								{
@@ -639,43 +670,43 @@ public class DND
 						}
 						
 						roll = p1.rolld20 ();
-						slowPrint ("\nYou rolled " + roll + " verses the " + enemy.getRace () + "'s AC", textspeed [textchoice]);
+						slowPrint ("\nYou rolled " + roll + " verses the " + enemy.getRace () + "'s AC\n", textspeeds [textchoice]);
 						if (roll > enemy.getAC ())
 						{
-							slowPrint ("Attacked for " + p1.getDamage (), textspeed [textchoice]);
+							slowPrint ("Attacked for " + p1.getDamage () + "\n", textspeeds [textchoice]);
 							if (enemy.attacked (p1.getDamage ()))
 							{
 								slowPrint ("\n\nThe weapon swung true\nThe " +
-							enemy.getRace () + " fell\nA fatal blow\nTo the left pinky toe.\n", textspeed [textchoice]);
+							enemy.getRace () + " fell\nA fatal blow\nTo the left pinky toe.\n\n", textspeeds [textchoice]);
 							}
 							else
-								slowPrint (enemy.getRace () + " has " + enemy.getHealth () + " health left.", textspeed [textchoice]);
+								slowPrint (enemy.getRace () + " has " + enemy.getHealth () + " health left.\n", textspeeds [textchoice]);
 						}
 						else
-							slowPrint ("That ain't gonna cut it.", textspeed [textchoice]);
+							slowPrint ("That ain't gonna cut it.\n", textspeeds [textchoice]);
 						input = "";
 						break;
 					}
 					else if (input.equals ("c") || input.equals ("check") || input.equals ("check bag"))
 						p1.inventoryCheck ();
 					else
-						slowPrint ("Invalid input", textspeed [textchoice]);
+						slowPrint ("Invalid input.\n", textspeeds [textchoice]);
 				}
 			}
 			else
 			{
-				if (map.current.enemyDead (order [turn].getInd ()))
+				if (map.current.enemyDead (order [turn]))
 				{
 					turn++;
 					continue;
 				}
 				else
-					slowPrint ("\nIt's " + order [turn].getRace () + "'s turn.", textspeed [textchoice]);
+					slowPrint ("\nIt's " + order [turn].getRace () + "'s turn.", textspeeds [textchoice]);
 			}
 			
 			if (((turn + 1) > order.length))
 			{
-				slowPrint ("\nTop of the order again.", textspeed [textchoice]);
+				slowPrint ("\nTop of the order again.\n", textspeeds [textchoice]);
 				turn = 0;
 			}
 			else
@@ -683,6 +714,45 @@ public class DND
 		}
 		
 		return p1.isDead ();
+	}
+	
+	// Change text speed
+	// So far only functionality
+	static int changeSettings (int current)
+	{
+		int [] speeds = {120, 90, 40, 0};
+		int choice = current;
+		String input;
+		
+		slowPrint ("What do you want to change?\n", speeds [choice]);
+		
+		System.out.print ("[Text (Sp)eed]   [Text (Si)ze]\n> ");
+		
+		input = input ().toLowerCase ();
+		
+		if (input.equals ("sp"))
+		{
+			slowPrint ("Ok, what speed do you want?\n", speeds [choice]);
+			System.out.print ("[(S)low]   [[(M)edium]   [(F)ast]\n> ");
+			
+			input = input ().toLowerCase ();
+			if (input.equals ("s"))
+				choice = 0;
+			else if (input.equals ("m"))
+				choice = 1;
+			else if (input.equals ("f"))
+				choice = 2;
+			else if (input.equals ("d"))
+				choice = 3;
+			else
+				slowPrint ("Not a valid choice", speeds [choice]);
+		}
+		else if (input.equals ("si"))
+		{
+			System.out.println ("Not implemented yet.");
+		}
+		
+		return choice;
 	}
 	
 	// Print things out in a slow, epic way
@@ -693,7 +763,7 @@ public class DND
 			System.out.print (str.charAt (i));
 			
 			try { TimeUnit.MILLISECONDS.sleep (len); }
-			catch (InterruptedException e) { e.printStackTrace(); }
+			catch (InterruptedException e) { System.out.println ("Oops, Java messed up."); }
 		}
 	}
 	

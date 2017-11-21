@@ -76,20 +76,12 @@ public class Room
 	{
 		for (int i = 0; i < numenemies; i++)
 		{
-			if (!enemyDead (i))
+			if (!enemyDead (enemies [i]))
 				return false;
 		}
 		return true;
 	}
-	public void enemiesAlive ()
-	{
-		for (int i = 0; i < numenemies; i++)
-		{
-			if (!enemyDead (i))
-				System.out.println (enemies [i]);
-		}
-	}
-	public Boolean enemyDead (int i) { return enemies [i].getHealth () == 0; }
+	public Boolean enemyDead (Character c) { return (c == null || c.getHealth () == 0)? true : false; }
 	public int hasEnemy (String e)
 	{
 		for (int i = 0; i < numenemies; i++)
