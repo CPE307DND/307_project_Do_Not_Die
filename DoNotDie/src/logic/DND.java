@@ -1,8 +1,13 @@
 package logic;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.TimeUnit;
 
 public class DND
@@ -484,9 +489,6 @@ public class DND
 						System.out.println (String.format ("%14s%2d", "Agility: ", Agl));
 						System.out.println (String.format ("%14s%2d", "Speed: ", Spd));
 						System.out.print (String.format ("%14s%2d\n> ", "Luck: ", Lck));
-						/*System.out.print ("Strength:     " + Str + "\nEndurance:    " + End +
-								"\nIntelligence: " + Int + "\nWillpower:    " + Wil + "\nAgility:      " + Agl +
-								"\nSpeed:        " + Spd + "\nLuck:         " + Lck + "\n> ")*/;
 						
 						
 						if ((input = input ().toLowerCase ()).equals ("y") || input.equals ("yes"))
@@ -510,13 +512,19 @@ public class DND
 					input = input ();
 					
 					player = loadChar (input);*/
-					return null;
+					player = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2, 2);
+					System.out.println (player);
+					return player;
 				}
 				case ("d"):
 				{
 					slowPrint ("Delete Which Character?\n", len);
 					input = null;
 					break;
+				}
+				case ("dev"):
+				{
+					return new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2, 2);
 				}
 				default:
 				{
@@ -535,7 +543,29 @@ public class DND
 	// Output Character to txt file, if not already there
 	static void saveChar (Character c)
 	{
-		System.out.println ("Saving Char");
+		// Apparently printwriter overwrites previous text files
+		// So it's temporary
+		PrintWriter out = null;
+		try
+		{
+			out = new PrintWriter ("saved_chars.txt", "UTF-8");
+		}
+		catch (FileNotFoundException | UnsupportedEncodingException e)
+		{
+			e.printStackTrace();
+		}
+		
+		if (out != null)
+		{
+			out.println (c.printCharacter ());
+			out.close ();
+		}
+		else
+		{
+			System.out.println ("Error saving character, you can play, but will have to make again.");
+		}
+		
+		System.out.println ("Saving Char:\n" + c.printCharacter ());
 	}
 	
 	// Takes in the player, and the current map.
@@ -608,7 +638,7 @@ public class DND
 				slowPrint (order [i].getRace () + "\n", textspeeds [textchoice]);
 		
 		// Battle manager
-		while (!p1.isDead () && !map.current.roomCleared () && ++infiniteloopstopper < 25)
+		while (!p1.isDead () && !map.current.roomCleared ())
 		{
 			if (turn >= order.length || order [turn] == null)
 			{
@@ -622,7 +652,7 @@ public class DND
 			{
 				while (!input.equals ("a") && !input.equals ("attack"))
 				{
-					slowPrint ("\nIt's your turn, what do you want to do?\n[(A)ttack][(C)heck Bag]\n> ", textspeeds [textchoice]);
+					slowPrint ("\nIt's your turn, what do you want to do?\n[(A)ttack]   [(C)heck Bag]   [(P)erception Check]\n> ", textspeeds [textchoice]);
 					input = input ().toLowerCase ();
 					if (input.equals ("a") || input.equals ("attack"))
 					{
@@ -689,6 +719,9 @@ public class DND
 					}
 					else if (input.equals ("c") || input.equals ("check") || input.equals ("check bag"))
 						p1.inventoryCheck ();
+					else if (input.equals ("p") || input.equals ("perception check"))
+						for (int i = 0; i < aselect.length; i++)
+							aselect [i].printDescription (textspeeds [textchoice]);
 					else
 						slowPrint ("Invalid input.\n", textspeeds [textchoice]);
 				}
@@ -774,10 +807,25 @@ public class DND
 		String ret = null;
 		
 		try { ret = br.readLine (); }
-		catch (IOException e) { e.printStackTrace(); }
+		catch (IOException e) { e.printStackTrace (); }
 		
 		return ret;
 	}
+ 	// Gets input from a file
+ 	static String input (File f)
+ 	{
+ 		BufferedReader br = null; 
+ 		
+ 		try { br = new BufferedReader (new FileReader (f)); }
+ 		catch (FileNotFoundException e) { e.printStackTrace (); }
+ 		
+ 		String ret = null;
+ 		
+ 		try { ret = br.readLine (); }
+ 		catch (IOException e) { e.printStackTrace (); }
+ 		
+ 		return ret;
+ 	}
  	
  	// Checks if input is any exit keyword
  	// returns true if not
