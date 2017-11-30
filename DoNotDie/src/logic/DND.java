@@ -1,13 +1,19 @@
 package logic;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.concurrent.TimeUnit;
 
 public class DND
@@ -17,7 +23,7 @@ public class DND
 		Map map = new Map ();
 		Character p1 = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2, 1);
 		String input = "";
-		String BASEMSG = "\nWhat do you want to do?\n[(I)nspect]   [I(N)ventory]", prompt = "";
+		String BASEMSG = "\nWhat do you want to do?\n[(I)nspect]   [I(N)ventory]   [(S)ee Stats]", prompt = "";
 		String RGTMSG = "   [Move (R)ight]", LEFMSG = "   [Move (L)eft]";
 		String UPMSG = "   [Move (U)p]", DWNMSG = "   [Move (D)own]";
 		String CTRMSG = "   [Move (F)orward]", BCKMSG = "   [Move (B)ackward]";
@@ -30,22 +36,25 @@ public class DND
 		slowPrint ("What would you like to do?\n", textspeeds [textchoice]);
 		System.out.print ("[(C)hoose Character]   [C(H)oose Map]   [(S)ettings]\n> ");
 		
-		while (inputvalid (input = input ()))
+		while (inputvalid (input = input ().toLowerCase ()))
 		{
 			if (input.equals ("c"))
 			{
 				p1 = chooseChar (textchoice);
 				break;
-			}/*
+			}
 			else if (input.equals ("h"))
-				chooseMap (map);*/
+			{
+				System.out.println ("Currently unimplemented.");
+			}
+			//	chooseMap (map);
 			else if (input.equals ("s"))
 			{
 				textchoice = changeSettings (textchoice);
 				slowPrint ("Ok, now what do you want to do?\n", textspeeds [textchoice]);
 				System.out.print ("[(C)hoose Character]   [C(H)oose Map]   [(S)ettings]\n> ");
 			}
-			else if (input.equals ("s"))
+			else if (input.equals ("dev"))
 				break;
 			else
 				slowPrint ("\nNot a choice, please retry:", textspeeds [textchoice]);
@@ -87,6 +96,11 @@ public class DND
 			
 			switch (input)
 			{
+				case ("s"):
+				{
+					slowPrint (p1.printStats (), textspeeds [textchoice]);
+					break;
+				}
 				case ("i"):
 				{
 					if (map.current.hasTreasures ())
@@ -195,12 +209,10 @@ public class DND
 	
 	static Character chooseChar (int len)
 	{
-		String input, name = "", racestr = "";
-		int race = 0, Str = 0, End = 0, Int = 0, Wil = 0, Agl = 0, Spd = 0, Lck = 0, statpoints = 10;
-		Boolean gender = true, retry = true;
+		String input;
 		Character player;
 		
-		slowPrint ("What would you like to do?\n[(N)ew Character]   [(C)hoose Character]   [(D)elete Character]\n> ", len);
+		slowPrint ("\nWhat would you like to do?\n[(N)ew Character]   [(C)hoose Character]   [(D)elete Character]\n> ", len);
 		
 		while (inputvalid (input = input ().toLowerCase ()))
 		{
@@ -208,313 +220,33 @@ public class DND
 			{
 				case ("n"):
 				{
-					slowPrint ("New Character, Ok.\n", len);
-					slowPrint ("Let's go through the steps.\nName:\n> ", len);
-					input = input ();
-					if (inputvalid (input))
-						name = input;
-					slowPrint ("Um, " + name + "? You sure? Ok, well whatever, you're the player...\n\n", len);
-					
-					slowPrint ("Ok, Race:\n", len);
-					
-					System.out.print ("0:       Human\n1:         Elf\n2:         Orc\n3:       Gnome\n4:       Dwarf\n" +
-					"5:  Dragonborn\n6:  Half-Troll\n7: Lizard-Folk\n8:    Cat-Folk\n9:    Tiefling\n> ");
-					input = input ().toLowerCase ();
-					
-					while (inputvalid (input))
-						if (input.equals ("human") || input.equals ("0"))
-						{
-							racestr = "Human";
-							race = 0;
-							break;
-						}
-						else if (input.equals ("elf") || input.equals ("1"))
-						{
-							racestr = "Elf";
-							race = 1;
-							break;
-						}
-						else if (input.equals ("orc") || input.equals ("2"))
-						{
-							racestr = "Orc";
-							race = 2;
-							break;
-						}
-						else if (input.equals ("gnome") || input.equals ("3"))
-						{
-							racestr = "Gnome";
-							race = 3;
-							break;
-						}
-						else if (input.equals ("dwarf") || input.equals ("4"))
-						{
-							racestr = "Dwarf";
-							race = 4;
-							break;
-						}
-						else if (input.equals ("dragonborn") || input.equals ("5"))
-						{
-							racestr = "Dragonborn";
-							race = 5;
-							break;
-						}
-						else if (input.equals ("half-troll") || input.equals ("6"))
-						{
-							racestr = "Half-Troll";
-							race = 6;
-							break;
-						}
-						else if (input.equals ("lizard-folk") || input.equals ("7"))
-						{
-							racestr = "Lizard-Folk";
-							race = 7;
-							break;
-						}
-						else if (input.equals ("cat-folk") || input.equals ("8"))
-						{
-							racestr = "Cat-Folk";
-							race = 8;
-							break;
-						}
-						else if (input.equals ("tiefling") || input.equals ("9"))
-						{
-							racestr = "Tiefling";
-							race = 9;
-							break;
-						}
-						else
-						{
-							slowPrint ("Nope. That's not a race. Try again:\n> ", len);
-							input = input ().toLowerCase ();
-						}
-					slowPrint ("Oh, " + racestr + " huh?\nI kinda thought so, but " +
-							"I wanted to make sure.\n\n", len);
-					
-					slowPrint ("So um, what's.... uh, what's your gender?:\n", len);
-					System.out.print ("0: Male\n1: Female\n> ");
-					input = input ().toLowerCase ();
-					
-					while (inputvalid (input))
-						if (input.equals ("male") || input.equals ("0"))
-						{
-							gender = true;
-							break;
-						}
-						else if (input.equals ("female") || input.equals ("1"))
-						{
-							gender = false;
-							break;
-						}
-						else
-						{
-							slowPrint ("We're not that inclusive. Only male or female.\n> ", len);
-							input = input ().toLowerCase ();
-						}
-					
-					if (gender)
-						slowPrint ("You're a dude?\nOk, Ok, yes you do look manly, I didn't want to assume.\n\n", len);
-					else
-						slowPrint ("You're a dudette?\nNo, you don't look too manly, I just didn't want to assume.\n\n", len);
-					
-					slowPrint ("Ok, now you have to allocate stat points.\nYou get 10 points to" +
-							" use across all 7 stats, be wise.\n", len);
-					System.out.println ("Strength\nEndurance\nIntelligence\nWillpower\nAgility\nSpeed\nLuck\n");
-					
-					while (statpoints != 0 && retry)
-					{
-						slowPrint ("Strength:\n> ", len);
-						input = input ();
-						
-						try
-						{
-							Str = Integer.parseInt (input);
-							statpoints -= Str;
-						}
-						catch (NumberFormatException e)
-						{
-							slowPrint ("That's not a number, can you put a number?\nSpecifically" +
-									" an integer less than or equal to the number of stat points left?\n", len);
-							continue;
-						}
-						
-						slowPrint ("Endurance:\n> ", len);
-						input = input ();
-						
-						try
-						{
-							End = Integer.parseInt (input);
-							if (statpoints >= End)
-								statpoints -= End;
-							else
-							{
-								statpoints = 10;
-								slowPrint ("Um, that's more points than you have...\n" +
-								"You spent too many points on Strength already.\nSTART OVER!\n", len);
-								continue;
-							}
-						}
-						catch (NumberFormatException e)
-						{
-							slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
-									" an integer less than or equal to the number of stat points left?\n", len);
-							statpoints = 10;
-							continue;
-						}
-						
-						slowPrint ("Intelligence:\n> ", len);
-						input = input ();
-						
-						try
-						{
-							Int = Integer.parseInt (input);
-							if (statpoints >= Int)
-								statpoints -= Int;
-							else
-							{
-								statpoints = 10;
-								slowPrint ("Um, that's more points than you have... START OVER!\n", len);
-								continue;
-							}
-						}
-						catch (NumberFormatException e)
-						{
-							slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
-									" an integer less than or equal to the number of stat points left?\n", len);
-							statpoints = 10;
-							continue;
-						}
-						
-						slowPrint ("Willpower:\n> ", len);
-						input = input ();
-						
-						try
-						{
-							Wil = Integer.parseInt (input);
-							if (statpoints >= Wil)
-								statpoints -= Wil;
-							else
-							{
-								statpoints = 10;
-								slowPrint ("Um, that's more points than you have... START OVER!\n", len);
-								continue;
-							}
-						}
-						catch (NumberFormatException e)
-						{
-							slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
-									" an integer less than or equal to the number of stat points left?\n", len);
-							statpoints = 10;
-							continue;
-						}
-						
-						slowPrint ("Agility:\n> ", len);
-						input = input ();
-						
-						try
-						{
-							Agl = Integer.parseInt (input);
-							if (statpoints >= Agl)
-								statpoints -= Agl;
-							else
-							{
-								statpoints = 10;
-								slowPrint ("Um, that's more points than you have... START OVER!\n", len);
-								continue;
-							}
-						}
-						catch (NumberFormatException e)
-						{
-							slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
-									" an integer less than or equal to the number of stat points left?\n", len);
-							statpoints = 10;
-							continue;
-						}
-						
-						slowPrint ("Speed:\n> ", len);
-						input = input ();
-						
-						try
-						{
-							Spd = Integer.parseInt (input);
-							if (statpoints >= Spd)
-								statpoints -= Spd;
-							else
-							{
-								statpoints = 10;
-								slowPrint ("Um, that's more points than you have... START OVER!\n", len);
-								continue;
-							}
-						}
-						catch (NumberFormatException e)
-						{
-							slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
-									" an integer less than or equal to the number of stat points left?\n", len);
-							statpoints = 10;
-							continue;
-						}
-						
-						slowPrint ("Luck:\n> ", len);
-						input = input ();
-						
-						try
-						{
-							Lck = Integer.parseInt (input);
-							if (statpoints >= Lck)
-								statpoints -= Lck;
-							else
-							{
-								statpoints = 10;
-								slowPrint ("Um, that's more points than you have... START OVER!\n", len);
-								continue;
-							}
-						}
-						catch (NumberFormatException e)
-						{
-							slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
-									" an integer less than or equal to the number of stat points left?\n", len);
-							statpoints = 10;
-							continue;
-						}
-						
-						if (statpoints > 0)
-							slowPrint ("Um, you have " + statpoints + " point(s) left... " +
-									"Why didn't you use them?\nStart over, you scrub, and use " +
-									"all your points, that's why you get them!\n", len);
-						
-						slowPrint ("Are you sure you're good with this?\n", len);
-						System.out.println (String.format ("%14s%2d", "Strength: ", Str));
-						System.out.println (String.format ("%14s%2d", "Endurance: ", End));
-						System.out.println (String.format ("%14s%2d", "Intelligence: ", Int));
-						System.out.println (String.format ("%14s%2d", "Willpower: ", Wil));
-						System.out.println (String.format ("%14s%2d", "Agility: ", Agl));
-						System.out.println (String.format ("%14s%2d", "Speed: ", Spd));
-						System.out.print (String.format ("%14s%2d\n> ", "Luck: ", Lck));
-						
-						
-						if ((input = input ().toLowerCase ()).equals ("y") || input.equals ("yes"))
-							retry = false;
-						else
-							statpoints = 10;
-					}
-					
-					player = new Character (name, race, gender, Str, End, Int, Wil, Agl, Spd, Lck, 1);
-					
-					saveChar (player);
-					
-					return player;
+					return newChar (len);
 				}
 				case ("c"):
 				{
-					slowPrint ("Select Which Character?\n", len);
+					slowPrint ("\nSelect Which Character?\n", len);
 					/*
 					printSavedChars ()
 					
 					input = input ();
 					
 					player = loadChar (input);*/
-					player = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2, 2);
-					System.out.println (player);
-					return player;
+					System.out.println ("0: " + loadChar (0));
+					System.out.println ("1: " + loadChar (1) + "\n> ");
+					input = input ().toLowerCase ();
+					if (Integer.parseInt (input) == 0)
+						player = loadChar (0);
+					else
+						player = loadChar (1);
+					
+					System.out.println ("You loaded: " + player);
+					if (player != null)
+						return player;
+					else
+					{
+						slowPrint ("\nSorry, there are no saved characters.\nLet me point you in the right direction:\n\n", len);
+						return newChar (len);
+					}
 				}
 				case ("d"):
 				{
@@ -539,33 +271,381 @@ public class DND
 		}
 		return null;
 	}
-	
+	// Create Character process
+	static Character newChar (int len)
+	{
+		String input, name = "", racestr = "";
+		int race = 0, Str = 0, End = 0, Int = 0, Wil = 0, Agl = 0, Spd = 0, Lck = 0, statpoints = 10;
+		Boolean gender = true, retry = true;
+		Character player;
+		
+		slowPrint ("New Character, Ok.\n", len);
+		slowPrint ("Let's go through the steps.\nName:\n> ", len);
+		input = input ();
+		if (inputvalid (input))
+			name = input;
+		slowPrint ("Um, " + name + "? You sure? Ok, well whatever, you're the player...\n\n", len);
+		
+		slowPrint ("Ok, Race:\n", len);
+		
+		System.out.print ("0:       Human\n1:         Elf\n2:         Orc\n3:       Gnome\n4:       Dwarf\n" +
+		"5:  Dragonborn\n6:  Half-Troll\n7: Lizard-Folk\n8:    Cat-Folk\n9:    Tiefling\n> ");
+		input = input ().toLowerCase ();
+		
+		while (inputvalid (input))
+			if (input.equals ("human") || input.equals ("0"))
+			{
+				racestr = "Human";
+				race = 0;
+				break;
+			}
+			else if (input.equals ("elf") || input.equals ("1"))
+			{
+				racestr = "Elf";
+				race = 1;
+				break;
+			}
+			else if (input.equals ("orc") || input.equals ("2"))
+			{
+				racestr = "Orc";
+				race = 2;
+				break;
+			}
+			else if (input.equals ("gnome") || input.equals ("3"))
+			{
+				racestr = "Gnome";
+				race = 3;
+				break;
+			}
+			else if (input.equals ("dwarf") || input.equals ("4"))
+			{
+				racestr = "Dwarf";
+				race = 4;
+				break;
+			}
+			else if (input.equals ("dragonborn") || input.equals ("5"))
+			{
+				racestr = "Dragonborn";
+				race = 5;
+				break;
+			}
+			else if (input.equals ("half-troll") || input.equals ("6"))
+			{
+				racestr = "Half-Troll";
+				race = 6;
+				break;
+			}
+			else if (input.equals ("lizard-folk") || input.equals ("7"))
+			{
+				racestr = "Lizard-Folk";
+				race = 7;
+				break;
+			}
+			else if (input.equals ("cat-folk") || input.equals ("8"))
+			{
+				racestr = "Cat-Folk";
+				race = 8;
+				break;
+			}
+			else if (input.equals ("tiefling") || input.equals ("9"))
+			{
+				racestr = "Tiefling";
+				race = 9;
+				break;
+			}
+			else
+			{
+				slowPrint ("Nope. That's not a race. Try again:\n> ", len);
+				input = input ().toLowerCase ();
+			}
+		slowPrint ("Oh, " + racestr + " huh?\nI kinda thought so, but " +
+				"I wanted to make sure.\n\n", len);
+		
+		slowPrint ("So um, what's.... uh, what's your gender?:\n", len);
+		System.out.print ("0: Male\n1: Female\n> ");
+		input = input ().toLowerCase ();
+		
+		while (inputvalid (input))
+			if (input.equals ("male") || input.equals ("0"))
+			{
+				gender = true;
+				break;
+			}
+			else if (input.equals ("female") || input.equals ("1"))
+			{
+				gender = false;
+				break;
+			}
+			else
+			{
+				slowPrint ("We're not that inclusive. Only male or female.\n> ", len);
+				input = input ().toLowerCase ();
+			}
+		
+		if (gender)
+			slowPrint ("You're a dude?\nOk, Ok, yes you do look manly, I didn't want to assume.\n\n", len);
+		else
+			slowPrint ("You're a dudette?\nNo, you don't look too manly, I just didn't want to assume.\n\n", len);
+		
+		slowPrint ("Ok, now you have to allocate stat points.\nYou get 10 points to" +
+				" use across all 7 stats, be wise.\n", len);
+		System.out.println ("Strength\nEndurance\nIntelligence\nWillpower\nAgility\nSpeed\nLuck\n");
+		
+		while (statpoints != 0 && retry)
+		{
+			slowPrint ("Strength:\n> ", len);
+			input = input ();
+			
+			try
+			{
+				Str = Integer.parseInt (input);
+				if (statpoints >= Str)
+					statpoints -= Str;
+				else
+				{
+					statpoints = 10;
+					slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+					continue;
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				slowPrint ("That's not a number, can you put a number?\nSpecifically" +
+						" an integer less than or equal to the number of stat points left?\n", len);
+				continue;
+			}
+			
+			slowPrint ("Endurance:\n> ", len);
+			input = input ();
+			
+			try
+			{
+				End = Integer.parseInt (input);
+				if (statpoints >= End)
+					statpoints -= End;
+				else
+				{
+					statpoints = 10;
+					slowPrint ("Um, that's more points than you have...\n" +
+					"You spent too many points on Strength already.\nSTART OVER!\n", len);
+					continue;
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
+						" an integer less than or equal to the number of stat points left?\n", len);
+				statpoints = 10;
+				continue;
+			}
+			
+			slowPrint ("Intelligence:\n> ", len);
+			input = input ();
+			
+			try
+			{
+				Int = Integer.parseInt (input);
+				if (statpoints >= Int)
+					statpoints -= Int;
+				else
+				{
+					statpoints = 10;
+					slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+					continue;
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
+						" an integer less than or equal to the number of stat points left?\n", len);
+				statpoints = 10;
+				continue;
+			}
+			
+			slowPrint ("Willpower:\n> ", len);
+			input = input ();
+			
+			try
+			{
+				Wil = Integer.parseInt (input);
+				if (statpoints >= Wil)
+					statpoints -= Wil;
+				else
+				{
+					statpoints = 10;
+					slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+					continue;
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
+						" an integer less than or equal to the number of stat points left?\n", len);
+				statpoints = 10;
+				continue;
+			}
+			
+			slowPrint ("Agility:\n> ", len);
+			input = input ();
+			
+			try
+			{
+				Agl = Integer.parseInt (input);
+				if (statpoints >= Agl)
+					statpoints -= Agl;
+				else
+				{
+					statpoints = 10;
+					slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+					continue;
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
+						" an integer less than or equal to the number of stat points left?\n", len);
+				statpoints = 10;
+				continue;
+			}
+			
+			slowPrint ("Speed:\n> ", len);
+			input = input ();
+			
+			try
+			{
+				Spd = Integer.parseInt (input);
+				if (statpoints >= Spd)
+					statpoints -= Spd;
+				else
+				{
+					statpoints = 10;
+					slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+					continue;
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
+						" an integer less than or equal to the number of stat points left?\n", len);
+				statpoints = 10;
+				continue;
+			}
+			
+			slowPrint ("Luck:\n> ", len);
+			input = input ();
+			
+			try
+			{
+				Lck = Integer.parseInt (input);
+				if (statpoints >= Lck)
+					statpoints -= Lck;
+				else
+				{
+					statpoints = 10;
+					slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+					continue;
+				}
+			}
+			catch (NumberFormatException e)
+			{
+				slowPrint ("That's not a number, can you put in a number?\nSpecifically" +
+						" an integer less than or equal to the number of stat points left?\n", len);
+				statpoints = 10;
+				continue;
+			}
+			
+			if (statpoints > 0)
+				slowPrint ("Um, you have " + statpoints + " point(s) left... " +
+						"Why didn't you use them you scrub? That's what they're for!\n", len);
+			
+			slowPrint ("Are you sure you're good with this?\n", len);
+			System.out.println (String.format ("%14s%2d", "Strength: ", Str));
+			System.out.println (String.format ("%14s%2d", "Endurance: ", End));
+			System.out.println (String.format ("%14s%2d", "Intelligence: ", Int));
+			System.out.println (String.format ("%14s%2d", "Willpower: ", Wil));
+			System.out.println (String.format ("%14s%2d", "Agility: ", Agl));
+			System.out.println (String.format ("%14s%2d", "Speed: ", Spd));
+			System.out.print (String.format ("%14s%2d\n> ", "Luck: ", Lck));
+			
+			
+			if ((input = input ().toLowerCase ()).equals ("y") || input.equals ("yes"))
+				retry = false;
+			else
+				statpoints = 10;
+		}
+		
+		player = new Character (name, race, gender, Str, End, Int, Wil, Agl, Spd, Lck, 1);
+		
+		saveChar (player);
+		
+		return player;
+	}
 	// Output Character to txt file, if not already there
 	static void saveChar (Character c)
 	{
-		// Apparently printwriter overwrites previous text files
-		// So it's temporary
-		PrintWriter out = null;
-		try
-		{
-			out = new PrintWriter ("saved_chars.txt", "UTF-8");
-		}
-		catch (FileNotFoundException | UnsupportedEncodingException e)
-		{
-			e.printStackTrace();
-		}
+		System.out.println ("Saving Char:\n" + c.printCharacter ());
 		
-		if (out != null)
+		try
+		{ Files.write (Paths.get ("saved_chars.txt"), c.printCharacter ().getBytes (), StandardOpenOption.APPEND); }
+		catch (IOException e)
 		{
-			out.println (c.printCharacter ());
-			out.close ();
+			PrintWriter out;
+			try
+			{
+				out = new PrintWriter (new BufferedWriter (new FileWriter (new File ("saved_chars.txt"))));
+				out.write (c.printCharacter (), 0, c.printCharacter ().length ());
+				out.close ();
+			}
+			catch (IOException g)
+			{ System.out.println ("Error saving character, you can play, but will have to make again."); }
+		}
+	}
+	
+	// Load Character from a txt file, if there
+	static Character loadChar (int num)
+	{
+		Path save = Paths.get ("saved_chars.txt");
+		Character load = null;
+		//int i = 0;
+		if (num != 0)
+		{
+			num *= 11;
+		
+			try
+			{
+				for (int i = 0; i <= num; )
+				{
+					load = new Character (input (save.toFile (), i), Integer.parseInt (input (save.toFile (), i + 1)),
+							Boolean.parseBoolean (input (save.toFile (), i + 2)), Integer.parseInt (input (save.toFile (), i + 3)),
+							Integer.parseInt (input (save.toFile (), i + 4)), Integer.parseInt (input (save.toFile (), i + 5)),
+							Integer.parseInt (input (save.toFile (), i + 6)), Integer.parseInt (input (save.toFile (), i + 7)),
+							Integer.parseInt (input (save.toFile (), i + 8)), Integer.parseInt (input (save.toFile (), i + 9)),
+							Integer.parseInt (input (save.toFile (), i + 10)));
+					i += 11;
+				}
+			}
+			catch (IOException e)
+			{
+				System.out.println ("Sorry, your computer has decided it doesn't enjoy files.\n");
+			}
 		}
 		else
-		{
-			System.out.println ("Error saving character, you can play, but will have to make again.");
-		}
+			try
+			{
+				load = new Character (input (save.toFile (), 0), Integer.parseInt (input (save.toFile (), 1)),
+					Boolean.parseBoolean (input (save.toFile (), 2)), Integer.parseInt (input (save.toFile (), 3)),
+					Integer.parseInt (input (save.toFile (), 4)), Integer.parseInt (input (save.toFile (), 5)),
+					Integer.parseInt (input (save.toFile (), 6)), Integer.parseInt (input (save.toFile (), 7)),
+					Integer.parseInt (input (save.toFile (), 8)), Integer.parseInt (input (save.toFile (), 9)),
+					Integer.parseInt (input (save.toFile (), 10)));
+			}
+			catch (NumberFormatException | IOException e)
+			{
+				System.out.println ("Sorry, your computer has decided it doesn't enjoy files.\n");
+			}
+
 		
-		System.out.println ("Saving Char:\n" + c.printCharacter ());
+		return load;
 	}
 	
 	// Takes in the player, and the current map.
@@ -811,19 +891,16 @@ public class DND
 		
 		return ret;
 	}
- 	// Gets input from a file
- 	static String input (File f)
+ 	// Gets input from a file, skipping a number of lines indicated by toskip
+ 	static String input (File f, int toskip) throws IOException
  	{
- 		BufferedReader br = null; 
+ 		BufferedReader br = new BufferedReader (new FileReader (f));
+ 		String ret = br.readLine ();
  		
- 		try { br = new BufferedReader (new FileReader (f)); }
- 		catch (FileNotFoundException e) { e.printStackTrace (); }
+ 		for (int i = 0; i < toskip; i++)
+ 			ret = br.readLine ();
  		
- 		String ret = null;
- 		
- 		try { ret = br.readLine (); }
- 		catch (IOException e) { e.printStackTrace (); }
- 		
+ 		br.close ();
  		return ret;
  	}
  	

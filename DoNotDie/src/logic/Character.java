@@ -641,6 +641,7 @@ public class Character implements Comparable <Character>
 		}
 		
 		name = n;
+		racenum = r;
 		health += (Endurance * 5);
 		maxhealth = health;
 		damage += ((Strength * 5) + (Intelligence * 3)) / 2;
@@ -661,14 +662,14 @@ public class Character implements Comparable <Character>
 	String.format ("%3d", health) + "/" + String.format ("%3d", maxhealth) + ")"; }
 	public String printCharacter ()
 	{
-		return name + "\n" + race + "\n" + gender + "\n" + Strength + "\n" + Endurance +
+		return name + "\n" + racenum + "\n" + gender + "\n" + Strength + "\n" + Endurance +
 				"\n" + Intelligence + "\n" + Willpower + "\n" + Agility + "\n" + Speed +
-				"\n" + Luck + "\n" + level;
+				"\n" + Luck + "\n" + level + "\n";
 	}
 	public String printStats ()
 	{
 		return "STR: " + Strength + "\nEND: " + Endurance + "\nINT: " + Intelligence +
-				"\nWIL: " + Willpower + "\nAGL: " + Agility + "\nSPD: " + Speed +  "\nLCK: " + Luck;
+				"\nWIL: " + Willpower + "\nAGL: " + Agility + "\nSPD: " + Speed +  "\nLCK: " + Luck + "\n";
 	}
 	public void printDescription (int len) { DND.slowPrint ("\n" + description, len); }
 	
@@ -768,7 +769,7 @@ public class Character implements Comparable <Character>
 		return !((p1.getName () == null  && p2.getName () != null) ||
 				(p1.getName () != null && p2.getName () == null) ||
 				(!p1.getName ().equals (p2.getName ())) ||
-				(!p1.getRace ().equals (p2.getRace ())) ||
+				(p1.getRacenum () != (p2.getRacenum ())) ||
 				(p1.getGenderbool () & p1.getGenderbool ()) ||
 				(p1.getStrength () != p2.getStrength ()) ||
 				(p1.getEndurance () != p2.getEndurance ()) ||
@@ -799,6 +800,7 @@ public class Character implements Comparable <Character>
 	public int getAgility () { return Agility; }
 	public int getSpeed () { return Speed; }
 	public int getLuck () { return Luck; }
+	public int getRacenum () { return racenum; }
 	public Boolean getGenderbool () { return gender; }
 	public String getName () { return name; }
 	public String getRace () { return race; }
@@ -808,7 +810,7 @@ public class Character implements Comparable <Character>
 	private String name, race;
 	//True is male
 	private Boolean gender;
-	private int ind, level, health = 50, damage = 20, AC, initiative, maxhealth = 50;
+	private int ind, level, health = 50, damage = 20, AC, initiative, maxhealth = 50, racenum;
 	private int Strength, Endurance, Intelligence, Willpower, Agility, Speed, Luck;
 	private Random roller;
 	private String description;
