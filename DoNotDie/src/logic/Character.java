@@ -763,14 +763,14 @@ public class Character implements Comparable <Character>
 	}
 	public Boolean equals (Character o) { return race.equals (o.getRace ()) && health == o.getHealth (); }
 	public Boolean equals (String str) { return race.equals (str); }
-	// Used for loading characters
+	// Used for comparing saved characters, returns true if they are the exact same
 	public static Boolean areEqual (Character p1, Character p2)
 	{
 		return !((p1.getName () == null  && p2.getName () != null) ||
 				(p1.getName () != null && p2.getName () == null) ||
 				(!p1.getName ().equals (p2.getName ())) ||
 				(p1.getRacenum () != (p2.getRacenum ())) ||
-				(p1.getGenderbool () & p1.getGenderbool ()) ||
+				(p1.getGenderbool () ^ p1.getGenderbool ()) ||
 				(p1.getStrength () != p2.getStrength ()) ||
 				(p1.getEndurance () != p2.getEndurance ()) ||
 				(p1.getIntelligence () != p2.getIntelligence ()) ||
@@ -808,10 +808,23 @@ public class Character implements Comparable <Character>
 	
 	public ArrayList <Treasure> inventory;
 	private String name, race;
-	//True is male
+	// For gender, true is male
 	private Boolean gender;
-	private int ind, level, health = 50, damage = 20, AC, initiative, maxhealth = 50, racenum;
-	private int Strength, Endurance, Intelligence, Willpower, Agility, Speed, Luck;
+	private int AC;
+	private int damage = 20;
+	private int health = 50;
+	private int ind;
+	private int initiative;
+	private int level;
+	private int maxhealth = 50;
+	private int racenum;
+	private int Agility;
+	private int Endurance;
+	private int Intelligence;
+	private int Luck;
+	private int Speed;
+	private int Strength;
+	private int Willpower;
 	private Random roller;
 	private String description;
 }

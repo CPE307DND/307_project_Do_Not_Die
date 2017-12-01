@@ -210,7 +210,8 @@ public class DND
 	static Character chooseChar (int len)
 	{
 		String input;
-		Character player;
+		int choice;
+		Character player = null;
 		
 		slowPrint ("\nWhat would you like to do?\n[(N)ew Character]   [(C)hoose Character]   [(D)elete Character]\n> ", len);
 		
@@ -220,28 +221,68 @@ public class DND
 			{
 				case ("n"):
 				{
-					return newChar (len);
+					if (loadChar (2) == null)
+						player = newChar (len);
+					else
+						System.out.println ("Sorry, our benevolent overlords have imposed a" +
+								" limit of 3 saved characters.\nTry deleting one or all first. :)\n");
+					break;
 				}
 				case ("c"):
 				{
-					slowPrint ("\nSelect Which Character?\n", len);
-					/*
-					printSavedChars ()
+					if (loadChar (0) != null)
+					{
+						slowPrint ("\nSelect Which Character?\n", len);
 					
-					input = input ();
-					
-					player = loadChar (input);*/
-					System.out.println ("0: " + loadChar (0));
-					System.out.println ("1: " + loadChar (1) + "\n> ");
-					input = input ().toLowerCase ();
-					if (Integer.parseInt (input) == 0)
-						player = loadChar (0);
-					else
-						player = loadChar (1);
-					
-					System.out.println ("You loaded: " + player);
-					if (player != null)
-						return player;
+						// Print out first 3 characters, because 3 should be max
+						for (int i = 0; i < 3; i++)
+						{
+							player = loadChar (i);
+							if (player != null)
+								System.out.println (i + ": " + player);
+						}
+						System.out.print ("> ");
+						
+						// Let them choose the character, 0, 1, or 2
+						while (input != null)
+						{
+							input = input ().toLowerCase ();
+							try
+							{
+								choice = Integer.parseInt (input);
+							}
+							catch (NumberFormatException e)
+							{
+								slowPrint ("\nThat's not a number, input a valid selection\n> ", len);
+								continue;
+							}
+							
+							if (choice == 0 && loadChar (0) != null)
+							{
+								player = loadChar (0);
+								input = null;
+							}
+							else if (choice == 1 && loadChar (1) != null)
+							{
+								player = loadChar (1);
+								input = null;
+							}
+							else if (choice == 2 && loadChar (2) != null)
+							{
+								player = loadChar (2);
+								input = null;
+							}
+							else
+							{
+								slowPrint ("\nThat's not a valid choice.\n> ", len);
+							}
+						}
+						
+						
+						System.out.println ("You loaded: " + player);
+						/*if (player != null)
+							*/return player;
+					}
 					else
 					{
 						slowPrint ("\nSorry, there are no saved characters.\nLet me point you in the right direction:\n\n", len);
@@ -250,13 +291,69 @@ public class DND
 				}
 				case ("d"):
 				{
-					slowPrint ("Delete Which Character?\n", len);
-					input = null;
+					if (loadChar (0) == null)
+					{
+						slowPrint ("Ummm, you have no characters to delete.\nMake some first, then you can delete them.\n\n", len);
+						break;
+					}
+					slowPrint ("\nDelete Which Character?\n", len);
+					
+					// Print out first 3 characters, because 3 should be max
+					for (int i = 0; i < 3; i++)
+					{
+						player = loadChar (i);
+						if (player != null)
+							System.out.println (i + ": " + player);
+					}
+					System.out.print ("> ");
+					
+					// Let them choose the character, 0, 1, or 2
+					while (input != null)
+					{
+						input = input ().toLowerCase ();
+						try
+						{
+							choice = Integer.parseInt (input);
+						}
+						catch (NumberFormatException e)
+						{
+							slowPrint ("\nThat's not a number, input a valid selection\n> ", len);
+							continue;
+						}
+						
+						if (choice == 0 && loadChar (0) != null)
+						{
+							player = loadChar (0);
+							input = null;
+						}
+						else if (choice == 1 && loadChar (1) != null)
+						{
+							player = loadChar (1);
+							input = null;
+						}
+						else if (choice == 2 && loadChar (2) != null)
+						{
+							player = loadChar (2);
+							input = null;
+						}
+						else
+						{
+							slowPrint ("\nThat's not a valid choice.\n> ", len);
+						}
+					}
+					
+					
+					System.out.println ("You deleted: " + player);
+					delChar (player);
 					break;
 				}
 				case ("dev"):
 				{
 					return new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2, 2);
+				}
+				case ("b"):
+				{
+					return player;
 				}
 				default:
 				{
@@ -271,7 +368,7 @@ public class DND
 		}
 		return null;
 	}
-	// Create Character process
+	// Create new Character process
 	static Character newChar (int len)
 	{
 		String input, name = "", racestr = "";
@@ -556,7 +653,7 @@ public class DND
 			
 			if (statpoints > 0)
 				slowPrint ("Um, you have " + statpoints + " point(s) left... " +
-						"Why didn't you use them you scrub? That's what they're for!\n", len);
+						"Why didn't you use them you scrub?\nThat's what they're for!\n", len);
 			
 			slowPrint ("Are you sure you're good with this?\n", len);
 			System.out.println (String.format ("%14s%2d", "Strength: ", Str));
@@ -580,72 +677,101 @@ public class DND
 		
 		return player;
 	}
-	// Output Character to txt file, if not already there
+	// Output Character to the txt file, if the max of 3 saved characters is not met
 	static void saveChar (Character c)
 	{
-		System.out.println ("Saving Char:\n" + c.printCharacter ());
-		
-		try
-		{ Files.write (Paths.get ("saved_chars.txt"), c.printCharacter ().getBytes (), StandardOpenOption.APPEND); }
-		catch (IOException e)
+		if (loadChar (2) != null)
+			System.out.println ("Sorry, maximum of 3 saved characters.\nDelete one first.\n");
+		else
 		{
-			PrintWriter out;
+			System.out.println ("Saving character\n");
 			try
+			{ Files.write (Paths.get ("saved_chars.txt"), c.printCharacter ().getBytes (), StandardOpenOption.APPEND); }
+			catch (IOException e)
 			{
-				out = new PrintWriter (new BufferedWriter (new FileWriter (new File ("saved_chars.txt"))));
-				out.write (c.printCharacter (), 0, c.printCharacter ().length ());
-				out.close ();
+				PrintWriter out;
+				try
+				{
+					out = new PrintWriter (new BufferedWriter (new FileWriter (new File ("saved_chars.txt"))));
+					out.write (c.printCharacter (), 0, c.printCharacter ().length ());
+					out.close ();
+				}
+				catch (IOException g)
+				{ System.out.println ("Error saving character, you can play, but will have to make again."); }
 			}
-			catch (IOException g)
-			{ System.out.println ("Error saving character, you can play, but will have to make again."); }
 		}
 	}
-	
-	// Load Character from a txt file, if there
+	// Load Character from the txt file, if there
 	static Character loadChar (int num)
 	{
 		Path save = Paths.get ("saved_chars.txt");
 		Character load = null;
-		//int i = 0;
-		if (num != 0)
-		{
-			num *= 11;
+
+		num *= 11;
 		
-			try
+		try
+		{
+			for (int i = 0; i <= num; )
 			{
-				for (int i = 0; i <= num; )
+				if (input (save.toFile (), i) != null)
 				{
 					load = new Character (input (save.toFile (), i), Integer.parseInt (input (save.toFile (), i + 1)),
-							Boolean.parseBoolean (input (save.toFile (), i + 2)), Integer.parseInt (input (save.toFile (), i + 3)),
-							Integer.parseInt (input (save.toFile (), i + 4)), Integer.parseInt (input (save.toFile (), i + 5)),
-							Integer.parseInt (input (save.toFile (), i + 6)), Integer.parseInt (input (save.toFile (), i + 7)),
-							Integer.parseInt (input (save.toFile (), i + 8)), Integer.parseInt (input (save.toFile (), i + 9)),
-							Integer.parseInt (input (save.toFile (), i + 10)));
+						Boolean.parseBoolean (input (save.toFile (), i + 2)), Integer.parseInt (input (save.toFile (), i + 3)),
+						Integer.parseInt (input (save.toFile (), i + 4)), Integer.parseInt (input (save.toFile (), i + 5)),
+						Integer.parseInt (input (save.toFile (), i + 6)), Integer.parseInt (input (save.toFile (), i + 7)),
+						Integer.parseInt (input (save.toFile (), i + 8)), Integer.parseInt (input (save.toFile (), i + 9)),
+						Integer.parseInt (input (save.toFile (), i + 10)));
 					i += 11;
 				}
-			}
-			catch (IOException e)
-			{
-				System.out.println ("Sorry, your computer has decided it doesn't enjoy files.\n");
+				else
+					return null;
 			}
 		}
-		else
-			try
-			{
-				load = new Character (input (save.toFile (), 0), Integer.parseInt (input (save.toFile (), 1)),
-					Boolean.parseBoolean (input (save.toFile (), 2)), Integer.parseInt (input (save.toFile (), 3)),
-					Integer.parseInt (input (save.toFile (), 4)), Integer.parseInt (input (save.toFile (), 5)),
-					Integer.parseInt (input (save.toFile (), 6)), Integer.parseInt (input (save.toFile (), 7)),
-					Integer.parseInt (input (save.toFile (), 8)), Integer.parseInt (input (save.toFile (), 9)),
-					Integer.parseInt (input (save.toFile (), 10)));
-			}
-			catch (NumberFormatException | IOException e)
-			{
-				System.out.println ("Sorry, your computer has decided it doesn't enjoy files.\n");
-			}
-
+		catch (IOException e)
+		{
+			System.out.println ("Sorry, your computer has decided it doesn't enjoy files.\n");
+		}
 		
 		return load;
+	}
+	// Will delete a Character from the txt file
+	static void delChar (Character c)
+	{
+		Character [] hold = new Character [3];
+		int rem = 2;
+		PrintWriter out = null;
+		
+		for (int i = 0; i < 3; i++)
+		{
+			hold [i] = loadChar (i);
+			if (hold [i] != null && Character.areEqual (c, hold [i]))
+			{
+				rem = i;
+				//System.out.println ("setting char to delete to: "+hold[i]);
+			}
+		}
+		
+		try
+		{
+			out = new PrintWriter ("saved_chars.txt", "UTF-8");
+		}
+		catch (FileNotFoundException | UnsupportedEncodingException e)
+		{
+			System.out.println ("Error with file");
+			e.printStackTrace ();
+			return;
+		}
+		
+		for (int i = 0; i < 3; i++)
+		{
+			if (hold [i] != null && i != rem)
+			{
+				out.print (hold [i].printCharacter ());
+				//System.out.println ("Outputted char");
+			}
+		}
+		
+		out.close ();
 	}
 	
 	// Takes in the player, and the current map.
@@ -892,6 +1018,7 @@ public class DND
 		return ret;
 	}
  	// Gets input from a file, skipping a number of lines indicated by toskip
+ 	// Used by loadChar to read from text file
  	static String input (File f, int toskip) throws IOException
  	{
  		BufferedReader br = new BufferedReader (new FileReader (f));
