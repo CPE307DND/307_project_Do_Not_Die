@@ -569,7 +569,7 @@ public class DND
 		// Stat point allocation
 		slowPrint ("Ok, now you have to allocate stat points.\nYou get 10 points to" +
 				" use across all 7 stats, be wise.\n", len);
-		slowPrint ("Strength\nEndurance\nIntelligence\nWillpower\nAgility\nSpeed\nLuck\n", 0);
+		slowPrint ("Strength\nEndurance\nIntelligence\nWillpower\nAgility\nSpeed\nLuck\n\n", 0);
 		
 		while (statpoints != 0 && retry)
 		{
@@ -740,13 +740,13 @@ public class DND
 			
 			// Double check the user doesn't want to retry
 			slowPrint ("Are you sure you're good with this?\n", len);
-			slowPrint (String.format ("%14s%2d", "Strength: ", Str + "\n"), 0);
-			slowPrint (String.format ("%14s%2d", "Endurance: ", End + "\n"), 0);
-			slowPrint (String.format ("%14s%2d", "Intelligence: ", Int + "\n"), 0);
-			slowPrint (String.format ("%14s%2d", "Willpower: ", Wil + "\n"), 0);
-			slowPrint (String.format ("%14s%2d", "Agility: ", Agl + "\n"), 0);
-			slowPrint (String.format ("%14s%2d", "Speed: ", Spd + "\n"), 0);
-			slowPrint (String.format ("%14s%2d\n> ", "Luck: ", Lck + "\n"), 0);
+			slowPrint (String.format ("%14s%2d\n", "Strength: ", Str ), 0);
+			slowPrint (String.format ("%14s%2d\n", "Endurance: ", End), 0);
+			slowPrint (String.format ("%14s%2d\n", "Intelligence: ", Int), 0);
+			slowPrint (String.format ("%14s%2d\n", "Willpower: ", Wil), 0);
+			slowPrint (String.format ("%14s%2d\n", "Agility: ", Agl), 0);
+			slowPrint (String.format ("%14s%2d\n", "Speed: ", Spd), 0);
+			slowPrint (String.format ("%14s%2d\n> ", "Luck: ", Lck), 0);
 			slowPrint ("[(Y)es / (N)o]\n> ", 0);
 			
 			if ((input = input ().toLowerCase ()).equals ("y") || input.equals ("yes"))
