@@ -2,6 +2,12 @@ package logic;
 
 public class Warhammer extends Weapon
 {
+	private int damage;
+	private int value;
+	private int weight;
+	private String name;
+	
+	// No default constructor, because this cannot be randomized. Pass in material type to create
 	public Warhammer (String type)
 	{
 		if (type.equals ("Iron"))
@@ -62,21 +68,22 @@ public class Warhammer extends Weapon
 		}
 	}
 	
+	// Exactly the same as Weapon's toString, for redundancy
 	public String toString ()
 	{
 		return name + "\nValue: " + value + "\nDamage: " + damage + "\nWeight: " + weight;
 	}
 	
+	// Exactly the same as Weapon's equals, for redundancy
 	public Boolean equals (Warhammer other)
 	{
 		return name.equals (other.getName ());
 	}
 	
+	// Getters and no Setters because once it is set, it will not be changed
+	// There will be no weapon decay in this game
 	public int getDamage () { return damage; }
 	public int getValue () { return value; }
 	public int getWeight () { return weight; }
 	public String getName () { return name; }
-	
-	private int value, damage, weight;
-	private String name;
 }

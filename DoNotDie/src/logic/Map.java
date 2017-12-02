@@ -2,6 +2,12 @@ package logic;
 
 public class Map
 {
+	public Room current;
+	private Room [] layout;
+	
+	
+	// Default constructor. So far only creates one single map, hard-coded
+	// To have a procedurally generated map soon
 	public Map ()
 	{
 		layout = new Room [14];
@@ -24,6 +30,7 @@ public class Map
 		current = layout [0];
 	}
 	
+	// Movement methods. Change the current room to that of the specified direction, linked list style
 	public void moveBack ()
 	{
 		if (current.connections [0] >= 0)
@@ -55,6 +62,7 @@ public class Map
 			current = layout [current.connections [5]];
 	}
 
+	// Checks if all rooms have been cleared. Returns true if so, false if not
 	public Boolean allCleared ()
 	{
 		for (int i = 0; i < layout.length; i++)
@@ -62,7 +70,4 @@ public class Map
 				return false;
 		return true;
 	}
-	
-	public Room current;
-	private Room [] layout;
 }

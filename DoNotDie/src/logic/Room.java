@@ -4,6 +4,17 @@ import java.util.Random;
 
 public class Room
 {
+	private String description;
+	public Character [] enemies;
+	public Treasure [] treasures;
+	public int numenemies;
+	public int numtreasures;
+	// Room connection array. There is a back, left, center, right, up, down, in that order
+	public int [] connections = {-1, -1, -1, -1, -1, -1};
+	
+	
+	// No default constructor because this cannot be randomized.
+	// Pass in number of enemies, number of treasures, level of room, and all the room connections in order
 	public Room (int numenem, int numtre, int level, int back, int l, int c, int r, int u, int d)
 	{
 		Random rand = new Random ();
@@ -20,7 +31,7 @@ public class Room
 				enemies [i] = new Character (null, race, g, level - rand.nextInt (4),
 						level - rand.nextInt (4), level - rand.nextInt (4),
 						level - rand.nextInt (4), level - rand.nextInt (4),
-						level - rand.nextInt (4), level - rand.nextInt (4), level);
+						level - rand.nextInt (4), level - rand.nextInt (4), level, true);
 				enemies [i].setInd (i);
 			}
 		}
@@ -50,8 +61,11 @@ public class Room
 
 		numenemies = numenem;
 		numtreasures = numtre;
+		description = "";
 	}
 	
+	// Methods for printing
+	// Prints room connections. Used for testing constructor and as a failsafe
 	public String toString ()
 	{
 		String ret = "Connections:";
@@ -70,8 +84,11 @@ public class Room
 		
 		return ret;
 	}
+	// Prints room description. Used by DND.main for inspect room utility
+	public void printDescription (int len) { DND.slowPrint (description, len); }
 	
-	// Methods to deal with enemies
+	// Methods to deal with enemies. All used by DND.battle
+	// Check if the room is free of enemies, used by Map.allCleared as well
 	public Boolean roomCleared ()
 	{
 		for (int i = 0; i < numenemies; i++)
@@ -81,7 +98,9 @@ public class Room
 		}
 		return true;
 	}
+	// Check if an enemy is nonexistent or dead
 	public Boolean enemyDead (Character c) { return (c == null || c.getHealth () == 0)? true : false; }
+	// Check if a room has a certain enemy
 	public int hasEnemy (String e)
 	{
 		for (int i = 0; i < numenemies; i++)
@@ -90,8 +109,10 @@ public class Room
 		return -1;
 	}
 	
-	// Methods to deal with treasures
+	// Methods to deal with treasures. All used by DND.main for inspect room utility
+	// Check if a room has any treasures in it
 	public Boolean hasTreasures () { return numtreasures > 0; }
+	// Check if a room has a certain treasure in it. Pass in treasure name
 	public Boolean hasTreasure (String item)
 	{
 		for (int i = 0; i < numtreasures; i++)
@@ -99,10 +120,12 @@ public class Room
 				return true;
 		return false;
 	}
+	// Check if a room has a certain treasure in it. Pass in its index in treasures[]
 	public Boolean hasTreasure (int item)
 	{
 		return item < numtreasures && item >= 0;
 	}
+	// Get a treasure from the room, delete it from the room, and return it. Pass in treasure name
 	public Treasure getTreasure (String item)
 	{
 		Treasure hold;
@@ -117,17 +140,20 @@ public class Room
 		}
 		return null;
 	}
+	// Get a treasure from the room, delete it from the room, and return it. Pass in its index in treasures[]
 	public Treasure getTreasure (int item)
 	{
 		Treasure hold = treasures [item];
 		removeTreasure (item);
 		return hold;
 	}
+	// List all treasures in the room
 	public void listTreasures ()
 	{
 		for (int i = 0; i < numtreasures; i++)
 			System.out.println (i + ": " + treasures [i].getName ());
 	}
+	// Remove a treasure from the room. Private method used by getTreasure
 	private void removeTreasure (int ind)
 	{
 		for (int i = ind; i < numtreasures - 1; i++)
@@ -135,12 +161,4 @@ public class Room
 		treasures [numtreasures - 1] = null;
 		numtreasures--;
 	}
-
-	
-	public String description;
-	public Character [] enemies;
-	public Treasure [] treasures;
-	public int numenemies, numtreasures;
-	// There will be a back, left, center, right, up, down, in that order
-	public int [] connections = {-1, -1, -1, -1, -1, -1};
 }

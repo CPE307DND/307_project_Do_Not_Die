@@ -18,51 +18,80 @@ import java.util.concurrent.TimeUnit;
 
 public class DND
 {
+	// Main game driver. Makes calls to all other driver methods
 	public static void main (String [] args)
 	{
 		Map map = new Map ();
-		Character p1 = new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2, 1);
+		Character p1 = null;
 		String input = "";
-		String BASEMSG = "\nWhat do you want to do?\n[(I)nspect]   [I(N)ventory]   [(S)ee Stats]", prompt = "";
-		String RGTMSG = "   [Move (R)ight]", LEFMSG = "   [Move (L)eft]";
-		String UPMSG = "   [Move (U)p]", DWNMSG = "   [Move (D)own]";
-		String CTRMSG = "   [Move (F)orward]", BCKMSG = "   [Move (B)ackward]";
+		String prompt = "";
+		String BASEMSG = "\nWhat do you want to do?\n[(I)nspect]        [I(N)ventory]      " +
+				"[(S)ee Stats]                [(Q)uit]\n";
+		String RGTMSG = "[Move (R)ight]";
+		String LEFMSG = "[Move (L)eft]";
+		String UPMSG = "[Move (U)p]";
+		String DWNMSG = "[Move (D)own]";
+		String CTRMSG = "[Move (F)orward]";
+		String BCKMSG = "[Move (B)ackward]";
 		String DIFFICULTY = "[(E)asy]\t[(M)edium]\t[(H)ard]";
 		String [] msgs = {BCKMSG, LEFMSG, CTRMSG, RGTMSG, UPMSG, DWNMSG};
-		int choice, slow = 0, med = 1, fast = 2, dev = 3, textchoice = dev;
+		int choice;
+		int textchoice = 3;
 		int [] textspeeds = {120, 90, 40, 0};
 		
-		slowPrint ("Welcome to Do Not Die, 1st Edition!!\n\n", textspeeds [textchoice]);
-		slowPrint ("What would you like to do?\n", textspeeds [textchoice]);
-		System.out.print ("[(C)hoose Character]   [C(H)oose Map]   [(S)ettings]\n> ");
+		slowPrint ("Welcome to Do Not Die, 1st Edition!!\n" +
+				"We hope you enjoy our game!! :D\n\n", textspeeds [textchoice]);
 		
+		// Main menu loop
+		slowPrint ("\nWhat would you like to do?\n\n", textspeeds [textchoice]);
+		slowPrint ("[(C)hoose Character]   [C(H)oose Map]   [(P)lay]\n[(S)ettings]           [(Q)uit]\n> ", 0);
 		while (inputvalid (input = input ().toLowerCase ()))
 		{
 			if (input.equals ("c"))
 			{
-				p1 = chooseChar (textchoice);
-				break;
+				// Choose Character
+				p1 = chooseChar (textspeeds [textchoice]);
+				slowPrint ("\nWhat would you like to do?\n\n", textspeeds [textchoice]);
+				slowPrint ("[(C)hoose Character]   [C(H)oose Map]   [(P)lay]\n[(S)ettings]           [(Q)uit]\n> ", 0);
 			}
 			else if (input.equals ("h"))
 			{
-				System.out.println ("Currently unimplemented.");
+				// Choose Map
+				slowPrint ("\nCurrently unimplemented\n\n", 0);
+				slowPrint ("\nWhat would you like to do?\n\n", textspeeds [textchoice]);
+				slowPrint ("[(C)hoose Character]   [C(H)oose Map]   [(P)lay]\n[(S)ettings]           [(Q)uit]\n> ", 0);
 			}
-			//	chooseMap (map);
 			else if (input.equals ("s"))
 			{
+				// Change Settings
 				textchoice = changeSettings (textchoice);
-				slowPrint ("Ok, now what do you want to do?\n", textspeeds [textchoice]);
-				System.out.print ("[(C)hoose Character]   [C(H)oose Map]   [(S)ettings]\n> ");
+				slowPrint ("\nWhat would you like to do?\n\n", textspeeds [textchoice]);
+				slowPrint ("[(C)hoose Character]   [C(H)oose Map]   [(P)lay]\n[(S)ettings]           [(Q)uit]\n> ", 0);
 			}
-			else if (input.equals ("dev"))
-				break;
+			else if (input.equals ("p"))
+			{
+				// Play game
+				if (p1 == null)
+				{
+					slowPrint ("\nHey, you need to choose your character!\n", textspeeds [textchoice]);
+					p1 = chooseChar (textspeeds [textchoice]);
+					break;
+				}
+				else
+				{
+					slowPrint ("All right! Ready to play?\n", textspeeds [textchoice]);
+					break;
+				}
+			}
 			else
-				slowPrint ("\nNot a choice, please retry:", textspeeds [textchoice]);
+				slowPrint ("\nNot a choice, please retry:\n> ", 0);
 		}
 		
+		// Commented out until implemented or deadline is reached
 		/*slowPrint ("Set Difficulty:\n" + DIFFICULTY + "\n> ", textspeeds [textchoice]);
 		input = input ().toLowerCase ();*/
 		
+		// Main gameplay loop
 		while (inputvalid (input) && !p1.isDead() && !map.allCleared ())
 		{
 			// Fight enemies in the room before you can do anything else
@@ -70,39 +99,41 @@ public class DND
 			{
 				if (map.current.numenemies > 1)
 					slowPrint ("There are " + map.current.numenemies +
-							" enemies in the room, prepare to fight.\n", textspeeds [textchoice]);
+							" enemies in the room, prepare to fight.\n\n", textspeeds [textchoice]);
 				else
-					slowPrint ("There is an enemy in the room, prepare to fight.\n", textspeeds [textchoice]);
+					slowPrint ("There is an enemy in the room, prepare to fight.\n\n", textspeeds [textchoice]);
 				
 				battle (p1, map);
 			}
+			// Room is now cleared
 			
-			
+			// Build string with all movement options and prompt user
 			prompt = BASEMSG;
 			for (int i = 0; i < map.current.connections.length; i++)
 			{
 				if (map.current.connections [i] >= 0)
-					prompt += msgs [i];
+					prompt += String.format ("%-19s", msgs [i]);
 			}
-			
 			slowPrint (prompt + "\n> ", textspeeds [textchoice]);
 			input = input ().toLowerCase ();
 			
+			// Check if user wants to quit. If yes, exit loop, so game ends, if no, continue as normal
 			if (!inputvalid (input))
-			{
-				input = null;
-				continue;
-			}
+				break;
 			
 			switch (input)
 			{
 				case ("s"):
 				{
-					slowPrint (p1.printStats (), textspeeds [textchoice]);
+					// Print player stats
+					slowPrint (p1.printStats () + "\n", textspeeds [textchoice]);
 					break;
 				}
 				case ("i"):
 				{
+					// Inspect room
+					//map.current.printDescription ();
+					// If room has treasures, list them and allow player to pick one up per inspect action
 					if (map.current.hasTreasures ())
 					{
 						slowPrint ("Treasures:\n", textspeeds [textchoice]);
@@ -120,7 +151,8 @@ public class DND
 								}
 								else
 								{
-									slowPrint ("That's not an item you can pick up.\n", textspeeds [textchoice]);
+									slowPrint ("That's not an item you can pick up.\n" +
+											"Here's what you can:\n", textspeeds [textchoice]);
 									map.current.listTreasures ();
 									slowPrint ("What do you want to pick up?\n> ", textspeeds [textchoice]);
 								}
@@ -134,7 +166,8 @@ public class DND
 								}
 								else
 								{
-									slowPrint ("That's not an item you can pick up.\n", textspeeds [textchoice]);
+									slowPrint ("That's not an item you can pick up.\n" +
+											"Here's what you can:\n", textspeeds [textchoice]);
 									map.current.listTreasures ();
 									slowPrint ("What do you want to pick up?\n> ", textspeeds [textchoice]);
 								}
@@ -142,7 +175,7 @@ public class DND
 						}
 					}
 					else
-						slowPrint ("Nothing in the room.", textspeeds [textchoice]);
+						slowPrint ("Nothing in the room\n", textspeeds [textchoice]);
 					break;
 				}
 				case ("n"):
@@ -152,230 +185,277 @@ public class DND
 				}
 				case ("b"):
 				{
+					// Only allow movement if the current room has this connection
 					if (map.current.connections [0] >= 0)
 						map.moveBack ();
 					else
-						slowPrint ("Not a valid action.", textspeeds [textchoice]);
+						slowPrint ("Not a valid action\n", textspeeds [textchoice]);
 					break;
 				}
 				case ("l"):
 				{
+					// Only allow movement if the current room has this connection
 					if (map.current.connections [1] >= 0)
 						map.moveLeft ();
 					else
-						slowPrint ("Not a valid action.", textspeeds [textchoice]);
+						slowPrint ("Not a valid action\n", textspeeds [textchoice]);
 					break;
 				}
 				case ("f"):
 				{
+					// Only allow movement if the current room has this connection
 					if (map.current.connections [2] >= 0)
 						map.moveCenter ();
 					else
-						slowPrint ("Not a valid action.", textspeeds [textchoice]);
+						slowPrint ("Not a valid action\n", textspeeds [textchoice]);
 					break;
 				}
 				case ("r"):
 				{
+					// Only allow movement if the current room has this connection
 					if (map.current.connections [3] >= 0)
 						map.moveRight ();
 					else
-						slowPrint ("Not a valid action.", textspeeds [textchoice]);
+						slowPrint ("Not a valid action\n", textspeeds [textchoice]);
 					break;
 				}
 				case ("u"):
 				{
+					// Only allow movement if the current room has this connection
 					if (map.current.connections [4] >= 0)
 						map.moveUp ();
 					else
-						slowPrint ("Not a valid action.", textspeeds [textchoice]);
+						slowPrint ("Not a valid action\n", textspeeds [textchoice]);
 					break;
 				}
 				case ("d"):
 				{
+					// Only allow movement if the current room has this connection
 					if (map.current.connections [5] >= 0)
 						map.moveDown ();
 					else
-						slowPrint ("Not a valid action.", textspeeds [textchoice]);
+						slowPrint ("Not a valid action\n", textspeeds [textchoice]);
 					break;
 				}
 				default:
 				{
-					slowPrint ("Not a valid action.", textspeeds [textchoice]);
+					// Catch-all failsafe
+					slowPrint ("Not a valid action\n", textspeeds [textchoice]);
 					break;
 				}
 			}
 		}
+		
+		slowPrint ("Thank you for playing!", textspeeds [textchoice]);
 	}
 	
+	// Char selection driver
 	static Character chooseChar (int len)
 	{
 		String input;
-		int choice;
+		int choice = -1;
 		Character player = null;
+
+		slowPrint ("\nWhat would you like to do?\n\n", len);
+		slowPrint ("[(N)ew Character]      [(C)hoose Character]\n[(D)elete Character]   [(F)inish]\n> ", 0);
 		
-		slowPrint ("\nWhat would you like to do?\n[(N)ew Character]   [(C)hoose Character]   [(D)elete Character]\n> ", len);
-		
+		// Main choose char loop
 		while (inputvalid (input = input ().toLowerCase ()))
 		{
-			switch (input)
+			if (input.equals ("n") || input.equals ("new") || input.equals ("new character"))
 			{
-				case ("n"):
+				// Only make new char if not at max already
+				if (loadChar (2) == null)
+					player = newChar (len);
+				else
+					slowPrint ("Sorry, our benevolent overlords have imposed a" +
+							" limit of 3 saved characters.\nTry deleting one or all first. :)\n", 0);
+			}
+			else if (input.equals ("c") || input.equals ("choose") || input.equals ("choose character"))
+			{
+				// Ensure there are chars saved. If none, direct them to char creation
+				if (loadChar (0) == null)
 				{
-					if (loadChar (2) == null)
-						player = newChar (len);
-					else
-						System.out.println ("Sorry, our benevolent overlords have imposed a" +
-								" limit of 3 saved characters.\nTry deleting one or all first. :)\n");
-					break;
+					slowPrint ("\nSorry, there are no saved characters.\n" +
+							"Let me point you in the right direction:\n\n", len);
+					return newChar (len);
 				}
-				case ("c"):
+				
+				slowPrint ("\nSelect Which Character?\n", len);
+				
+				// Print out first 3 chars, because we decided 3 is max, but is scalable
+				for (int i = 0; i < 3; i++)
 				{
-					if (loadChar (0) != null)
-					{
-						slowPrint ("\nSelect Which Character?\n", len);
+					player = loadChar (i);
+					if (player != null)
+						slowPrint (i + ": " + player + "\n", 0);
+					else
+						break;
+				}
+				slowPrint ("> ", 0);
+				
+				// Let them choose the char by the index or name
+				while (input != null)
+				{
+					input = input ();
 					
-						// Print out first 3 characters, because 3 should be max
+					// Break if they want to quit, quit is after loop
+					if (!inputvalid (input))
+						break;
+					
+					// Turn input into an index, whether they put in the number or name
+					try
+					{
+						// If input is the index
+						choice = Integer.parseInt (input);
+					}
+					catch (NumberFormatException e)
+					{
+						// If input is the name
 						for (int i = 0; i < 3; i++)
 						{
 							player = loadChar (i);
-							if (player != null)
-								System.out.println (i + ": " + player);
+							if (player != null && player.is (input))
+							{
+								choice = i;
+								break;
+							}
+							else if (player == null)
+								break;
 						}
-						System.out.print ("> ");
-						
-						// Let them choose the character, 0, 1, or 2
-						while (input != null)
-						{
-							input = input ().toLowerCase ();
-							try
-							{
-								choice = Integer.parseInt (input);
-							}
-							catch (NumberFormatException e)
-							{
-								slowPrint ("\nThat's not a number, input a valid selection\n> ", len);
-								continue;
-							}
-							
-							if (choice == 0 && loadChar (0) != null)
-							{
-								player = loadChar (0);
-								input = null;
-							}
-							else if (choice == 1 && loadChar (1) != null)
-							{
-								player = loadChar (1);
-								input = null;
-							}
-							else if (choice == 2 && loadChar (2) != null)
-							{
-								player = loadChar (2);
-								input = null;
-							}
-							else
-							{
-								slowPrint ("\nThat's not a valid choice.\n> ", len);
-							}
-						}
-						
-						
-						System.out.println ("You loaded: " + player);
-						/*if (player != null)
-							*/return player;
 					}
-					else
-					{
-						slowPrint ("\nSorry, there are no saved characters.\nLet me point you in the right direction:\n\n", len);
-						return newChar (len);
-					}
-				}
-				case ("d"):
-				{
-					if (loadChar (0) == null)
-					{
-						slowPrint ("Ummm, you have no characters to delete.\nMake some first, then you can delete them.\n\n", len);
+					
+					// Load the corresponding char
+					if ((player = loadChar (choice)) != null)
 						break;
-					}
-					slowPrint ("\nDelete Which Character?\n", len);
-					
-					// Print out first 3 characters, because 3 should be max
-					for (int i = 0; i < 3; i++)
-					{
-						player = loadChar (i);
-						if (player != null)
-							System.out.println (i + ": " + player);
-					}
-					System.out.print ("> ");
-					
-					// Let them choose the character, 0, 1, or 2
-					while (input != null)
-					{
-						input = input ().toLowerCase ();
-						try
-						{
-							choice = Integer.parseInt (input);
-						}
-						catch (NumberFormatException e)
-						{
-							slowPrint ("\nThat's not a number, input a valid selection\n> ", len);
-							continue;
-						}
-						
-						if (choice == 0 && loadChar (0) != null)
-						{
-							player = loadChar (0);
-							input = null;
-						}
-						else if (choice == 1 && loadChar (1) != null)
-						{
-							player = loadChar (1);
-							input = null;
-						}
-						else if (choice == 2 && loadChar (2) != null)
-						{
-							player = loadChar (2);
-							input = null;
-						}
-						else
-						{
-							slowPrint ("\nThat's not a valid choice.\n> ", len);
-						}
-					}
-					
-					
-					System.out.println ("You deleted: " + player);
-					delChar (player);
+					else
+						slowPrint ("\nThat's not a valid choice.\n> ", len);
+				}
+				// Quit here if they don't want to load
+				if (!inputvalid (input))
 					break;
-				}
-				case ("dev"):
-				{
-					return new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2, 2);
-				}
-				case ("b"):
-				{
-					return player;
-				}
-				default:
-				{
-					slowPrint ("Invalid Input, please retry\n", len);
-					slowPrint ("What would you like to do?\n[(N)ew Character]   [(C)hoose Character]   [(D)elete Character]\n> ", len);
-					break;
-				}
+				
+				// Usability message, letting the user know their choice was confirmed
+				slowPrint ("You loaded: " + player + "\n", 0);
+				return player;
 			}
-			
-			System.out.print ("Ok, what do you want to do now?\n[(N)ew Character]   " +
-					"[(C)hoose Character]   [(D)elete Character]\n> ");
+			else if (input.equals ("d") || input.equals ("delete") || input.equals ("delete character"))
+			{
+				// Ensure there are chars saved. If none, return them to options
+				if (loadChar (0) == null)
+				{
+					slowPrint ("Ummm, you have no characters to delete.\n" +
+							"Make some first, then you can delete them.\n\n", len);
+					break;
+				}
+				slowPrint ("\nDelete Which Character?\n", len);
+				
+				// Print out first 3 chars, because we decided 3 is max, but is scalable
+				for (int i = 0; i < 3; i++)
+				{
+					player = loadChar (i);
+					if (player != null)
+						slowPrint (i + ": " + player + "\n", 0);
+					else
+						break;
+				}
+				slowPrint ("> ", 0);
+				
+				// Let them choose the char by the index or name
+				while (input != null)
+				{
+					input = input ();
+					
+					// Break if they want to quit, quit is after loop
+					if (!inputvalid (input))
+						break;
+					
+					// Turn input into an index, whether they put in the number or name
+					try
+					{
+						// If input is the index
+						choice = Integer.parseInt (input);
+					}
+					catch (NumberFormatException e)
+					{
+						// If input is the name
+						for (int i = 0; i < 3; i++)
+						{
+							player = loadChar (i);
+							if (player != null && player.is (input))
+							{
+								choice = i;
+								break;
+							}
+							else if (player == null)
+								break;
+						}
+					}
+					
+					// Load the corresponding char
+					if ((player = loadChar (choice)) != null)
+						input = null;
+					else
+						slowPrint ("\nThat's not a valid choice.\n> ", len);
+				}
+				// Quit here if they don't want to delete
+				if (!inputvalid (input))
+					break;
+
+				// Usability message, letting the user know their choice was confirmed
+				slowPrint ("You deleted: " + player + "\n", 0);
+				delChar (player);
+			}
+			else if (input.equals ("f") || input.equals ("finish"))
+			{
+				// Check if user has selected a char
+				// If no, redo loop. If yes, return them to menu
+				if (player == null)
+				{
+					slowPrint ("Um, you have not selected a character...\nHow do you expect to play?\n" +
+							"Try again.\n", len );
+				}
+				else
+					return player;
+			}
+			else if (input.equals ("dev"))
+			{
+				// For speeding up the dev process, use a god strength char
+				return new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2, 2, true);
+			}
+			else
+			{
+				// Catch-all failsafe
+				slowPrint ("Invalid Input, please retry\n", len);
+				slowPrint ("\nWhat would you like to do?\n\n", len);
+				slowPrint ("[(N)ew Character]      [(C)hoose Character]\n[(D)elete Character]   [(F)inish]\n> ", 0);
+			}
+
+			slowPrint ("\nWhat would you like to do?\n\n", len);
+			slowPrint ("[(N)ew Character]      [(C)hoose Character]\n[(D)elete Character]   [(F)inish]\n> ", 0);
 		}
 		return null;
 	}
-	// Create new Character process
+	// Create new char process
 	static Character newChar (int len)
 	{
-		String input, name = "", racestr = "";
-		int race = 0, Str = 0, End = 0, Int = 0, Wil = 0, Agl = 0, Spd = 0, Lck = 0, statpoints = 10;
-		Boolean gender = true, retry = true;
+		String input;
+		String name = "";
+		String racestr = "";
+		int race = 0;
+		int Str = 0;
+		int End = 0;
+		int Int = 0;
+		int Wil = 0;
+		int Agl = 0;
+		int Spd = 0;
+		int Lck = 0;
+		int statpoints = 10;
+		Boolean gender = true;
+		Boolean retry = true;
 		Character player;
 		
+		// Name input
 		slowPrint ("New Character, Ok.\n", len);
 		slowPrint ("Let's go through the steps.\nName:\n> ", len);
 		input = input ();
@@ -383,10 +463,10 @@ public class DND
 			name = input;
 		slowPrint ("Um, " + name + "? You sure? Ok, well whatever, you're the player...\n\n", len);
 		
+		// Race Selection
 		slowPrint ("Ok, Race:\n", len);
-		
-		System.out.print ("0:       Human\n1:         Elf\n2:         Orc\n3:       Gnome\n4:       Dwarf\n" +
-		"5:  Dragonborn\n6:  Half-Troll\n7: Lizard-Folk\n8:    Cat-Folk\n9:    Tiefling\n> ");
+		slowPrint ("0:       Human\n1:         Elf\n2:         Orc\n3:       Gnome\n4:       Dwarf\n" +
+		"5:  Dragonborn\n6:  Half-Troll\n7: Lizard-Folk\n8:    Cat-Folk\n9:    Tiefling\n> ", 0);
 		input = input ().toLowerCase ();
 		
 		while (inputvalid (input))
@@ -458,11 +538,13 @@ public class DND
 		slowPrint ("Oh, " + racestr + " huh?\nI kinda thought so, but " +
 				"I wanted to make sure.\n\n", len);
 		
+		// Gender selection
 		slowPrint ("So um, what's.... uh, what's your gender?:\n", len);
-		System.out.print ("0: Male\n1: Female\n> ");
+		slowPrint ("0: Male\n1: Female\n> ", 0);
 		input = input ().toLowerCase ();
 		
 		while (inputvalid (input))
+		{
 			if (input.equals ("male") || input.equals ("0"))
 			{
 				gender = true;
@@ -478,15 +560,16 @@ public class DND
 				slowPrint ("We're not that inclusive. Only male or female.\n> ", len);
 				input = input ().toLowerCase ();
 			}
-		
+		}
 		if (gender)
 			slowPrint ("You're a dude?\nOk, Ok, yes you do look manly, I didn't want to assume.\n\n", len);
 		else
 			slowPrint ("You're a dudette?\nNo, you don't look too manly, I just didn't want to assume.\n\n", len);
 		
+		// Stat point allocation
 		slowPrint ("Ok, now you have to allocate stat points.\nYou get 10 points to" +
 				" use across all 7 stats, be wise.\n", len);
-		System.out.println ("Strength\nEndurance\nIntelligence\nWillpower\nAgility\nSpeed\nLuck\n");
+		slowPrint ("Strength\nEndurance\nIntelligence\nWillpower\nAgility\nSpeed\nLuck\n", 0);
 		
 		while (statpoints != 0 && retry)
 		{
@@ -501,7 +584,7 @@ public class DND
 				else
 				{
 					statpoints = 10;
-					slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+					slowPrint ("Um, that's more points than you have... START OVER!\n\n\n", len);
 					continue;
 				}
 			}
@@ -524,7 +607,7 @@ public class DND
 				{
 					statpoints = 10;
 					slowPrint ("Um, that's more points than you have...\n" +
-					"You spent too many points on Strength already.\nSTART OVER!\n", len);
+					"You spent too many points on Strength already.\nSTART OVER!\n\n\n", len);
 					continue;
 				}
 			}
@@ -547,7 +630,7 @@ public class DND
 				else
 				{
 					statpoints = 10;
-					slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+					slowPrint ("Um, that's more points than you have... START OVER!\n\n\n", len);
 					continue;
 				}
 			}
@@ -570,7 +653,7 @@ public class DND
 				else
 				{
 					statpoints = 10;
-					slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+					slowPrint ("Um, that's more points than you have... START OVER!\n\n\n", len);
 					continue;
 				}
 			}
@@ -593,7 +676,7 @@ public class DND
 				else
 				{
 					statpoints = 10;
-					slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+					slowPrint ("Um, that's more points than you have... START OVER!\n\n\n", len);
 					continue;
 				}
 			}
@@ -616,7 +699,7 @@ public class DND
 				else
 				{
 					statpoints = 10;
-					slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+					slowPrint ("Um, that's more points than you have... START OVER!\n\n\n", len);
 					continue;
 				}
 			}
@@ -639,7 +722,7 @@ public class DND
 				else
 				{
 					statpoints = 10;
-					slowPrint ("Um, that's more points than you have... START OVER!\n", len);
+					slowPrint ("Um, that's more points than you have... START OVER!\n\n\n", len);
 					continue;
 				}
 			}
@@ -653,17 +736,18 @@ public class DND
 			
 			if (statpoints > 0)
 				slowPrint ("Um, you have " + statpoints + " point(s) left... " +
-						"Why didn't you use them you scrub?\nThat's what they're for!\n", len);
+						"Why didn't you use them you scrub?\nThat's what they're for!\n\n", len);
 			
+			// Double check the user doesn't want to retry
 			slowPrint ("Are you sure you're good with this?\n", len);
-			System.out.println (String.format ("%14s%2d", "Strength: ", Str));
-			System.out.println (String.format ("%14s%2d", "Endurance: ", End));
-			System.out.println (String.format ("%14s%2d", "Intelligence: ", Int));
-			System.out.println (String.format ("%14s%2d", "Willpower: ", Wil));
-			System.out.println (String.format ("%14s%2d", "Agility: ", Agl));
-			System.out.println (String.format ("%14s%2d", "Speed: ", Spd));
-			System.out.print (String.format ("%14s%2d\n> ", "Luck: ", Lck));
-			
+			slowPrint (String.format ("%14s%2d", "Strength: ", Str + "\n"), 0);
+			slowPrint (String.format ("%14s%2d", "Endurance: ", End + "\n"), 0);
+			slowPrint (String.format ("%14s%2d", "Intelligence: ", Int + "\n"), 0);
+			slowPrint (String.format ("%14s%2d", "Willpower: ", Wil + "\n"), 0);
+			slowPrint (String.format ("%14s%2d", "Agility: ", Agl + "\n"), 0);
+			slowPrint (String.format ("%14s%2d", "Speed: ", Spd + "\n"), 0);
+			slowPrint (String.format ("%14s%2d\n> ", "Luck: ", Lck + "\n"), 0);
+			slowPrint ("[(Y)es / (N)o]\n> ", 0);
 			
 			if ((input = input ().toLowerCase ()).equals ("y") || input.equals ("yes"))
 				retry = false;
@@ -671,20 +755,24 @@ public class DND
 				statpoints = 10;
 		}
 		
-		player = new Character (name, race, gender, Str, End, Int, Wil, Agl, Spd, Lck, 1);
-		
+		// Create and save character
+		player = new Character (name, race, gender, Str, End, Int, Wil, Agl, Spd, Lck, 1, true);
 		saveChar (player);
 		
+		// Return character so that it will be selected for the user to simply finish
 		return player;
 	}
-	// Output Character to the txt file, if the max of 3 saved characters is not met
+	// Output char to the txt file, if the max of 3 saved characters is not met
 	static void saveChar (Character c)
 	{
+		// Check for max chars save already
+		// Redundancy for accuracy
 		if (loadChar (2) != null)
-			System.out.println ("Sorry, maximum of 3 saved characters.\nDelete one first.\n");
+			slowPrint ("Sorry, maximum of 3 saved characters.\nDelete one first.\n\n", 0);
 		else
 		{
-			System.out.println ("Saving character\n");
+			slowPrint ("Saving character\n\n", 0);
+			// Append to the save file if it exists, create it if it doesn't
 			try
 			{ Files.write (Paths.get ("saved_chars.txt"), c.printCharacter ().getBytes (), StandardOpenOption.APPEND); }
 			catch (IOException e)
@@ -697,30 +785,78 @@ public class DND
 					out.close ();
 				}
 				catch (IOException g)
-				{ System.out.println ("Error saving character, you can play, but will have to make again."); }
+				{ slowPrint ("Error saving character, you can play, but will have to make again.\n\n", 0); }
 			}
 		}
 	}
-	// Load Character from the txt file, if there
+	// Will delete a char from the txt file
+	static void delChar (Character c)
+	{
+		Character [] hold = new Character [3];
+		int rem = 2;
+		PrintWriter out = null;
+		
+		// Look through saved chars for the char to delete, and save the index
+		for (int i = 0; i < 3; i++)
+		{
+			hold [i] = loadChar (i);
+			if (hold [i] != null && Character.areEqual (c, hold [i]))
+				rem = i;
+			else if (hold [i] == null)
+				break;
+		}
+		
+		// Create new file
+		try
+		{
+			out = new PrintWriter ("saved_chars.txt", "UTF-8");
+		}
+		catch (FileNotFoundException | UnsupportedEncodingException e)
+		{
+			slowPrint ("Error with file\n\n", 0);
+			e.printStackTrace ();
+			return;
+		}
+		
+		// Write only the chars that are not the one to delete
+		for (int i = 0; i < 3; i++)
+		{
+			if (hold [i] != null && i != rem)
+				out.print (hold [i].printCharacter ());
+			else if (hold [i] == null)
+				break;
+		}
+		
+		out.close ();
+	}
+	// Load char from the txt file and return it, if there, return null if not
+	// Used by chooseChar, saveChar, and delChar
 	static Character loadChar (int num)
 	{
 		Path save = Paths.get ("saved_chars.txt");
 		Character load = null;
 
+		// Change the input index to reflect the number of lines that must be skipped
+		// Each char takes up 11 lines in the save file
 		num *= 11;
-		
+		// Go through each set of 11 lines and build a new Char out of them, without re-editing the stats
 		try
 		{
 			for (int i = 0; i <= num; )
 			{
 				if (input (save.toFile (), i) != null)
 				{
-					load = new Character (input (save.toFile (), i), Integer.parseInt (input (save.toFile (), i + 1)),
-						Boolean.parseBoolean (input (save.toFile (), i + 2)), Integer.parseInt (input (save.toFile (), i + 3)),
-						Integer.parseInt (input (save.toFile (), i + 4)), Integer.parseInt (input (save.toFile (), i + 5)),
-						Integer.parseInt (input (save.toFile (), i + 6)), Integer.parseInt (input (save.toFile (), i + 7)),
-						Integer.parseInt (input (save.toFile (), i + 8)), Integer.parseInt (input (save.toFile (), i + 9)),
-						Integer.parseInt (input (save.toFile (), i + 10)));
+					load = new Character (input (save.toFile (), i),
+							Integer.parseInt (input (save.toFile (), i + 1)),
+							Boolean.parseBoolean (input (save.toFile (), i + 2)),
+							Integer.parseInt (input (save.toFile (), i + 3)),
+							Integer.parseInt (input (save.toFile (), i + 4)),
+							Integer.parseInt (input (save.toFile (), i + 5)),
+							Integer.parseInt (input (save.toFile (), i + 6)),
+							Integer.parseInt (input (save.toFile (), i + 7)),
+							Integer.parseInt (input (save.toFile (), i + 8)),
+							Integer.parseInt (input (save.toFile (), i + 9)),
+							Integer.parseInt (input (save.toFile (), i + 10)), false);
 					i += 11;
 				}
 				else
@@ -729,68 +865,33 @@ public class DND
 		}
 		catch (IOException e)
 		{
-			System.out.println ("Sorry, your computer has decided it doesn't enjoy files.\n");
+			slowPrint ("Sorry, your computer has decided it doesn't enjoy files.\n\n", 0);
 		}
 		
 		return load;
 	}
-	// Will delete a Character from the txt file
-	static void delChar (Character c)
-	{
-		Character [] hold = new Character [3];
-		int rem = 2;
-		PrintWriter out = null;
-		
-		for (int i = 0; i < 3; i++)
-		{
-			hold [i] = loadChar (i);
-			if (hold [i] != null && Character.areEqual (c, hold [i]))
-			{
-				rem = i;
-				//System.out.println ("setting char to delete to: "+hold[i]);
-			}
-		}
-		
-		try
-		{
-			out = new PrintWriter ("saved_chars.txt", "UTF-8");
-		}
-		catch (FileNotFoundException | UnsupportedEncodingException e)
-		{
-			System.out.println ("Error with file");
-			e.printStackTrace ();
-			return;
-		}
-		
-		for (int i = 0; i < 3; i++)
-		{
-			if (hold [i] != null && i != rem)
-			{
-				out.print (hold [i].printCharacter ());
-				//System.out.println ("Outputted char");
-			}
-		}
-		
-		out.close ();
-	}
 	
+	// Battle driver method
 	// Takes in the player, and the current map.
 	// Returns true if the player died
 	static Boolean battle (Character p1, Map map)
 	{
-		Character enemy = null, hold = null;
+		Character enemy = null;
+		Character hold = null;
 		Character [] order = new Character [map.current.numenemies + 1];
 		Character [] ordercpy = new Character [map.current.numenemies + 1];
-		Character [] aselect = new Character [map.current.numenemies];
-		int turn = 0, roll = 0, aselected, maxinit, infiniteloopstopper = 0;
-		int slow = 0, med = 1, fast = 2, dev = 3, textchoice = dev;
+		Character [] enemies = new Character [map.current.numenemies];
+		int turn = 0;
+		int roll = 0;
+		int selected;
+		int maxinit;
+		int textchoice = 3;
 		int [] textspeeds = {120, 90, 60, 0};
 		String input = "";
 		
-		// Put player and enemies into a priority queue based on initiative
+		// Put player and enemies into an array for the turn utility
 		slowPrint ("You rolled " + p1.initiative () + " for initiative.\n", textspeeds [textchoice]);
 		order [0] = p1;
-		
 		for (int i = 0; i < map.current.numenemies; i++)
 		{
 			if (map.current.numenemies > 1)
@@ -803,12 +904,14 @@ public class DND
 			order [i + 1] = map.current.enemies [i];
 		}
 		
+		// Reordering the array based on initiative rolls, higher rolls first, ties broken by race
 		for (int i = 0; i <= map.current.numenemies; i++)
 		{
 			maxinit = i;
 			for (int j = i; j <= map.current.numenemies && order [j] != null; j++)
 			{
-				if (order [j].compareTo (order [maxinit]) > 0)
+				if (order [j].compareTo (order [maxinit]) > 0 ||
+						order [j].getRace ().compareTo (order [maxinit].getRace ()) < 0)
 					maxinit = j;
 			}
 			hold = order [i];
@@ -816,11 +919,9 @@ public class DND
 			order [maxinit] = hold;
 			ordercpy [i] = order [i];
 		}
-		
 		hold = null;
 		
-		
-		// Removing player from order, to allow for easier target select
+		// Removing player from order, for target selection
 		for (int i = 0; i < ordercpy.length - 1 && ordercpy [i] != null; i++)
 		{
 			if (!(ordercpy [i].getName () == null && hold == null))
@@ -829,23 +930,24 @@ public class DND
 				ordercpy [i] = ordercpy [i + 1];
 				ordercpy [i + 1] = hold;
 			}
-			if (i < aselect.length)
-				aselect [i] = ordercpy [i];
+			if (i < enemies.length)
+				enemies [i] = ordercpy [i];
 		}
 		
 		
-		slowPrint ("\nThe order is: \n", textspeeds [textchoice]);
-		
-		// Print order
+		slowPrint ("\nThe order is:\n", textspeeds [textchoice]);
+		// Print the battle order
 		for (int i = 0; i < order.length && order [i] != null; i++)
 			if (order [i].getName () != null)
 				slowPrint (order [i].getName () + "\n", textspeeds [textchoice]);
 			else
 				slowPrint (order [i].getRace () + "\n", textspeeds [textchoice]);
 		
+		
 		// Battle manager
 		while (!p1.isDead () && !map.current.roomCleared ())
 		{
+			// Ensure no out of bounds exception or null pointer exception
 			if (turn >= order.length || order [turn] == null)
 			{
 				slowPrint ("\nTop of the order again.\n", textspeeds [textchoice]);
@@ -854,69 +956,82 @@ public class DND
 			
 			input = input.toLowerCase ();
 			
+			// Player turn
 			if (order [turn].getName () != null)
 			{
 				while (!input.equals ("a") && !input.equals ("attack"))
 				{
-					slowPrint ("\nIt's your turn, what do you want to do?\n[(A)ttack]   [(C)heck Bag]   [(P)erception Check]\n> ", textspeeds [textchoice]);
+					slowPrint ("\nIt's your turn, what do you want to do?\n[(A)ttack]   [(C)heck Bag]" +
+							"   [(P)erception Check]\n> ", textspeeds [textchoice]);
 					input = input ().toLowerCase ();
+					
 					if (input.equals ("a") || input.equals ("attack"))
 					{
-						slowPrint ("Attack who?\n", textspeeds [textchoice]);
+						slowPrint ("\nAttack who?\n", textspeeds [textchoice]);
 						
-						for (int i = 0; i < aselect.length && aselect [i] != null; i++)
-							if (!map.current.enemyDead (aselect [i]))
-								slowPrint (i + ": " + aselect [i].printEnemy () + "\n", textspeeds [textchoice]);
+						// Print out list of living enemies
+						for (int i = 0; i < enemies.length && enemies [i] != null; i++)
+							if (!map.current.enemyDead (enemies [i]))
+								slowPrint (i + ": " + enemies [i].printEnemy () + "\n", textspeeds [textchoice]);
 						
+						// Loop to ensure an enemy is selected correctly
 						while (inputvalid (input = input ().toLowerCase ()))
 						{
 							try
 							{
-								aselected = Integer.parseInt (input);
-								
-								if (aselected >= aselect.length || aselect [aselected] == null)
+								selected = Integer.parseInt (input);
+								// Input validation for index selection
+								if (selected >= enemies.length || enemies [selected] == null)
 								{
-									slowPrint ("Number not valid. Can you like be nice please?\n", textspeeds [textchoice]);
-									for (int i = 0; i < aselect.length && aselect [i] != null; i++)
-										if (!map.current.enemyDead (aselect [i]))
-											slowPrint (i + ": " + aselect [i].printEnemy () + "\n", textspeeds [textchoice]);
+									slowPrint ("Number not valid. Can you like be nice please?\n",
+											textspeeds [textchoice]);
+									for (int i = 0; i < enemies.length && enemies [i] != null; i++)
+										if (!map.current.enemyDead (enemies [i]))
+											slowPrint (i + ": " + enemies [i].printEnemy () + "\n",
+													textspeeds [textchoice]);
 								}
 								else
 								{
-									enemy = aselect [aselected];
+									enemy = enemies [selected];
 									break;
 								}
 							}
 							catch (NumberFormatException e)
 							{
-								aselected = map.current.hasEnemy (input);
-								if (aselected < 0)
+								selected = map.current.hasEnemy (input);
+								// Input validation for name selection
+								if (selected < 0)
 								{
 									slowPrint ("That's not an enemy. Play nice.\n", textspeeds [textchoice]);
-									for (int i = 0; i < aselect.length && aselect [i] != null; i++)
-										if (!map.current.enemyDead (aselect [i]))
-											slowPrint (i + ": " + aselect [i].printEnemy () + "\n", textspeeds [textchoice]);
+									for (int i = 0; i < enemies.length && enemies [i] != null; i++)
+										if (!map.current.enemyDead (enemies [i]))
+											slowPrint (i + ": " + enemies [i].printEnemy () + "\n",
+													textspeeds [textchoice]);
 								}
 								else
 								{
-									enemy  = aselect [aselected];
+									enemy  = enemies [selected];
 									break;
 								}
 							}
 						}
 						
+						// Roll vs. AC and attack if the roll is good enough
 						roll = p1.rolld20 ();
-						slowPrint ("\nYou rolled " + roll + " verses the " + enemy.getRace () + "'s AC\n", textspeeds [textchoice]);
+						slowPrint ("\nYou rolled " + roll + " verses the " + enemy.getRace () + "'s AC\n",
+								textspeeds [textchoice]);
 						if (roll > enemy.getAC ())
 						{
 							slowPrint ("Attacked for " + p1.getDamage () + "\n", textspeeds [textchoice]);
 							if (enemy.attacked (p1.getDamage ()))
 							{
 								slowPrint ("\n\nThe weapon swung true\nThe " +
-							enemy.getRace () + " fell\nA fatal blow\nTo the left pinky toe.\n\n", textspeeds [textchoice]);
+										enemy.getRace () + " fell\nA fatal blow\nTo the left pinky toe.\n\n",
+										textspeeds [textchoice]);
 							}
 							else
-								slowPrint (enemy.getRace () + " has " + enemy.getHealth () + " health left.\n", textspeeds [textchoice]);
+								slowPrint (enemy.getRace () + " has " + enemy.getHealth () + " health left.\n",
+										textspeeds [textchoice]);
 						}
 						else
 							slowPrint ("That ain't gonna cut it.\n", textspeeds [textchoice]);
@@ -924,26 +1039,33 @@ public class DND
 						break;
 					}
 					else if (input.equals ("c") || input.equals ("check") || input.equals ("check bag"))
+						// Check inventory
 						p1.inventoryCheck ();
 					else if (input.equals ("p") || input.equals ("perception check"))
-						for (int i = 0; i < aselect.length; i++)
-							aselect [i].printDescription (textspeeds [textchoice]);
+						// Check enemy description. Has no use other than amusement
+						for (int i = 0; i < enemies.length; i++)
+							enemies [i].printDescription (textspeeds [textchoice]);
 					else
+						// Catch-all failsafe
 						slowPrint ("Invalid input.\n", textspeeds [textchoice]);
 				}
 			}
 			else
 			{
+				// Double checking that the enemy isn't dead. If it is, skip it, if not, give it a turn
 				if (map.current.enemyDead (order [turn]))
 				{
 					turn++;
 					continue;
 				}
 				else
-					slowPrint ("\nIt's " + order [turn].getRace () + "'s turn.", textspeeds [textchoice]);
+					// Enemy turn
+					// If the player dies, break out of loop;
+					slowPrint ("\nIt's " + order [turn].getRace () + "'s turn.\n", textspeeds [textchoice]);
 			}
 			
-			if (((turn + 1) > order.length))
+			// Standard wraparound to get back to index 0, start the order over again
+			if ((turn + 1) > order.length)
 			{
 				slowPrint ("\nTop of the order again.\n", textspeeds [textchoice]);
 				turn = 0;
@@ -952,6 +1074,7 @@ public class DND
 				turn++;
 		}
 		
+		// Battle over. Return whether the player died.
 		return p1.isDead ();
 	}
 	
@@ -963,38 +1086,55 @@ public class DND
 		int choice = current;
 		String input;
 		
-		slowPrint ("What do you want to change?\n", speeds [choice]);
+		slowPrint ("\nWhat would you like to do?\n\n", speeds [choice]);
+		slowPrint ("[Text (Sp)eed]   [Text (Si)ze]   [(F)inish]\n> ", 0);
 		
-		System.out.print ("[Text (Sp)eed]   [Text (Si)ze]\n> ");
-		
-		input = input ().toLowerCase ();
-		
-		if (input.equals ("sp"))
+		// Loop to ensure proper choice
+		while (inputvalid (input = input ().toLowerCase ()))
 		{
-			slowPrint ("Ok, what speed do you want?\n", speeds [choice]);
-			System.out.print ("[(S)low]   [[(M)edium]   [(F)ast]\n> ");
-			
-			input = input ().toLowerCase ();
-			if (input.equals ("s"))
-				choice = 0;
-			else if (input.equals ("m"))
-				choice = 1;
-			else if (input.equals ("f"))
-				choice = 2;
-			else if (input.equals ("d"))
-				choice = 3;
+			if (input.equals ("sp"))
+			{
+				// Change text delay
+				slowPrint ("\nOk, what speed do you want?\n", speeds [choice]);
+				slowPrint ("[(S)low]   [[(M)edium]\n[(F)ast]   [(N)o Delay]\n> ", 0);
+				
+				input = input ().toLowerCase ();
+				if (input.equals ("s") || input.equals ("slow"))
+					choice = 0;
+				else if (input.equals ("m") || input.equals ("medium"))
+					choice = 1;
+				else if (input.equals ("f") || input.equals ("fast"))
+					choice = 2;
+				else if (input.equals ("n") || input.equals ("no") || input.equals ("no delay"))
+					choice = 3;
+				else
+					slowPrint ("\nNot a valid choice\n\n", speeds [choice]);
+			}
+			else if (input.equals ("si"))
+			{
+				// Change text size
+				slowPrint ("\nNot implemented yet\n\n", 0);
+			}
+			else if (input.equals ("f") || input.equals ("finish"))
+				// Finish and return
+				break;
 			else
-				slowPrint ("Not a valid choice", speeds [choice]);
+			{
+				// Catch-all failsafe
+				slowPrint ("\nNot a valid choice\n\n", speeds [choice]);
+			}
+			
+			slowPrint ("\nWhat would you like to do?\n\n", speeds [choice]);
+			slowPrint ("[Text (Sp)eed]   [Text (Si)ze]   [(F)inish]\n> ", 0);
 		}
-		else if (input.equals ("si"))
-		{
-			System.out.println ("Not implemented yet.");
-		}
+		
 		
 		return choice;
 	}
 	
-	// Print things out in a slow, epic way
+	// Print str out in a slow, epic way, dependent on the delay passed in for len
+	// Also can print str without delay
+	// Used also in order to facilitate outputting to the UI
 	public static void slowPrint (String str, int len)
 	{
 		for (int i = 0; i < str.length (); i++)
@@ -1018,7 +1158,7 @@ public class DND
 		return ret;
 	}
  	// Gets input from a file, skipping a number of lines indicated by toskip
- 	// Used by loadChar to read from text file
+ 	// Used by loadChar to read from save file
  	static String input (File f, int toskip) throws IOException
  	{
  		BufferedReader br = new BufferedReader (new FileReader (f));
@@ -1031,7 +1171,7 @@ public class DND
  		return ret;
  	}
  	
- 	// Checks if input is any exit keyword
+ 	// Checks if input is any exit keyword, even ones not listed for player options
  	// returns true if not
  	static Boolean inputvalid (String input)
  	{

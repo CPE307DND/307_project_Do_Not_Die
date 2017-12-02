@@ -4,8 +4,13 @@ import java.util.Random;
 
 class Misc extends Treasure
 {
-	Misc () {}
-	
+	// All the different misc items you can get. Not at all balanced
+	private String [] types = {"Gold", "Brass Ring", "Copper Ring", "Flawed Pearl", "Silver Ring", "Pearl",
+			"Flawed Ruby", "Flawed Sapphire", "Flawed Emerald", "Gold Ring", "Copper Ingot", "Ruby",
+			"Sapphire", "Emerald", "Flawed Diamond", "Diamond", "Silver Ingot", "Gold Ingot", "Platinum Ingot"};
+	private int value, weight;
+	private String name;
+	// Randomizing constructor. Pass in the desired value of the misc object
 	public Misc (int val)
 	{
 		value = val;
@@ -62,23 +67,15 @@ class Misc extends Treasure
 		return name + "\nValue: " + value + "\nWeight: " + weight + "\n";
 	}
 	
+	// Checks if the name and the value are the same, because several items can have different values,
+	// despite being the same item
 	public Boolean equals (Misc other)
 	{
 		return (name.equals (other.name) && (value == other.value));
 	}
-	
-	public Boolean equals (Boots other)
-	{
-		return name.equals (other.getName ()) && value == other.getValue ();
-	}
-	
+
+	// Getters and no Setters because once it is set, it will not be changed
 	public int getValue () { return value; }
 	public int getWeight () { return weight; }
 	public String getName () { return name; }
-	
-	private String [] types = {"Gold", "Brass Ring", "Copper Ring", "Flawed Pearl", "Silver Ring", "Pearl",
-			"Flawed Ruby", "Flawed Sapphire", "Flawed Emerald", "Gold Ring", "Copper Ingot", "Ruby",
-			"Sapphire", "Emerald", "Flawed Diamond", "Diamond", "Silver Ingot", "Gold Ingot", "Platinum Ingot"};
-	private int value, weight;
-	private String name;
 }

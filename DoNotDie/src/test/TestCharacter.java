@@ -19,7 +19,7 @@ public class TestCharacter
 		underdamage = 1;
 		overheals = 1000;
 		underheals = 1;
-		p1 = new logic.Character ("Chaos", 2, true, 2, 2, 2, 2, 2, 2, 2, 1);
+		p1 = new logic.Character ("Chaos", 2, true, 2, 2, 2, 2, 2, 2, 2, 1, true);
 		item = new logic.Weapon (5, 0);
 	}
 	
@@ -64,22 +64,6 @@ public class TestCharacter
 	{
 		p1.setHealth (p1.getMaxHealth ());
 		assertEquals (false, p1.isDead ());
-	}
-
-	@Test
-	public void testInInventoryIsThere ()
-	{
-		p1.addToInventory (item);
-		assertEquals (0, p1.inInventory (item));
-	}
-
-	@Test
-	public void testInInventoryNotThere ()
-	{
-		ArrayList <logic.Treasure> hold = p1.inventory;
-		p1.inventory = new ArrayList <logic.Treasure> ();
-		assertEquals (-1, p1.inInventory (item));
-		p1.inventory = hold;
 	}
 
 	@Test
