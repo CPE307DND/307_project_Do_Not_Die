@@ -757,11 +757,28 @@ public class DND
 		
 		// Create and save character
 		player = new Character (name, race, gender, Str, End, Int, Wil, Agl, Spd, Lck, 1, true);
-		saveChar (player);
-		
+		if(!isCharExist(player)){
+			saveChar (player);
+		}
+
 		// Return character so that it will be selected for the user to simply finish
 		return player;
 	}
+
+	static boolean isCharExist(Character c){
+		Character player;
+		boolean isExist = false;
+		for (int i = 0; i < 3; i++)
+		{
+			player = loadChar (i);
+			if (player != null) {
+				isExist = Character.areEqual(c,player);
+				if(isExist) break;
+			}
+		}
+		return isExist;
+	}
+
 	// Output char to the txt file, if the max of 3 saved characters is not met
 	static void saveChar (Character c)
 	{
