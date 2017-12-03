@@ -40,6 +40,14 @@ public class Character implements Comparable <Character>
 		level = lvl;
 		int rand;
 		
+		Strength = STR;
+		Endurance = END;
+		Intelligence = INT;
+		Willpower = WIL;
+		Agility = AGL;
+		Speed = SPD;
+		Luck = LCK;
+		
 		if (r == 1)
 		{
 			AC = 3;
@@ -47,13 +55,12 @@ public class Character implements Comparable <Character>
 			gender = g;
 			if (edit)
 			{
-				Strength = STR - 2;
-				Endurance = END;
-				Intelligence = INT + 5;
-				Willpower = WIL + 5;
-				Agility = AGL + 2;
-				Speed = SPD + 1;
-				Luck = LCK + 2;
+				Strength -= 2;
+				Intelligence += 5;
+				Willpower += 5;
+				Agility += 2;
+				Speed += 1;
+				Luck += 2;
 			}
 			
 			rand = roller.nextInt (2);
@@ -116,13 +123,13 @@ public class Character implements Comparable <Character>
 			gender = g;
 			if (edit)
 			{
-				Strength = STR + 4;
-				Endurance = END + 3;
-				Intelligence = INT - 3;
-				Willpower = WIL - 4;
-				Agility = AGL - 4;
-				Speed = SPD - 4;
-				Luck = LCK - 1;
+				Strength += 4;
+				Endurance += 3;
+				Intelligence -= 3;
+				Willpower -= 4;
+				Agility -= 4;
+				Speed -= 4;
+				Luck -= 1;
 			}
 			
 			rand = roller.nextInt (2);
@@ -182,13 +189,13 @@ public class Character implements Comparable <Character>
 			gender = g;
 			if (edit)
 			{
-				Strength = STR - 7;
-				Endurance = END - 7;
-				Intelligence = INT + 7;
-				Willpower = WIL + 6;
-				Agility = AGL - 4;
-				Speed = SPD - 4;
-				Luck = LCK + 4;
+				Strength -= 7;
+				Endurance -= 7;
+				Intelligence += 7;
+				Willpower += 6;
+				Agility -= 4;
+				Speed -= 4;
+				Luck += 4;
 			}
 			
 			rand = roller.nextInt (2);
@@ -246,13 +253,13 @@ public class Character implements Comparable <Character>
 			gender = g;
 			if (edit)
 			{
-				Strength = STR + 3;
-				Endurance = END + 1;
-				Intelligence = INT - 2;
-				Willpower = WIL - 3;
-				Agility = AGL - 1;
-				Speed = SPD - 3;
-				Luck = LCK + 2;
+				Strength += 3;
+				Endurance += 1;
+				Intelligence -= 2;
+				Willpower -= 3;
+				Agility -= 1;
+				Speed -= 3;
+				Luck += 2;
 			}
 			
 			rand = roller.nextInt (2);
@@ -310,13 +317,13 @@ public class Character implements Comparable <Character>
 			gender = g;
 			if (edit)
 			{
-				Strength = STR + 5;
-				Endurance = END + 6;
-				Intelligence = INT + 4;
-				Willpower = WIL - 5;
-				Agility = AGL - 3;
-				Speed = SPD + 3;
-				Luck = LCK + 3;
+				Strength += 5;
+				Endurance += 6;
+				Intelligence += 4;
+				Willpower -= 5;
+				Agility -= 3;
+				Speed += 3;
+				Luck += 3;
 			}
 			
 			rand = roller.nextInt (2);
@@ -375,13 +382,13 @@ public class Character implements Comparable <Character>
 			gender = g;
 			if (edit)
 			{
-				Strength = STR + 7;
-				Endurance = END + 8;
-				Intelligence = INT - 10;
-				Willpower = WIL - 7;
-				Agility = AGL - 5;
-				Speed = SPD + 4;
-				Luck = LCK - 4;
+				Strength += 7;
+				Endurance += 8;
+				Intelligence -= 10;
+				Willpower -= 7;
+				Agility -= 5;
+				Speed += 4;
+				Luck -= 4;
 			}
 			
 			rand = roller.nextInt (2);
@@ -440,13 +447,11 @@ public class Character implements Comparable <Character>
 			gender = g;
 			if (edit)
 			{
-				Strength = STR;
-				Endurance = END + 2;
-				Intelligence = INT - 1;
-				Willpower = WIL + 1;
-				Agility = AGL + 3;
-				Speed = SPD;
-				Luck = LCK + 3;
+				Endurance += 2;
+				Intelligence -= 1;
+				Willpower += 1;
+				Agility += 3;
+				Luck += 3;
 			}
 			
 			rand = roller.nextInt (2);
@@ -504,13 +509,9 @@ public class Character implements Comparable <Character>
 			gender = g;
 			if (edit)
 			{
-				Strength = STR;
-				Endurance = END;
-				Intelligence = INT;
-				Willpower = WIL;
-				Agility = AGL + 8;
-				Speed = SPD + 8;
-				Luck = LCK + 6;
+				Agility += 8;
+				Speed += 8;
+				Luck += 6;
 			}
 			
 			rand = roller.nextInt (2);
@@ -564,13 +565,13 @@ public class Character implements Comparable <Character>
 			gender = g;
 			if (edit)
 			{
-				Strength = STR + 1;
-				Endurance = END - 2;
-				Intelligence = INT + 3;
-				Willpower = WIL + 2;
-				Agility = AGL - 3;
-				Speed = SPD - 3;
-				Luck = LCK + 7;
+				Strength += 1;
+				Endurance -= 2;
+				Intelligence += 3;
+				Willpower += 2;
+				Agility -= 3;
+				Speed -= 3;
+				Luck += 7;
 			}
 			
 			rand = roller.nextInt (2);
@@ -627,16 +628,6 @@ public class Character implements Comparable <Character>
 			AC = 5;
 			race = "Human";
 			gender = g;
-			if (edit)
-			{
-				Strength = STR;
-				Endurance = END;
-				Intelligence = INT;
-				Willpower = WIL;
-				Agility = AGL;
-				Speed = SPD;
-				Luck = LCK;
-			}
 			
 			rand = roller.nextInt (2);
 			if (gender)
@@ -748,8 +739,14 @@ public class Character implements Comparable <Character>
 	// Prints out the stats of the char
 	public String printStats ()
 	{
-		return "STR: " + Strength + "\nEND: " + Endurance + "\nINT: " + Intelligence +
-				"\nWIL: " + Willpower + "\nAGL: " + Agility + "\nSPD: " + Speed +  "\nLCK: " + Luck + "\n";
+		return String.format ("%12s:%4d\n", "Strength", Strength) +
+			   String.format ("%12s:%4d\n", "Endurance", Endurance) +
+			   String.format ("%12s:%4d\n", "Intelligence", Intelligence) +
+			   String.format ("%12s:%4d\n", "Willpower", Willpower) +
+			   String.format ("%12s:%4d\n", "Agility", Agility) +
+			   String.format ("%12s:%4d\n", "Speed", Speed) +
+			   String.format ("%12s:%4d\n", "Luck", Luck) +
+			   String.format ("%12s:%4d\n", "Level", level);
 	}
 	// Prints out the description of the enemy
 	public void printDescription (int len) { DND.slowPrint ("\n" + description, len); }
@@ -844,7 +841,8 @@ public class Character implements Comparable <Character>
 			return -1;
 	}
 	// Checks if this char equals another
-	/* Based off race and health, because enemies don't have names, so that's risky,
+	/*
+	 * Based off race and health, because enemies don't have names, so that's risky,
 	 * and health should be the most volatile field, so if two are the same,
 	 * it's likely they belong to the same entity
 	*/

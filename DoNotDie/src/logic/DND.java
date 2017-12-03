@@ -25,8 +25,8 @@ public class DND
 		Character p1 = null;
 		String input = "";
 		String prompt = "";
-		String BASEMSG = "\nWhat do you want to do?\n[(I)nspect]        [I(N)ventory]      " +
-				"[(S)ee Stats]                [(Q)uit]\n";
+		String BASEMSG = "\nWhat do you want to do?\n[(I)nspect]         [I(N)ventory]       " +
+				"[(S)ee Stats]       [(Q)uit]\n";
 		String RGTMSG = "[Move (R)ight]";
 		String LEFMSG = "[Move (L)eft]";
 		String UPMSG = "[Move (U)p]";
@@ -50,7 +50,7 @@ public class DND
 			if (input.equals ("c"))
 			{
 				// Choose Character
-				p1 = chooseChar (textspeeds [textchoice]);
+				p1 = chooseChar (textspeeds [textchoice], p1);
 				slowPrint ("\nWhat would you like to do?\n\n", textspeeds [textchoice]);
 				slowPrint ("[(C)hoose Character]   [C(H)oose Map]   [(P)lay]\n[(S)ettings]           [(Q)uit]\n> ", 0);
 			}
@@ -74,7 +74,7 @@ public class DND
 				if (p1 == null)
 				{
 					slowPrint ("\nHey, you need to choose your character!\n", textspeeds [textchoice]);
-					p1 = chooseChar (textspeeds [textchoice]);
+					p1 = chooseChar (textspeeds [textchoice], p1);
 					break;
 				}
 				else
@@ -112,9 +112,9 @@ public class DND
 			for (int i = 0; i < map.current.connections.length; i++)
 			{
 				if (map.current.connections [i] >= 0)
-					prompt += String.format ("%-19s", msgs [i]);
+					prompt += String.format ("%-20s", msgs [i]);
 			}
-			slowPrint (prompt + "\n> ", textspeeds [textchoice]);
+			slowPrint (prompt + "\n> ", 0);
 			input = input ().toLowerCase ();
 			
 			// Check if user wants to quit. If yes, exit loop, so game ends, if no, continue as normal
@@ -126,7 +126,8 @@ public class DND
 				case ("s"):
 				{
 					// Print player stats
-					slowPrint (p1.printStats () + "\n", textspeeds [textchoice]);
+					slowPrint ("Stats:\n", textspeeds [textchoice]);
+					slowPrint ("p1.printStats () + \n", 0);
 					break;
 				}
 				case ("i"):
@@ -250,11 +251,11 @@ public class DND
 	}
 	
 	// Char selection driver
-	static Character chooseChar (int len)
+	static Character chooseChar (int len, Character p1)
 	{
 		String input;
 		int choice = -1;
-		Character player = null;
+		Character player = p1;
 
 		slowPrint ("\nWhat would you like to do?\n\n", len);
 		slowPrint ("[(N)ew Character]      [(C)hoose Character]\n[(D)elete Character]   [(F)inish]\n> ", 0);
@@ -394,7 +395,7 @@ public class DND
 					
 					// Load the corresponding char
 					if ((player = loadChar (choice)) != null)
-						input = null;
+						break;
 					else
 						slowPrint ("\nThat's not a valid choice.\n> ", len);
 				}
@@ -746,8 +747,8 @@ public class DND
 			slowPrint (String.format ("%14s%2d\n", "Willpower: ", Wil), 0);
 			slowPrint (String.format ("%14s%2d\n", "Agility: ", Agl), 0);
 			slowPrint (String.format ("%14s%2d\n", "Speed: ", Spd), 0);
-			slowPrint (String.format ("%14s%2d\n> ", "Luck: ", Lck), 0);
-			slowPrint ("[(Y)es / (N)o]\n> ", 0);
+			slowPrint (String.format ("%14s%2d\n", "Luck: ", Lck), 0);
+			slowPrint ("[(Y)es]   [(N)o]\n> ", 0);
 			
 			if ((input = input ().toLowerCase ()).equals ("y") || input.equals ("yes"))
 				retry = false;
@@ -757,7 +758,11 @@ public class DND
 		
 		// Create and save character
 		player = new Character (name, race, gender, Str, End, Int, Wil, Agl, Spd, Lck, 1, true);
-		saveChar (player);
+		
+		if (!charExists (player))
+			saveChar (player);
+		else
+			slowPrint ("\nThis character exists already. I'm not going to save them twice.\n", len);
 		
 		// Return character so that it will be selected for the user to simply finish
 		return player;
@@ -835,33 +840,26 @@ public class DND
 	{
 		Path save = Paths.get ("saved_chars.txt");
 		Character load = null;
-
+		
 		// Change the input index to reflect the number of lines that must be skipped
 		// Each char takes up 11 lines in the save file
-		num *= 11;
+		int i = num * 11;
+		
 		// Go through each set of 11 lines and build a new Char out of them, without re-editing the stats
 		try
 		{
-			for (int i = 0; i <= num; )
-			{
-				if (input (save.toFile (), i) != null)
-				{
-					load = new Character (input (save.toFile (), i),
-							Integer.parseInt (input (save.toFile (), i + 1)),
-							Boolean.parseBoolean (input (save.toFile (), i + 2)),
-							Integer.parseInt (input (save.toFile (), i + 3)),
-							Integer.parseInt (input (save.toFile (), i + 4)),
-							Integer.parseInt (input (save.toFile (), i + 5)),
-							Integer.parseInt (input (save.toFile (), i + 6)),
-							Integer.parseInt (input (save.toFile (), i + 7)),
-							Integer.parseInt (input (save.toFile (), i + 8)),
-							Integer.parseInt (input (save.toFile (), i + 9)),
-							Integer.parseInt (input (save.toFile (), i + 10)), false);
-					i += 11;
-				}
-				else
-					return null;
-			}
+			if (input (save.toFile (), i) != null)
+				load = new Character (input (save.toFile (), i),
+						Integer.parseInt (input (save.toFile (), i + 1)),
+						Boolean.parseBoolean (input (save.toFile (), i + 2)),
+						Integer.parseInt (input (save.toFile (), i + 3)),
+						Integer.parseInt (input (save.toFile (), i + 4)),
+						Integer.parseInt (input (save.toFile (), i + 5)),
+						Integer.parseInt (input (save.toFile (), i + 6)),
+						Integer.parseInt (input (save.toFile (), i + 7)),
+						Integer.parseInt (input (save.toFile (), i + 8)),
+						Integer.parseInt (input (save.toFile (), i + 9)),
+						Integer.parseInt (input (save.toFile (), i + 10)), false);
 		}
 		catch (IOException e)
 		{
@@ -869,6 +867,26 @@ public class DND
 		}
 		
 		return load;
+	}
+	// Method to check if a char is a duplicate
+	// Used by saveChar
+	static boolean charExists (Character c)
+	{
+ 		Character player;
+ 		boolean exists = false;
+ 		
+ 		for (int i = 0; i < 3; i++)
+ 		{
+ 			player = loadChar (i);
+ 			
+ 			if (player != null)
+ 			{
+ 				exists = Character.areEqual (c, player);
+ 				if (exists)
+ 					break;
+ 			}
+ 		}
+ 		return exists;
 	}
 	
 	// Battle driver method
