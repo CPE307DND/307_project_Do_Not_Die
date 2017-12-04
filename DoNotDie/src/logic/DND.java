@@ -34,7 +34,7 @@ public class DND
 		String DWNMSG = "[Move (D)own]";
 		String CTRMSG = "[Move (F)orward]";
 		String BCKMSG = "[Move (B)ackward]";
-		String DIFFICULTY = "[(E)asy]\t[(M)edium]\t[(H)ard]";
+		String DIFFICULTY = "[(E)asy]   [(M)edium]   [(H)ard]\n";
 		String [] msgs = {BCKMSG, LEFMSG, CTRMSG, RGTMSG, UPMSG, DWNMSG};
 		int choice;
 		int textchoice = 3;
@@ -145,11 +145,15 @@ public class DND
 					// If room has treasures, list them and allow player to pick one up per inspect action
 					if (map.current.hasTreasures ())
 					{
+						slowPrint ("\nWhat do you want to pick up?\n\n", textspeeds [textchoice]);
 						slowPrint ("Treasures:\n", textspeeds [textchoice]);
 						map.current.listTreasures ();
-						slowPrint ("What do you want to pick up?\n> ", textspeeds [textchoice]);
+						slowPrint ("B: Back\n> ", textspeeds [textchoice]);
+						
 						while (inputvalid (input = input()))
 						{
+							if (input.equals ("b") || input.equals ("back"))
+								break;
 							try
 							{
 								choice = Integer.parseInt (input);
@@ -430,8 +434,8 @@ public class DND
 			}
 			else if (input.equals ("dev"))
 			{
-				// For speeding up the dev process, use a god strength char
-				return new Character ("Chaos", 0, true, 200, 2, 2, 2, 2, 2, 2, 2, true);
+				// For speeding up the dev process, use a god stat char
+				return new Character ("Chaos", 0, true, 200, 40, 40, 40, 40, 40, 40, 40, false);
 			}
 			else
 			{
@@ -917,6 +921,7 @@ public class DND
 		int roll = 0;
 		int selected;
 		int maxinit;
+		int dmg;
 		String input = "";
 		
 		// Put player and enemies into an array for the turn utility
@@ -1007,7 +1012,7 @@ public class DND
 						for (int i = 0; i < enemies.length && enemies [i] != null; i++)
 							if (!map.current.enemyDead (enemies [i]))
 								slowPrint (i + ": " + enemies [i].printEnemy () + "\n", 0);
-						slowPrint ("[(Q)uit]\n> ", 0);
+						slowPrint (String.format ("Q: %11s\n> ", "Quit"), 0);
 						
 						// Loop to ensure an enemy is selected correctly
 						while (inputvalid (input = input ().toLowerCase ()))
@@ -1052,20 +1057,40 @@ public class DND
 						
 						// Roll vs. AC and attack if the roll is good enough
 						roll = p1.rolld20 ();
-						slowPrint ("\nYou rolled " + roll + " verses the " + enemy.getRace () + "'s AC\n", len);
+						slowPrint ("\nYou rolled " + roll + " versus the " + enemy.getRace () + "'s AC,\n", len);
+						
 						if (roll > enemy.getAC ())
 						{
-							slowPrint ("Attacked for " + p1.getDamage () + "\n", len);
-							if (enemy.attacked (p1.getDamage ()))
+							slowPrint ("\nExcellent, that's a success!\nNow roll for damage.\n", len);
+							roll = p1.rolld20 ();
+							if (roll == 20)
+							{
+								slowPrint ("\nCritical success! Double damage!\n", len);
+								dmg  = p1.getDamage () * 2;
+							}
+							else if (roll == 1)
+							{
+								slowPrint ("\nAw man, critical failure! Half damage!\n", len);
+								dmg  = p1.getDamage () / 2;
+							}
+							else
+							{
+								dmg = p1.getDamage ();
+							}
+							
+							slowPrint ("Attacked for " + dmg + "\n", len);
+							if (enemy.attacked (dmg))
 							{
 								slowPrint ("\n\nThe weapon swung true\nThe " +
 										enemy.getRace () + " fell\nA fatal blow\nTo the left pinky toe.\n\n", len);
 							}
 							else
+							{
 								slowPrint (enemy.getRace () + " has " + enemy.getHealth () + " health left.\n", len);
+							}
 						}
 						else
-							slowPrint ("That ain't gonna cut it.\n", len);
+							slowPrint ("That ain't gonna cut it, sorry.\n", len);
 						input = "";
 						break;
 					}

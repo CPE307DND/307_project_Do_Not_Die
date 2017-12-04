@@ -775,17 +775,83 @@ public class Character implements Comparable <Character>
 	
 	// Die rolling methods: effectively rolls a die of the number of sides
 	// 20-sided die
-	public int rolld20 () { return roller.nextInt (20) + 1; }
+	public int rolld20 ()
+	{
+		int roll;
+		roll = 1 + roller.nextInt (20) + (Luck / 2);
+		
+		if (roll > 20)
+			return 20;
+		else if (roll < 1)
+			return 1;
+		else
+			return roll;
+	}
 	// 12-sided die
-	public int rolld12 () { return roller.nextInt (12) + 1; }
+	public int rolld12 ()
+	{
+		int roll;
+		roll = 1 + roller.nextInt (12) + (Luck / 2);
+		
+		if (roll > 12)
+			return 12;
+		else if (roll < 1)
+			return 1;
+		else
+			return roll;
+	}
 	// 10-sided die
-	public int rolld10 () { return roller.nextInt (10) + 1; }
+	public int rolld10 ()
+	{
+		int roll;
+		roll = 1 + roller.nextInt (10) + (Luck / 2);
+		
+		if (roll > 10)
+			return 10;
+		else if (roll < 1)
+			return 1;
+		else
+			return roll;
+	}
 	// 8-sided die
-	public int rolld8 () { return roller.nextInt (8) + 1; }
+	public int rolld8 ()
+	{
+		int roll;
+		roll = 1 + roller.nextInt (8) + (Luck / 2);
+		
+		if (roll > 8)
+			return 8;
+		else if (roll < 1)
+			return 1;
+		else
+			return roll;
+	}
 	// 6-sided die
-	public int rolld6 () { return roller.nextInt (6) + 1; }
+	public int rolld6 ()
+	{
+		int roll;
+		roll = 1 + roller.nextInt (6) + (Luck / 2);
+		
+		if (roll > 6)
+			return 6;
+		else if (roll < 1)
+			return 1;
+		else
+			return roll;
+	}
 	// 4-sided die
-	public int rolld4 () { return roller.nextInt (4) + 1; }
+	public int rolld4 ()
+	{
+		int roll;
+		roll = 1 + roller.nextInt (4) + (Luck / 2);
+		
+		if (roll > 4)
+			return 4;
+		else if (roll < 1)
+			return 1;
+		else
+			return roll;
+	}
 	
 	// Inventory management methods
 	// Removes an item from the player's inventory, if there. Returns true if it was there, false if not
