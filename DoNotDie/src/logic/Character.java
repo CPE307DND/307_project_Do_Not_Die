@@ -803,13 +803,13 @@ public class Character implements Comparable <Character>
 			return false;
 	}
 	// Prints out the players whole inventory, if there, or an empty inventory message if nothing
-	public void inventoryCheck ()
+	public void inventoryCheck (int len)
 	{
 		if (inventory.size () > 0)
 			for (int i = 0; i < inventory.size (); i++)
-				System.out.println (inventory.get (i));
+				DND.slowPrint (inventory.get (i) + "\n", len);
 		else
-			System.out.println ("You have nothing in your inventory.\n");
+			DND.slowPrint ("You have nothing in your inventory.\n\n", len);
 	}
 	// Checks if an item is in the player's inventory, returns the index of it in inventory if there, or -1 if not
 	// Internal method used by removeFromInventory

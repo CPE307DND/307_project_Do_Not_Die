@@ -18,15 +18,16 @@ import java.util.concurrent.TimeUnit;
 
 public class DND
 {
-	// Main game driver. Makes calls to all other driver methods
+	// Main game driver
+	// Makes calls to all other driver methods
 	public static void main (String [] args)
 	{
 		Map map = new Map ();
 		Character p1 = null;
 		String input = "";
 		String prompt = "";
-		String BASEMSG = "\nWhat do you want to do?\n[(I)nspect]         [I(N)ventory]       " +
-				"[(S)ee Stats]       [(Q)uit]\n";
+		String BASEMSG = "\nWhat do you want to do?\n";
+		String BASEOPTIONS = "[(I)nspect]         [I(N)ventory]       [(S)ee Stats]       [(Q)uit]\n";
 		String RGTMSG = "[Move (R)ight]";
 		String LEFMSG = "[Move (L)eft]";
 		String UPMSG = "[Move (U)p]";
@@ -43,30 +44,28 @@ public class DND
 				"We hope you enjoy our game!! :D\n\n", textspeeds [textchoice]);
 		
 		// Main menu loop
-		slowPrint ("\nWhat would you like to do?\n\n", textspeeds [textchoice]);
-		slowPrint ("[(C)hoose Character]   [C(H)oose Map]   [(P)lay]\n[(S)ettings]           [(Q)uit]\n> ", 0);
-		while (inputvalid (input = input ().toLowerCase ()))
+		while (inputvalid (input))
 		{
+			slowPrint ("\nWhat would you like to do?\n\n", textspeeds [textchoice]);
+			slowPrint (String.format ("%-23s%-23s%-23s\n%-23s%-23s%-23s\n> ",
+					"[(C)hoose Character]", "[C(H)oose Map]", "[(S)ettings]",
+					"[(P)lay]", "[(T)utorial]", "[(Q)uit]"), 0);
+			input = input ().toLowerCase ();
+			
 			if (input.equals ("c"))
 			{
 				// Choose Character
 				p1 = chooseChar (textspeeds [textchoice], p1);
-				slowPrint ("\nWhat would you like to do?\n\n", textspeeds [textchoice]);
-				slowPrint ("[(C)hoose Character]   [C(H)oose Map]   [(P)lay]\n[(S)ettings]           [(Q)uit]\n> ", 0);
 			}
 			else if (input.equals ("h"))
 			{
 				// Choose Map
-				slowPrint ("\nCurrently unimplemented\n\n", 0);
-				slowPrint ("\nWhat would you like to do?\n\n", textspeeds [textchoice]);
-				slowPrint ("[(C)hoose Character]   [C(H)oose Map]   [(P)lay]\n[(S)ettings]           [(Q)uit]\n> ", 0);
+				slowPrint ("\nCurrently unimplemented\n", 0);
 			}
 			else if (input.equals ("s"))
 			{
 				// Change Settings
 				textchoice = changeSettings (textchoice);
-				slowPrint ("\nWhat would you like to do?\n\n", textspeeds [textchoice]);
-				slowPrint ("[(C)hoose Character]   [C(H)oose Map]   [(P)lay]\n[(S)ettings]           [(Q)uit]\n> ", 0);
 			}
 			else if (input.equals ("p"))
 			{
@@ -75,6 +74,8 @@ public class DND
 				{
 					slowPrint ("\nHey, you need to choose your character!\n", textspeeds [textchoice]);
 					p1 = chooseChar (textspeeds [textchoice], p1);
+					if (p1 == null)
+						continue;
 					break;
 				}
 				else
@@ -83,8 +84,14 @@ public class DND
 					break;
 				}
 			}
+			else if (input.equals ("t") || input.equals ("tutorial"))
+			{
+				slowPrint ("\nNot yet implemented\n", textspeeds [textchoice]);
+			}
+			else if (input.equals ("q") || input.equals ("quit"))
+				break;
 			else
-				slowPrint ("\nNot a choice, please retry:\n> ", 0);
+				slowPrint ("\nNot a choice\n", 0);
 		}
 		
 		// Commented out until implemented or deadline is reached
@@ -103,17 +110,18 @@ public class DND
 				else
 					slowPrint ("There is an enemy in the room, prepare to fight.\n\n", textspeeds [textchoice]);
 				
-				battle (p1, map);
+				battle (p1, map, textspeeds [textchoice]);
 			}
 			// Room is now cleared
 			
 			// Build string with all movement options and prompt user
-			prompt = BASEMSG;
+			prompt = BASEOPTIONS;
 			for (int i = 0; i < map.current.connections.length; i++)
 			{
 				if (map.current.connections [i] >= 0)
 					prompt += String.format ("%-20s", msgs [i]);
 			}
+			slowPrint (BASEMSG, textspeeds [textchoice]);
 			slowPrint (prompt + "\n> ", 0);
 			input = input ().toLowerCase ();
 			
@@ -127,7 +135,7 @@ public class DND
 				{
 					// Print player stats
 					slowPrint ("Stats:\n", textspeeds [textchoice]);
-					slowPrint ("p1.printStats () + \n", 0);
+					slowPrint (p1.printStats () + "\n", 0);
 					break;
 				}
 				case ("i"):
@@ -181,7 +189,7 @@ public class DND
 				}
 				case ("n"):
 				{
-					p1.inventoryCheck ();
+					p1.inventoryCheck (textspeeds [textchoice]);
 					break;
 				}
 				case ("b"):
@@ -251,6 +259,7 @@ public class DND
 	}
 	
 	// Char selection driver
+	// Char selection driver
 	static Character chooseChar (int len, Character p1)
 	{
 		String input;
@@ -258,7 +267,7 @@ public class DND
 		Character player = p1;
 
 		slowPrint ("\nWhat would you like to do?\n\n", len);
-		slowPrint ("[(N)ew Character]      [(C)hoose Character]\n[(D)elete Character]   [(F)inish]\n> ", 0);
+		slowPrint ("[(N)ew Character]      [(C)hoose Character]\n[(D)elete Character]   [(B)ack]\n> ", 0);
 		
 		// Main choose char loop
 		while (inputvalid (input = input ().toLowerCase ()))
@@ -407,17 +416,17 @@ public class DND
 				slowPrint ("You deleted: " + player + "\n", 0);
 				delChar (player);
 			}
-			else if (input.equals ("f") || input.equals ("finish"))
+			else if (input.equals ("b") || input.equals ("back"))
 			{
 				// Check if user has selected a char
-				// If no, redo loop. If yes, return them to menu
+				// If not, tell them they still have to, but return them anyway
 				if (player == null)
 				{
-					slowPrint ("Um, you have not selected a character...\nHow do you expect to play?\n" +
-							"Try again.\n", len );
+					slowPrint ("Um, you have not selected a character...\nEven if you don't do so now, " +
+							"you will still be forced to before you play.\n", len );
 				}
-				else
-					return player;
+				
+				return player;
 			}
 			else if (input.equals ("dev"))
 			{
@@ -428,15 +437,14 @@ public class DND
 			{
 				// Catch-all failsafe
 				slowPrint ("Invalid Input, please retry\n", len);
-				slowPrint ("\nWhat would you like to do?\n\n", len);
-				slowPrint ("[(N)ew Character]      [(C)hoose Character]\n[(D)elete Character]   [(F)inish]\n> ", 0);
 			}
 
 			slowPrint ("\nWhat would you like to do?\n\n", len);
-			slowPrint ("[(N)ew Character]      [(C)hoose Character]\n[(D)elete Character]   [(F)inish]\n> ", 0);
+			slowPrint ("[(N)ew Character]      [(C)hoose Character]\n[(D)elete Character]   [(B)ack]\n> ", 0);
 		}
 		return null;
 	}
+	// Create new char process
 	// Create new char process
 	static Character newChar (int len)
 	{
@@ -767,6 +775,7 @@ public class DND
 		// Return character so that it will be selected for the user to simply finish
 		return player;
 	}
+	// Output char to the text file, if the max of 3 saved chars is not met
 	// Output char to the txt file, if the max of 3 saved characters is not met
 	static void saveChar (Character c)
 	{
@@ -794,6 +803,7 @@ public class DND
 			}
 		}
 	}
+	// Will delete a char from the text file, if there
 	// Will delete a char from the txt file
 	static void delChar (Character c)
 	{
@@ -836,6 +846,8 @@ public class DND
 	}
 	// Load char from the txt file and return it, if there, return null if not
 	// Used by chooseChar, saveChar, and delChar
+	// Load char from the txt file and return it, if there, return null if not
+	// Used by chooseChar, saveChar, and delChar
 	static Character loadChar (int num)
 	{
 		Path save = Paths.get ("saved_chars.txt");
@@ -868,6 +880,8 @@ public class DND
 		
 		return load;
 	}
+	// Checks for the char in the text file, returns true if it's there
+	// Used by newChar before saving char
 	// Method to check if a char is a duplicate
 	// Used by saveChar
 	static boolean charExists (Character c)
@@ -892,7 +906,7 @@ public class DND
 	// Battle driver method
 	// Takes in the player, and the current map.
 	// Returns true if the player died
-	static Boolean battle (Character p1, Map map)
+	static Boolean battle (Character p1, Map map, int len)
 	{
 		Character enemy = null;
 		Character hold = null;
@@ -903,33 +917,35 @@ public class DND
 		int roll = 0;
 		int selected;
 		int maxinit;
-		int textchoice = 3;
-		int [] textspeeds = {120, 90, 60, 0};
 		String input = "";
 		
 		// Put player and enemies into an array for the turn utility
-		slowPrint ("You rolled " + p1.initiative () + " for initiative.\n", textspeeds [textchoice]);
+		slowPrint ("You rolled " + p1.initiative () + " for initiative.\n", len);
 		order [0] = p1;
 		for (int i = 0; i < map.current.numenemies; i++)
 		{
 			if (map.current.numenemies > 1)
 				slowPrint (map.current.enemies[i].getRace() + " " + i + " rolled " +
-			map.current.enemies [i].initiative () + " for initiative.\n", textspeeds [textchoice]);
+			map.current.enemies [i].initiative () + " for initiative.\n", len);
 			else
 				slowPrint ("The " + map.current.enemies [i].getRace() + " rolled " +
-			map.current.enemies [i].initiative () + " for initiative.\n", textspeeds [textchoice]);
+			map.current.enemies [i].initiative () + " for initiative.\n", len);
 			
 			order [i + 1] = map.current.enemies [i];
 		}
 		
-		// Reordering the array based on initiative rolls, higher rolls first, ties broken by race
+		// Reordering the array based on initiative rolls, higher rolls first, ties broken by race, then luck
 		for (int i = 0; i <= map.current.numenemies; i++)
 		{
 			maxinit = i;
 			for (int j = i; j <= map.current.numenemies && order [j] != null; j++)
 			{
+				// Try for initiative difference, break ties by race, then by luck
 				if (order [j].compareTo (order [maxinit]) > 0 ||
-						order [j].getRace ().compareTo (order [maxinit].getRace ()) < 0)
+						((order [j].compareTo (order [maxinit]) == 0) &&
+						(order [j].getRace ().compareTo (order [maxinit].getRace ()) < 0)) ||
+						((order [j].compareTo (order [maxinit]) == 0) &&
+								order [j].getLuck () > order [maxinit].getLuck ()))
 					maxinit = j;
 			}
 			hold = order [i];
@@ -953,13 +969,13 @@ public class DND
 		}
 		
 		
-		slowPrint ("\nThe order is:\n", textspeeds [textchoice]);
+		slowPrint ("\nThe order is:\n", len);
 		// Print the battle order
 		for (int i = 0; i < order.length && order [i] != null; i++)
 			if (order [i].getName () != null)
-				slowPrint (order [i].getName () + "\n", textspeeds [textchoice]);
+				slowPrint (order [i].getName () + "\n", len);
 			else
-				slowPrint (order [i].getRace () + "\n", textspeeds [textchoice]);
+				slowPrint (order [i].getRace () + "\n", len);
 		
 		
 		// Battle manager
@@ -968,7 +984,7 @@ public class DND
 			// Ensure no out of bounds exception or null pointer exception
 			if (turn >= order.length || order [turn] == null)
 			{
-				slowPrint ("\nTop of the order again.\n", textspeeds [textchoice]);
+				slowPrint ("\nTop of the order again.\n", len);
 				turn = 0;
 			}
 			
@@ -979,18 +995,19 @@ public class DND
 			{
 				while (!input.equals ("a") && !input.equals ("attack"))
 				{
-					slowPrint ("\nIt's your turn, what do you want to do?\n[(A)ttack]   [(C)heck Bag]" +
-							"   [(P)erception Check]\n> ", textspeeds [textchoice]);
+					slowPrint ("\nIt's your turn, what do you want to do?", len);
+					slowPrint ("\n[(A)ttack]   [(C)heck Bag]   [(P)erception Check]\n> ", 0);
 					input = input ().toLowerCase ();
 					
 					if (input.equals ("a") || input.equals ("attack"))
 					{
-						slowPrint ("\nAttack who?\n", textspeeds [textchoice]);
+						slowPrint ("\nAttack who?\n", len);
 						
 						// Print out list of living enemies
 						for (int i = 0; i < enemies.length && enemies [i] != null; i++)
 							if (!map.current.enemyDead (enemies [i]))
-								slowPrint (i + ": " + enemies [i].printEnemy () + "\n", textspeeds [textchoice]);
+								slowPrint (i + ": " + enemies [i].printEnemy () + "\n", 0);
+						slowPrint ("[(Q)uit]\n> ", 0);
 						
 						// Loop to ensure an enemy is selected correctly
 						while (inputvalid (input = input ().toLowerCase ()))
@@ -1001,12 +1018,10 @@ public class DND
 								// Input validation for index selection
 								if (selected >= enemies.length || enemies [selected] == null)
 								{
-									slowPrint ("Number not valid. Can you like be nice please?\n",
-											textspeeds [textchoice]);
+									slowPrint ("Number not valid. Can you like be nice please?\n", len);
 									for (int i = 0; i < enemies.length && enemies [i] != null; i++)
 										if (!map.current.enemyDead (enemies [i]))
-											slowPrint (i + ": " + enemies [i].printEnemy () + "\n",
-													textspeeds [textchoice]);
+											slowPrint (i + ": " + enemies [i].printEnemy () + "\n", 0);
 								}
 								else
 								{
@@ -1020,11 +1035,10 @@ public class DND
 								// Input validation for name selection
 								if (selected < 0)
 								{
-									slowPrint ("That's not an enemy. Play nice.\n", textspeeds [textchoice]);
+									slowPrint ("That's not an enemy. Play nice.\n", len);
 									for (int i = 0; i < enemies.length && enemies [i] != null; i++)
 										if (!map.current.enemyDead (enemies [i]))
-											slowPrint (i + ": " + enemies [i].printEnemy () + "\n",
-													textspeeds [textchoice]);
+											slowPrint (i + ": " + enemies [i].printEnemy () + "\n", 0);
 								}
 								else
 								{
@@ -1033,39 +1047,38 @@ public class DND
 								}
 							}
 						}
+						if (!inputvalid (input))
+							continue;
 						
 						// Roll vs. AC and attack if the roll is good enough
 						roll = p1.rolld20 ();
-						slowPrint ("\nYou rolled " + roll + " verses the " + enemy.getRace () + "'s AC\n",
-								textspeeds [textchoice]);
+						slowPrint ("\nYou rolled " + roll + " verses the " + enemy.getRace () + "'s AC\n", len);
 						if (roll > enemy.getAC ())
 						{
-							slowPrint ("Attacked for " + p1.getDamage () + "\n", textspeeds [textchoice]);
+							slowPrint ("Attacked for " + p1.getDamage () + "\n", len);
 							if (enemy.attacked (p1.getDamage ()))
 							{
 								slowPrint ("\n\nThe weapon swung true\nThe " +
-										enemy.getRace () + " fell\nA fatal blow\nTo the left pinky toe.\n\n",
-										textspeeds [textchoice]);
+										enemy.getRace () + " fell\nA fatal blow\nTo the left pinky toe.\n\n", len);
 							}
 							else
-								slowPrint (enemy.getRace () + " has " + enemy.getHealth () + " health left.\n",
-										textspeeds [textchoice]);
+								slowPrint (enemy.getRace () + " has " + enemy.getHealth () + " health left.\n", len);
 						}
 						else
-							slowPrint ("That ain't gonna cut it.\n", textspeeds [textchoice]);
+							slowPrint ("That ain't gonna cut it.\n", len);
 						input = "";
 						break;
 					}
 					else if (input.equals ("c") || input.equals ("check") || input.equals ("check bag"))
 						// Check inventory
-						p1.inventoryCheck ();
+						p1.inventoryCheck (len);
 					else if (input.equals ("p") || input.equals ("perception check"))
 						// Check enemy description. Has no use other than amusement
 						for (int i = 0; i < enemies.length; i++)
-							enemies [i].printDescription (textspeeds [textchoice]);
+							enemies [i].printDescription (len);
 					else
 						// Catch-all failsafe
-						slowPrint ("Invalid input.\n", textspeeds [textchoice]);
+						slowPrint ("Invalid input.\n", len);
 				}
 			}
 			else
@@ -1079,13 +1092,13 @@ public class DND
 				else
 					// Enemy turn
 					// If the player dies, break out of loop;
-					slowPrint ("\nIt's " + order [turn].getRace () + "'s turn.\n", textspeeds [textchoice]);
+					slowPrint ("\nIt's " + order [turn].getRace () + "'s turn.\n", len);
 			}
 			
 			// Standard wraparound to get back to index 0, start the order over again
 			if ((turn + 1) > order.length)
 			{
-				slowPrint ("\nTop of the order again.\n", textspeeds [textchoice]);
+				slowPrint ("\nTop of the order again.\n", len);
 				turn = 0;
 			}
 			else
@@ -1096,6 +1109,7 @@ public class DND
 		return p1.isDead ();
 	}
 	
+	// Returns new text speed as that is all that is currently implemented
 	// Change text speed
 	// So far only functionality
 	static int changeSettings (int current)
@@ -1105,7 +1119,7 @@ public class DND
 		String input;
 		
 		slowPrint ("\nWhat would you like to do?\n\n", speeds [choice]);
-		slowPrint ("[Text (Sp)eed]   [Text (Si)ze]   [(F)inish]\n> ", 0);
+		slowPrint ("[Text (Sp)eed]   [Text (Si)ze]   [(B)ack]\n> ", 0);
 		
 		// Loop to ensure proper choice
 		while (inputvalid (input = input ().toLowerCase ()))
@@ -1114,26 +1128,47 @@ public class DND
 			{
 				// Change text delay
 				slowPrint ("\nOk, what speed do you want?\n", speeds [choice]);
-				slowPrint ("[(S)low]   [[(M)edium]\n[(F)ast]   [(N)o Delay]\n> ", 0);
+				slowPrint ("[(S)low]   [[(M)edium]\n[(F)ast]   [(N)o Delay]\n[(B)ack]\n> ", 0);
 				
-				input = input ().toLowerCase ();
-				if (input.equals ("s") || input.equals ("slow"))
-					choice = 0;
-				else if (input.equals ("m") || input.equals ("medium"))
-					choice = 1;
-				else if (input.equals ("f") || input.equals ("fast"))
-					choice = 2;
-				else if (input.equals ("n") || input.equals ("no") || input.equals ("no delay"))
-					choice = 3;
-				else
-					slowPrint ("\nNot a valid choice\n\n", speeds [choice]);
+				while (inputvalid (input))
+				{
+					input = input ().toLowerCase ();
+					if (input.equals ("s") || input.equals ("slow"))
+					{
+						choice = 0;
+						break;
+					}
+					else if (input.equals ("m") || input.equals ("medium"))
+					{
+						choice = 1;
+						break;
+					}
+					else if (input.equals ("f") || input.equals ("fast"))
+					{
+						choice = 2;
+						break;
+					}
+					else if (input.equals ("n") || input.equals ("no") || input.equals ("no delay"))
+					{
+						choice = 3;
+						break;
+					}
+					else if (input.equals ("b") || input.equals ("back"))
+						break;
+					else
+					{
+						slowPrint ("\nNot a valid choice\n\n", speeds [choice]);
+						slowPrint ("[(S)low]   [[(M)edium]\n[(F)ast]   [(N)o Delay]\n[(B)ack]\n> ", 0);
+					}
+				}
+				
 			}
 			else if (input.equals ("si"))
 			{
 				// Change text size
-				slowPrint ("\nNot implemented yet\n\n", 0);
+				slowPrint ("\nNot implemented yet\n", 0);
 			}
-			else if (input.equals ("f") || input.equals ("finish"))
+			else if (input.equals ("b") || input.equals ("back"))
 				// Finish and return
 				break;
 			else
@@ -1143,13 +1178,14 @@ public class DND
 			}
 			
 			slowPrint ("\nWhat would you like to do?\n\n", speeds [choice]);
-			slowPrint ("[Text (Sp)eed]   [Text (Si)ze]   [(F)inish]\n> ", 0);
+			slowPrint ("[Text (Sp)eed]   [Text (Si)ze]   [(B)ack]\n> ", 0);
 		}
 		
 		
 		return choice;
 	}
 	
+	// Print str out char by char with a delay in milliseconds given by len
 	// Print str out in a slow, epic way, dependent on the delay passed in for len
 	// Also can print str without delay
 	// Used also in order to facilitate outputting to the UI
@@ -1164,6 +1200,7 @@ public class DND
 		}
 	}
 	
+	// Input from user
 	// Gets input from the user, and returns it as a String
  	static String input ()
 	{
@@ -1175,6 +1212,8 @@ public class DND
 		
 		return ret;
 	}
+ 	// Reads from file
+ 	// Used by loadChar
  	// Gets input from a file, skipping a number of lines indicated by toskip
  	// Used by loadChar to read from save file
  	static String input (File f, int toskip) throws IOException
@@ -1188,7 +1227,7 @@ public class DND
  		br.close ();
  		return ret;
  	}
- 	
+ 	// Checks that the string is not an exit keyword
  	// Checks if input is any exit keyword, even ones not listed for player options
  	// returns true if not
  	static Boolean inputvalid (String input)
