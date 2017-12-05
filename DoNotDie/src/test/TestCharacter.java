@@ -23,7 +23,7 @@ public class TestCharacter
 		item = new logic.Weapon (5, 0);
 		room = new logic.Room (1, 1, 1, -1, -1, -1, -1, -1, -1);
 	}
-	
+
 	@Test
 	public void testAttackedOverkill ()
 	{

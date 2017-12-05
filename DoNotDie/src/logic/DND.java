@@ -108,7 +108,7 @@ public class DND
 		// Commented out until implemented or deadline is reached
 		/*slowPrint ("Set Difficulty:\n" + DIFFICULTY + "\n> ", textspeeds [textchoice]);
 		input = input ().toLowerCase ();*/
-		
+
 		// Main gameplay loop
 		while (inputvalid (input) && !p1.isDead() && !map.allCleared ())
 		{
@@ -123,6 +123,9 @@ public class DND
 				
 				battle (p1, map, textspeeds [textchoice]);
 			}
+			
+			if (p1.isDead ())
+				break;
 			// Room is now cleared
 			
 			// Build string with all movement options and prompt user
@@ -225,7 +228,7 @@ public class DND
 						{
 							slowPrint ("\nEquip what?\n", textspeeds [textchoice]);
 							p1.inventoryCheck (0);
-							slowPrint ("B: Back\n> ", 0);
+							slowPrint ("\nB: Back\n> ", 0);
 							
 							while (inputvalid (input = input ()))
 							{
@@ -267,8 +270,55 @@ public class DND
 						}
 						else if (input.equals ("u") || input.equals ("unequip"))
 						{
-							slowPrint ("\nNot implemented\n", 0);
-							break;
+							slowPrint ("\nUnequip what?\n\n", textspeeds [textchoice]);
+							p1.equippedCheck (true, 0);
+							slowPrint ("\nB: Back\n> ", 0);
+							
+							while (inputvalid (input = input ()))
+							{
+								if (input.equals ("b") || input.equals ("back"))
+									break;
+								try
+								{
+									choice = Integer.parseInt (input);
+									if (choice <= 5)
+									{
+										p1.unequip (choice);
+										break;
+									}
+									else
+									{
+										slowPrint ("\nThat's not an equipped item.\n" +
+												"Here's what's equipped:\n\n", textspeeds [textchoice]);
+										p1.equippedCheck (true, 0);
+									}
+								}
+								catch (NumberFormatException e)
+								{
+									choice = -1;
+									for (int i = 0; i < 5; i++)
+										if (p1.equipped [i].getName ().equals (input))
+										{
+											choice = i;
+											break;
+										}
+									
+									if (choice >= 0)
+									{
+										p1.unequip (choice);
+										break;
+									}
+									else
+									{
+										slowPrint ("\nThat's not an item in your inventory.\n" +
+												"Here's your inventory:\n\n", textspeeds [textchoice]);
+										p1.equippedCheck (true, 0);
+									}
+								}
+							}
+							
+							if (input.equals ("b") || input.equals ("back"))
+								break;
 						}
 						else if (input.equals ("vi") || input.equals ("view bag"))
 						{
@@ -276,13 +326,14 @@ public class DND
 						}
 						else if (input.equals ("v") || input.equals ("view equipped"))
 						{
-							p1.equippedCheck (textspeeds [textchoice]);
+							p1.equippedCheck (false, textspeeds [textchoice]);
 						}
 						else if (input.equals ("d") || input.equals ("drop"))
 						{
 							slowPrint ("\nNot implemented\n", 0);
-							break;
 						}
+						else if (input.equals ("b") || input.equals ("back"))
+							break;
 						else
 							slowPrint ("\nNot a valid choice", textspeeds [textchoice]);
 						
@@ -546,7 +597,6 @@ public class DND
 		}
 		return null;
 	}
-	// Create new char process
 	// Create new char process
 	static Character newChar (int len)
 	{
@@ -894,7 +944,6 @@ public class DND
 		return player;
 	}
 	// Output char to the text file, if the max of 3 saved chars is not met
-	// Output char to the txt file, if the max of 3 saved characters is not met
 	static void saveChar (Character c)
 	{
 		// Check for max chars save already
@@ -924,7 +973,6 @@ public class DND
 		}
 	}
 	// Will delete a char from the text file, if there
-	// Will delete a char from the txt file
 	static void delChar (Character c)
 	{
 		Character [] hold = new Character [3];
@@ -966,8 +1014,6 @@ public class DND
 	}
 	// Load char from the txt file and return it, if there, return null if not
 	// Used by chooseChar, saveChar, and delChar
-	// Load char from the txt file and return it, if there, return null if not
-	// Used by chooseChar, saveChar, and delChar
 	static Character loadChar (int num)
 	{
 		Path save = Paths.get ("saved_chars.txt");
@@ -1003,7 +1049,6 @@ public class DND
 	// Checks for the char in the text file, returns true if it's there
 	// Used by newChar before saving char
 	// Method to check if a char is a duplicate
-	// Used by saveChar
 	static boolean charExists (Character c)
 	{
  		Character player;
@@ -1231,21 +1276,112 @@ public class DND
 			}
 			else
 			{
-				// Double checking that the enemy isn't dead. If it is, skip it, if not, give it a turn
-				if (map.current.enemyDead (order [turn]))
-				{
-					turn++;
-					continue;
-				}
-				else {
-					// Enemy turn
-					// If the player dies, break out of loop;
-					
 					slowPrint ("\nIt's " + order [turn].getRace () + "'s turn.\n", len);
+					Character curEnemy = order[turn];
+					boolean enemyHit = false;
+					int enemyDmg = 0;
 					
-					//order[turn];
+					int attackRoll = curEnemy.rolld20();
+					slowPrint("The enemy rolled a " + attackRoll + " against your AC\n", len);
+					
+					//Handles the enemy's attack roll
+					if (attackRoll > p1.getAC())
+					{
+						enemyHit = true;
+					}
+					
+					//This handles an enemy's attack if they hit
+					if (enemyHit)
+					{
+						if(attackRoll == 20)
+						{
+							slowPrint("Damn Son! They got you gooooooooood!\n", len);
+							enemyDmg = curEnemy.getDamage() / 2;
+						}
+						else
+						{
+							enemyDmg = curEnemy.getDamage() / 3;
+						}
+						
+						p1.attacked(enemyDmg);
+						slowPrint("You've Been Struck for " + enemyDmg + "! You should get that checked!\n\n", len);
+								
+						//The player just died and handles what kind of enemy killed them
+						if(p1.getHealth() == 0)
+						{
+							if(curEnemy.getRace() == "Human")
+							{
+								slowPrint("The Human rolls into your blind spot and swings his sword to end your life.\n"
+										+ "Unfortunately for you, he has succeeded.\n", len);
+							}
+							else if(curEnemy.getRace() == "Elf")
+							{
+								slowPrint("In all the majesticness of an Elf's swiftness, this Elf raises his bow\n"
+										+ "and looses two arrows straight in your heart!\n"
+										+ "Today is not your day...\n", len);
+							}
+							else if(curEnemy.getRace() == "Orc")
+							{
+								slowPrint("The brute Orc rushes you, slams you against a wall, lifts you into the "
+										+ "air, tears you in half, and flings your carcases across the room!\n"
+										+ "The rats will feast tonight!\n", len); 
+							}
+							else if(curEnemy.getRace() == "Gnome")
+							{
+								slowPrint("This Gnome while small was quick because before you knew it, it had\n"
+										+ "sliced the back of both your knees and slit your throat!\n"
+										+ "You lay there bleeding out, watching as he robs you and skips away!", len);
+							}
+							else if(curEnemy.getRace() == "Dwarf")
+							{
+								slowPrint("This mighty Dwarf has gotten the best of you! Her mighty warcry offset\n"
+										+ "you just long enough so that her axe throw would meet its target... your face.\n", len);
+							}
+							else if(curEnemy.getRace() == "DragonBorn")
+							{
+								slowPrint("You swear the last thing you heard was FUS-RO-DA, but you get the faint\n"
+										+ "memory of also taking an arrow to the knee...\n", len);
+							}
+							else if(curEnemy.getRace() == "Half-Troll")
+							{
+								slowPrint("The Half-Troll removes its disguise to reveal three dwarfs who rush you\n"
+										+ "and kick you in the shins until you die of laughter!\n", len);
+							}
+							else if(curEnemy.getRace() == "Lizard-Folk")
+							{
+								slowPrint("After slashing your guts so they fall out, it knocks you onto the ground\n"
+										+ "with a tailwhip directly to the chest, and proceeds to eat your\n"
+										+ "insides like a fancy afternoon snack!", len);
+							}
+							else if(curEnemy.getRace() == "Cat-Folk")
+							{
+								slowPrint("Welp she clawed your face off... Still think cats are cute?\n", len);
+							}
+							else if(curEnemy.getRace() == "Tiefling")
+							{
+								slowPrint("The Tiefling shot a giant fireball at you turning you into a pile\n"
+										+ "of smouldering ashe! I told you it was a bad idea o say you were cold.\n", len);
+							}
+							else
+							{
+								slowPrint("You tripped and fell off a cliff while running away from the enemy like a little baby.\n"
+										+ "On the express way down the cliffside, you broke your face, and bent just about every\n"
+										+ "limb in your body in a direction it was never intended to go.\n", len);
+							}
+							slowPrint("You are dead. Game Over!\n\n", len);
+						}
+						//Print the player's health if they are not dead yet
+						else
+						{
+							slowPrint("Your new health is " + p1.getHealth() + "\n\n", len);
+						}
+					}
+					//The enemy's attack roll was not good enough to beat the player's AC
+					else
+					{
+						slowPrint("The enemy ain't got nothing on your AC!\n\n", len);
+					}
 				}
-			}
 			
 			// Standard wraparound to get back to index 0, start the order over again
 			if ((turn + 1) > order.length)
@@ -1338,7 +1474,6 @@ public class DND
 	}
 	
 	// Print str out char by char with a delay in milliseconds given by len
-	// Print str out in a slow, epic way, dependent on the delay passed in for len
 	// Also can print str without delay
 	// Used also in order to facilitate outputting to the UI
 	public static void slowPrint (String str, int len)
@@ -1373,7 +1508,6 @@ public class DND
 		return ret;
 	}
  	// Reads from file
- 	// Used by loadChar
  	// Gets input from a file, skipping a number of lines indicated by toskip
  	// Used by loadChar to read from save file
  	static String input (File f, int toskip) throws IOException
@@ -1396,7 +1530,6 @@ public class DND
 
  		return ret;
  	}
- 	// Checks that the string is not an exit keyword
  	// Checks if input is any exit keyword, even ones not listed for player options
  	// returns true if not
  	static Boolean inputvalid (String input)

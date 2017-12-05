@@ -67,8 +67,8 @@ public class Dagger extends Weapon
 			weight = 8;
 		}
 	}
-
-	// Exactly the same as Armor's equals, for redundancy
+	
+	// Prints out descriptive weapon statistics, as per the usual RPG style
 	public String toString ()
 	{
 		return name + "\nValue: " + value + "\nDamage: " + damage + "\nWeight: " + weight;

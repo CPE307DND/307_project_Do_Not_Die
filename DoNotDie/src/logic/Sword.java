@@ -67,8 +67,8 @@ public class Sword extends Weapon
 			weight = 25;
 		}
 	}
-
-	// Exactly the same as Weapon's toString, for redundancy
+	
+	// Prints out descriptive weapon statistics, as per the usual RPG style
 	public String toString ()
 	{
 		return name + "\nValue: " + value + "\nDamage: " + damage + "\nWeight: " + weight;

@@ -29,7 +29,7 @@ public class Character implements Comparable <Character>
 	private Random roller;
 	private String description;
 	
-	
+
 	// No default constructor because this cannot be randomized.
 	// Pass in the name, the race, the gender, all 7 stats in order, then whether to finalize based on race and gender
 	// edit gets passed false only when loading from the save file

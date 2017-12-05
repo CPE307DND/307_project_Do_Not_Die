@@ -95,8 +95,8 @@ public class Cuirass extends Armor
 			weight = 55;
 		}
 	}
-
-	// Exactly the same as Armor's toString, for redundancy
+	
+	// Prints out descriptive armor statistics, as per the usual RPG style
 	public String toString ()
 	{
 		return name + "\nValue: " + value + "\nArmor Rating: " + ar + "\nWeight: " + weight;
@@ -109,7 +109,7 @@ public class Cuirass extends Armor
 	}
 
 	// Getters and no Setters because once it is set, it will not be changed
-	// There will be no weapon decay in this game
+	// There will be no armor decay in this game
 	public int getAR () { return ar; }
 	public int getValue () { return value; }
 	public int getWeight () { return weight; }

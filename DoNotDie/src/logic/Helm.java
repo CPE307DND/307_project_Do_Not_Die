@@ -95,8 +95,8 @@ public class Helm extends Armor
 			weight = 6;
 		}
 	}
-
-	// Exactly the same as Armor's equals, for redundancy
+	
+	// Prints out descriptive armor statistics, as per the usual RPG style
 	public String toString ()
 	{
 		return name + "\nValue: " + value + "\nArmor Rating: " + ar + "\nWeight: " + weight;
