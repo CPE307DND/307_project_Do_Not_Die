@@ -1242,7 +1242,8 @@ public class DND
 					// If the player dies, break out of loop;
 					
 					slowPrint ("\nIt's " + order [turn].getRace () + "'s turn.\n", len);
-					order[turn].
+					
+					//order[turn];
 				}
 			}
 			
