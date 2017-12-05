@@ -21,6 +21,7 @@ public class TestCharacter
 		underheals = 1;
 		p1 = new logic.Character ("Chaos", 2, true, 2, 2, 2, 2, 2, 2, 2, 1, true);
 		item = new logic.Weapon (5, 0);
+		room = new logic.Room (1, 1, 1, -1, -1, -1, -1, -1, -1);
 	}
 	
 	@Test
@@ -70,14 +71,14 @@ public class TestCharacter
 	public void testRemoveFromInventoryIsThere ()
 	{
 		p1.addToInventory (item);
-		assertEquals (true, p1.removeFromInventory (item));
+		assertEquals (true, p1.removeFromInventory (room, item));
 	}
 
 	@Test
 	public void testRemoveFromInventoryNotThere ()
 	{
-		p1.removeFromInventory (item);
-		assertEquals (false, p1.removeFromInventory (item));
+		p1.removeFromInventory (room, item);
+		assertEquals (false, p1.removeFromInventory (room, item));
 	}
 	
 	@Test
@@ -119,4 +120,5 @@ public class TestCharacter
 	logic.Character p1;
 	int overdamage, underdamage, overheals, underheals;
 	logic.Treasure item;
+	logic.Room room;
 }

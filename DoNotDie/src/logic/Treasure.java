@@ -67,4 +67,5 @@ public class Treasure
 	public int getValue () { return value; }
 	public int getWeight () { return weight; }
 	public String getName () { return name; }
+	public Treasure getType () { return trs; }
 }

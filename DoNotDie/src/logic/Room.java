@@ -161,4 +161,27 @@ public class Room
 		treasures [numtreasures - 1] = null;
 		numtreasures--;
 	}
+	// Add a treasure to a room. Used when the Player drops an item
+	public Boolean addTreasure (Treasure item)
+	{
+		numtreasures++;
+		Treasure [] cpy;
+		
+		if (treasures == null || numtreasures >= treasures.length)
+		{
+			cpy = new Treasure [numtreasures];
+			for (int i = 0; i < treasures.length; i++)
+				cpy [i] = treasures [i];
+			
+			cpy [numtreasures - 1] = item;
+		}
+		else if (numtreasures < treasures.length)
+		{
+			treasures [numtreasures] = item;
+		}
+		else
+			return false;
+		
+		return true;
+	}
 }

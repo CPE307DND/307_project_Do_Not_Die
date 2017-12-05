@@ -6,6 +6,8 @@ import java.util.Random;
 public class Character implements Comparable <Character>
 {
 	public ArrayList <Treasure> inventory;
+	// Slots will be boots, greaves, cuirass, gloves, helm, weapon, in order
+	public Treasure [] equipped;
 	private String name, race;
 	// For gender, true is male
 	private Boolean gender;
@@ -40,6 +42,10 @@ public class Character implements Comparable <Character>
 		level = lvl;
 		int rand;
 		
+		name = n;
+		racenum = r;
+		inventory = new ArrayList <Treasure> ();
+		equipped = new Treasure [6];
 		Strength = STR;
 		Endurance = END;
 		Intelligence = INT;
@@ -705,12 +711,9 @@ public class Character implements Comparable <Character>
 			}
 		}
 		
-		name = n;
-		racenum = r;
 		health += (Endurance * 5);
 		maxhealth = health;
 		damage += ((Strength * 5) + (Intelligence * 3)) / 2;
-		inventory = new ArrayList <Treasure> ();
 	}
 	
 	// Methods to print stuff out
@@ -739,14 +742,16 @@ public class Character implements Comparable <Character>
 	// Prints out the stats of the char
 	public String printStats ()
 	{
-		return String.format ("%12s:%4d\n", "Strength", Strength) +
-			   String.format ("%12s:%4d\n", "Endurance", Endurance) +
-			   String.format ("%12s:%4d\n", "Intelligence", Intelligence) +
-			   String.format ("%12s:%4d\n", "Willpower", Willpower) +
-			   String.format ("%12s:%4d\n", "Agility", Agility) +
-			   String.format ("%12s:%4d\n", "Speed", Speed) +
-			   String.format ("%12s:%4d\n", "Luck", Luck) +
-			   String.format ("%12s:%4d\n", "Level", level);
+		return  String.format ("%12s:%4d/%4d\n", "Health",  health, maxhealth) +
+				String.format ("%12s:%4d\n", "Damage", damage) +
+				String.format ("%12s:%9d\n", "Strength", Strength) +
+				String.format ("%12s:%9d\n", "Endurance", Endurance) +
+				String.format ("%12s:%9d\n", "Intelligence", Intelligence) +
+				String.format ("%12s:%9d\n", "Willpower", Willpower) +
+				String.format ("%12s:%9d\n", "Agility", Agility) +
+				String.format ("%12s:%9d\n", "Speed", Speed) +
+				String.format ("%12s:%9d\n", "Luck", Luck) +
+				String.format ("%12s:%9d\n", "Level", level);
 	}
 	// Prints out the description of the enemy
 	public void printDescription (int len) { DND.slowPrint ("\n" + description, len); }
@@ -765,8 +770,9 @@ public class Character implements Comparable <Character>
 	}
 	// Restores health of the char, capping at maxhealth
 	public void healed (int heals) { if ((health += heals) > maxhealth) health = maxhealth; }
-	// Rolls initiative, and returns the roll;
+	// Checks if the char is dead. Returns true if dead, false if not
 	public Boolean isDead () { return (health <= 0); }
+	// Rolls initiative, and returns the roll;
 	public int initiative ()
 	{
 		initiative = rolld20 ();
@@ -854,44 +860,148 @@ public class Character implements Comparable <Character>
 	}
 	
 	// Inventory management methods
-	// Removes an item from the player's inventory, if there. Returns true if it was there, false if not
+	// Adds an item to the player's inventory
 	public void addToInventory (Treasure item) { inventory.add (item); }
-	public Boolean removeFromInventory (Treasure item)
+	// Removes an item from the player's inventory, if there. Returns true if it was there, false if not
+	public Boolean removeFromInventory (Room room, Treasure item)
 	{
 		int i = inInventory (item);
 		
 		if (i >= 0)
 		{
+			room.addTreasure (inventory.get (i));
 			inventory.remove (i);
 			return true;
 		}
 		else
 			return false;
 	}
-	// Prints out the players whole inventory, if there, or an empty inventory message if nothing
+	// Prints out the players inventory, if there, at the speed len
+	// If no inventory, prints an empty inventory message
 	public void inventoryCheck (int len)
 	{
 		if (inventory.size () > 0)
 			for (int i = 0; i < inventory.size (); i++)
-				DND.slowPrint (inventory.get (i) + "\n", len);
+				DND.slowPrint (i + ": " + inventory.get (i) + "\n", len);
 		else
 			DND.slowPrint ("You have nothing in your inventory.\n\n", len);
 	}
-	// Checks if an item is in the player's inventory, returns the index of it in inventory if there, or -1 if not
+	// Prints out player's equipped items at the speed len
+	// If none equipped in that slot, says None, does not skip
+	public void equippedCheck (int len)
+	{
+		String [] slots = {"Boots: ", "Greaves: ", "Cuirass: ", "Gauntlets: ", "Helm: ", "Weapon: "};
+		
+		DND.slowPrint ("Equipped:\n", len);
+		
+		for (int i = 0; i < 6; i++)
+		{
+			DND.slowPrint (slots [i], len);
+			if (equipped [i] == null)
+				DND.slowPrint ("None\n", len);
+			else
+				DND.slowPrint (equipped [i].getName () + "\n", len);
+		}
+	}
+	// Checks if an item is in the player's inventory, returns the index of the item if there, or -1 if not
 	// Internal method used by removeFromInventory
 	// Methods for inventory
-	private int inInventory (Treasure item)
+	public int inInventory (Treasure item)
 	{
 		for (int i = 0; i < inventory.size (); i++)
-		{
 			if (inventory.get (i).equals (item))
-			{
-				System.out.println (item + "\nIs equal to\n" + inventory.get (i));
 				return i;
-			}
-		}
+		
 		return -1;
 	}
+	// Checks if an item is in the player's inventory, returns the index of the item if there, or -1 if not
+	// Checks based on the name, in order to facilitate searching based on user input
+	public int inInventory (String item)
+	{
+		for (int i = 0; i < inventory.size (); i++)
+			if (inventory.get (i).getName ().equals (item))
+				return i;
+		
+		return -1;
+	}
+	// Equips an item, removes it from the player's inventory, and modifies the player's stats
+	// Checks that item is in the inventory
+	public void equip (Room room, String item)
+	{
+		int ind;
+		if ((ind = inInventory (item)) >= 0)
+			equip (room, ind);
+	}
+	// Equips an item, removes it from the player's inventory, and modifies the player's stats
+	// Assumes ind is a valid index into the inventory
+	public void equip (Room room, int ind)
+	{
+		Treasure item = inventory.get (ind);
+		
+		if (item instanceof Armor)
+		{
+			if (item.getType() instanceof Boots)
+			{
+				if (equipped [0] != null)
+					unequip (0);
+				equipped [0] = item;
+			}
+			else if (item.getType() instanceof Greaves)
+			{
+				if (equipped [1] != null)
+					unequip (1);
+				equipped [1] = item;
+			}
+			else if (item.getType() instanceof Cuirass)
+			{
+				if (equipped [2] != null)
+					unequip (2);
+				equipped [2] = item;
+			}
+			else if (item.getType() instanceof Gauntlets)
+			{
+				if (equipped [3] != null)
+					unequip (3);
+				equipped [3] = item;
+			}
+			else if (item.getType() instanceof Helm)
+			{
+				if (equipped [4] != null)
+					unequip (4);
+				equipped [4] = item;
+			}
+			
+			AC += ((Armor) item.getType ()).getAR ();
+		}
+		else if (item instanceof Weapon)
+		{
+			if (equipped [5] != null)
+				unequip (5);
+			equipped [5] = item;
+			damage += ((Weapon) item.getType ()).getDamage ();
+		}
+		else
+			return;
+		
+		removeFromInventory (room, item);
+	}
+	// Unequips an item, adds it to the player's inventory, and modifies the player's stats
+	// Assumes ind is a valid index into the equipped array
+	public void unequip (int ind)
+	{
+		Treasure item = equipped [ind];
+		equipped [ind] = null;
+		
+		if (item instanceof Armor)
+			AC += ((Armor) item.getType ()).getAR ();
+		else if (item instanceof Weapon)
+			damage += ((Weapon) item.getType ()).getDamage ();
+		else
+			return;
+		
+		addToInventory (item);
+	}
+	
 	
 	// CompareTo is used for the creation of a priorityqueue and nothing more
 	// DO NOT USE TO COMPARE TWO CHARS FOR EQUALITY

@@ -161,7 +161,7 @@ public class DND
 						slowPrint ("\nWhat do you want to pick up?\n\n", textspeeds [textchoice]);
 						slowPrint ("Treasures:\n", textspeeds [textchoice]);
 						map.current.listTreasures ();
-						slowPrint ("B: Back\n> ", textspeeds [textchoice]);
+						slowPrint ("\nB: Back\n> ", textspeeds [textchoice]);
 						
 						while (inputvalid (input = input()))
 						{
@@ -180,6 +180,7 @@ public class DND
 									slowPrint ("That's not an item you can pick up.\n" +
 											"Here's what you can:\n", textspeeds [textchoice]);
 									map.current.listTreasures ();
+									slowPrint ("\nB: Back\n> ", textspeeds [textchoice]);
 									slowPrint ("What do you want to pick up?\n> ", textspeeds [textchoice]);
 								}
 							}
@@ -195,9 +196,11 @@ public class DND
 									slowPrint ("That's not an item you can pick up.\n" +
 											"Here's what you can:\n", textspeeds [textchoice]);
 									map.current.listTreasures ();
+									slowPrint ("\nB: Back\n> ", textspeeds [textchoice]);
 									slowPrint ("What do you want to pick up?\n> ", textspeeds [textchoice]);
 								}
 							}
+							
 						}
 					}
 					else
@@ -206,7 +209,84 @@ public class DND
 				}
 				case ("n"):
 				{
-					p1.inventoryCheck (textspeeds [textchoice]);
+					slowPrint (BASEMSG, textspeeds [textchoice]);
+					slowPrint (String.format ("\n%-20s%-20s%-20s\n%-20s%-20s%-20s\n> ",
+							"[(E)quip]", "[(U)nequip]", "[(Vi)ew Bag]",
+							"[(V)iew Equipped]", "[(D)rop]", "[(B)ack]"), 0);
+					
+					while (inputvalid (input = input ().toLowerCase ()))
+					{
+						if (input.equals ("e") || input.equals ("equip"))
+						{
+							slowPrint ("\nEquip what?\n", textspeeds [textchoice]);
+							p1.inventoryCheck (0);
+							slowPrint ("B: Back\n> ", 0);
+							
+							while (inputvalid (input = input ()))
+							{
+								if (input.equals ("b") || input.equals ("back"))
+									break;
+								try
+								{
+									choice = Integer.parseInt (input);
+									if (choice <= p1.inventory.size ())
+									{
+										p1.equip (map.current, choice);
+										break;
+									}
+									else
+									{
+										slowPrint ("\nThat's not an item in your inventory.\n" +
+												"Here's your inventory:\n\n", textspeeds [textchoice]);
+										p1.inventoryCheck (0);
+									}
+								}
+								catch (NumberFormatException e)
+								{
+									if (p1.inInventory (input) >= 0)
+									{
+										p1.equip (map.current, input);
+										break;
+									}
+									else
+									{
+										slowPrint ("\nThat's not an item in your inventory.\n" +
+												"Here's your inventory:\n\n", textspeeds [textchoice]);
+										p1.inventoryCheck (0);
+									}
+								}
+							}
+							
+							if (input.equals ("b") || input.equals ("back"))
+								break;
+						}
+						else if (input.equals ("u") || input.equals ("unequip"))
+						{
+							slowPrint ("\nNot implemented\n", 0);
+							break;
+						}
+						else if (input.equals ("vi") || input.equals ("view bag"))
+						{
+							p1.inventoryCheck (textspeeds [textchoice]);
+						}
+						else if (input.equals ("v") || input.equals ("view equipped"))
+						{
+							p1.equippedCheck (textspeeds [textchoice]);
+						}
+						else if (input.equals ("d") || input.equals ("drop"))
+						{
+							slowPrint ("\nNot implemented\n", 0);
+							break;
+						}
+						else
+							slowPrint ("\nNot a valid choice", textspeeds [textchoice]);
+						
+						slowPrint (BASEMSG, textspeeds [textchoice]);
+						slowPrint (String.format ("\n%-20s%-20s%-20s\n%-20s%-20s%-20s\n> ",
+								"[(E)quip]", "[(U)nequip]", "[(Vi)ew Bag]",
+								"[(V)iew Equipped]", "[(D)rop]", "[(B)ack]"), 0);
+					}
+					
 					break;
 				}
 				case ("b"):
@@ -215,7 +295,7 @@ public class DND
 					if (map.current.connections [0] >= 0)
 						map.moveBack ();
 					else
-						slowPrint ("Not a valid action\n", textspeeds [textchoice]);
+						slowPrint ("There's no room behind you.\n", textspeeds [textchoice]);
 					break;
 				}
 				case ("l"):
@@ -224,7 +304,7 @@ public class DND
 					if (map.current.connections [1] >= 0)
 						map.moveLeft ();
 					else
-						slowPrint ("Not a valid action\n", textspeeds [textchoice]);
+						slowPrint ("No room to the left to move into.\n", textspeeds [textchoice]);
 					break;
 				}
 				case ("f"):
@@ -233,7 +313,7 @@ public class DND
 					if (map.current.connections [2] >= 0)
 						map.moveCenter ();
 					else
-						slowPrint ("Not a valid action\n", textspeeds [textchoice]);
+						slowPrint ("Stop trying to move forward.\n", textspeeds [textchoice]);
 					break;
 				}
 				case ("r"):
@@ -242,7 +322,7 @@ public class DND
 					if (map.current.connections [3] >= 0)
 						map.moveRight ();
 					else
-						slowPrint ("Not a valid action\n", textspeeds [textchoice]);
+						slowPrint ("Can't go where there's no door.\n", textspeeds [textchoice]);
 					break;
 				}
 				case ("u"):
@@ -251,7 +331,7 @@ public class DND
 					if (map.current.connections [4] >= 0)
 						map.moveUp ();
 					else
-						slowPrint ("Not a valid action\n", textspeeds [textchoice]);
+						slowPrint ("No moving up unless I say so!\n", textspeeds [textchoice]);
 					break;
 				}
 				case ("d"):
@@ -260,7 +340,8 @@ public class DND
 					if (map.current.connections [5] >= 0)
 						map.moveDown ();
 					else
-						slowPrint ("Not a valid action\n", textspeeds [textchoice]);
+						slowPrint ("I'd let you go down in flames, but there's no opening down.../n" +
+								"And no flames...\n", textspeeds [textchoice]);
 					break;
 				}
 				default:
