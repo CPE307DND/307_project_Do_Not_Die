@@ -103,7 +103,7 @@ public class Gauntlets extends Armor
 	}
 
 	// Exactly the same as Armor's equals, for redundancy
-	public Boolean equals (Gauntlets other)
+	public Boolean equalsTo (Gauntlets other)
 	{
 		return name.equals (other.getName ());
 	}

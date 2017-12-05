@@ -75,7 +75,7 @@ public class Axe extends Weapon
 	}
 
 	// Exactly the same as Armor's equals, for redundancy
-	public Boolean equals (Axe other)
+	public Boolean equalsTo (Axe other)
 	{
 		return name.equals (other.getName ());
 	}

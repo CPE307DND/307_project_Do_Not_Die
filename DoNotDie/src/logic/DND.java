@@ -22,6 +22,7 @@ public class DND
 	// Makes calls to all other driver methods
 	public static void main (String [] args)
 	{
+
 		Map map = new Map ();
 		Character p1 = null;
 		String input = "";
@@ -34,11 +35,12 @@ public class DND
 		String DWNMSG = "[Move (D)own]";
 		String CTRMSG = "[Move (F)orward]";
 		String BCKMSG = "[Move (B)ackward]";
-		String DIFFICULTY = "[(E)asy]   [(M)edium]   [(H)ard]\n";
 		String [] msgs = {BCKMSG, LEFMSG, CTRMSG, RGTMSG, UPMSG, DWNMSG};
 		int choice;
 		int textchoice = 3;
 		int [] textspeeds = {120, 90, 40, 0};
+		
+		//String DIFFICULTY = "[(E)asy]   [(M)edium]   [(H)ard]\n";
 		
 		slowPrint ("Welcome to Do Not Die, 1st Edition!!\n" +
 				"We hope you enjoy our game!! :D\n\n", textspeeds [textchoice]);
@@ -50,7 +52,13 @@ public class DND
 			slowPrint (String.format ("%-23s%-23s%-23s\n%-23s%-23s%-23s\n> ",
 					"[(C)hoose Character]", "[C(H)oose Map]", "[(S)ettings]",
 					"[(P)lay]", "[(T)utorial]", "[(Q)uit]"), 0);
-			input = input ().toLowerCase ();
+			input = input();
+			if (input == null) {
+				System.out.println("INVALID OR NULL INPUT\n");
+				break;
+			}
+			
+			input = input.toLowerCase ();
 			
 			if (input.equals ("c"))
 			{
@@ -123,7 +131,12 @@ public class DND
 			}
 			slowPrint (BASEMSG, textspeeds [textchoice]);
 			slowPrint (prompt + "\n> ", 0);
-			input = input ().toLowerCase ();
+			input = input();
+			if (input == null) {
+				System.out.println("INVALID OR NULL INPUT\n");
+				break;
+			}
+			input = input.toLowerCase();
 			
 			// Check if user wants to quit. If yes, exit loop, so game ends, if no, continue as normal
 			if (!inputvalid (input))
@@ -480,7 +493,12 @@ public class DND
 		slowPrint ("Ok, Race:\n", len);
 		slowPrint ("0:       Human\n1:         Elf\n2:         Orc\n3:       Gnome\n4:       Dwarf\n" +
 		"5:  Dragonborn\n6:  Half-Troll\n7: Lizard-Folk\n8:    Cat-Folk\n9:    Tiefling\n> ", 0);
-		input = input ().toLowerCase ();
+		input = input();
+		if (input == null) {
+			System.out.println("INVALID OR NULL INPUT\n");
+			System.exit(0);
+		}
+		input = input.toLowerCase();
 		
 		while (inputvalid (input))
 			if (input.equals ("human") || input.equals ("0"))
@@ -546,7 +564,7 @@ public class DND
 			else
 			{
 				slowPrint ("Nope. That's not a race. Try again:\n> ", len);
-				input = input ().toLowerCase ();
+				input = input().toLowerCase();
 			}
 		slowPrint ("Oh, " + racestr + " huh?\nI kinda thought so, but " +
 				"I wanted to make sure.\n\n", len);
@@ -554,7 +572,12 @@ public class DND
 		// Gender selection
 		slowPrint ("So um, what's.... uh, what's your gender?:\n", len);
 		slowPrint ("0: Male\n1: Female\n> ", 0);
-		input = input ().toLowerCase ();
+		input = input ();
+		if (input == null) {
+			System.out.println("INVALID OR NULL INPUT\n");
+			System.exit(0);
+		}
+		input = input.toLowerCase ();
 		
 		while (inputvalid (input))
 		{
@@ -1002,7 +1025,12 @@ public class DND
 				{
 					slowPrint ("\nIt's your turn, what do you want to do?", len);
 					slowPrint ("\n[(A)ttack]   [(C)heck Bag]   [(P)erception Check]\n> ", 0);
-					input = input ().toLowerCase ();
+					input = input();
+					if (input == null) {
+						System.out.println("INVALID OR NULL INPUT\n");
+						break;
+					}
+					input = input.toLowerCase ();
 					
 					if (input.equals ("a") || input.equals ("attack"))
 					{
@@ -1221,7 +1249,10 @@ public class DND
 			System.out.print (str.charAt (i));
 			
 			try { TimeUnit.MILLISECONDS.sleep (len); }
-			catch (InterruptedException e) { System.out.println ("Oops, Java messed up."); }
+			catch (InterruptedException e) { 
+				System.out.println ("Oops, Java messed up."); 
+				Thread.currentThread().interrupt();
+			}
 		}
 	}
 	
@@ -1229,6 +1260,7 @@ public class DND
 	// Gets input from the user, and returns it as a String
  	static String input ()
 	{
+ 		
 		BufferedReader br = new BufferedReader (new InputStreamReader (System.in));
 		String ret = null;
 		
@@ -1243,13 +1275,18 @@ public class DND
  	// Used by loadChar to read from save file
  	static String input (File f, int toskip) throws IOException
  	{
- 		BufferedReader br = new BufferedReader (new FileReader (f));
- 		String ret = br.readLine ();
- 		
- 		for (int i = 0; i < toskip; i++)
+ 		String ret = "hello";
+ 		try (BufferedReader br = new BufferedReader (new FileReader (f))) {
  			ret = br.readLine ();
  		
- 		br.close ();
+ 			for (int i = 0; i < toskip; i++)
+ 				ret = br.readLine ();
+ 			br.close();
+ 		}
+ 		catch (Exception e) {
+ 			
+ 		}
+
  		return ret;
  	}
  	// Checks that the string is not an exit keyword

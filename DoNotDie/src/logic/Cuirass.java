@@ -103,7 +103,7 @@ public class Cuirass extends Armor
 	}
 
 	// Exactly the same as Armor's equals, for redundancy
-	public Boolean equals (Cuirass other)
+	public Boolean equalsTo (Cuirass other)
 	{
 		return name.equals (other.getName ());
 	}

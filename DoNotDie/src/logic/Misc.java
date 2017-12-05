@@ -69,7 +69,7 @@ class Misc extends Treasure
 	
 	// Checks if the name and the value are the same, because several items can have different values,
 	// despite being the same item
-	public Boolean equals (Misc other)
+	public Boolean equalsTo (Misc other)
 	{
 		return (name.equals (other.name) && (value == other.value));
 	}

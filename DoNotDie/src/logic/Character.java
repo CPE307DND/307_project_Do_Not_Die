@@ -912,7 +912,7 @@ public class Character implements Comparable <Character>
 	 * and health should be the most volatile field, so if two are the same,
 	 * it's likely they belong to the same entity
 	*/
-	public Boolean equals (Character o) { return race.equals (o.getRace ()) && health == o.getHealth (); }
+	public Boolean equalsTo (Character o) { return race.equals (o.getRace ()) && health == o.getHealth (); }
 	// Checks if this char has the passed string as the name
 	// Used by DND.delChar for checking the chars in the save file
 	public Boolean is (String chk) { return chk.equals (name); }
@@ -926,7 +926,6 @@ public class Character implements Comparable <Character>
 				(p1.getName () != null && p2.getName () == null) ||
 				(!p1.getName ().equals (p2.getName ())) ||
 				(p1.getRacenum () != (p2.getRacenum ())) ||
-				(p1.getGenderbool () ^ p1.getGenderbool ()) ||
 				(p1.getStrength () != p2.getStrength ()) ||
 				(p1.getEndurance () != p2.getEndurance ()) ||
 				(p1.getIntelligence () != p2.getIntelligence ()) ||

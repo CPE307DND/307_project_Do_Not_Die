@@ -259,7 +259,7 @@ public class Armor extends Treasure
 	}
 
 	// Checks if this armor is the same type as another armor, returns true if so, false if not
-	public Boolean equals (Armor other)
+	public Boolean equalsTo (Armor other)
 	{
 		return name.equals (other.getName ());
 	}

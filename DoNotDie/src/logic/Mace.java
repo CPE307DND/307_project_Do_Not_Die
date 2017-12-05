@@ -75,7 +75,7 @@ public class Mace extends Weapon
 	}
 
 	// Exactly the same as Weapon's equals, for redundancy
-	public Boolean equals (Mace other)
+	public Boolean equalsTo (Mace other)
 	{
 		return name.equals (other.getName ());
 	}

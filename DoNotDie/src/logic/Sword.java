@@ -75,7 +75,7 @@ public class Sword extends Weapon
 	}
 
 	// Exactly the same as Weapon's equals, for redundancy
-	public Boolean equals (Sword other)
+	public Boolean equalsTo (Sword other)
 	{
 		return name.equals (other.getName ());
 	}

@@ -47,17 +47,17 @@ public class Treasure
 	
 	// For some reason, the equals method didn't work unless I had a seperate version for all 3 subtypes
 	// Check if it is equal to a weapon
-	public Boolean equals (Weapon other)
+	public Boolean equalsTo (Weapon other)
 	{
 		return name.equals (other.getName ());
 	}
 	 // Check if it is equal to an armor
-	public Boolean equals (Armor other)
+	public Boolean equalsTo (Armor other)
 	{
 		return name.equals (other.getName ());
 	}
 	// Check if it is equal to a misc
-	public Boolean equals (Misc other)
+	public Boolean equalsTo (Misc other)
 	{
 		return (name.equals (other.getName ()) && (value == other.getValue ()));
 	}

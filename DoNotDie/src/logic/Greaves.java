@@ -103,7 +103,7 @@ public class Greaves extends Armor
 	}
 
 	// Exactly the same as Armor's equals, for redundancy
-	public Boolean equals (Greaves other)
+	public Boolean equalsTo (Greaves other)
 	{
 		return name.equals (other.getName ());
 	}

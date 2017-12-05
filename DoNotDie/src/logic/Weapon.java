@@ -120,7 +120,7 @@ public class Weapon extends Treasure
 	}
 	
 	// Checks if this weapon is the same type as another weapon, returns true if so, false if not
-	public Boolean equals (Weapon other)
+	public Boolean equalsTo (Weapon other)
 	{
 		return name.equals (other.getName ());
 	}

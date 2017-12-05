@@ -75,7 +75,7 @@ public class Warhammer extends Weapon
 	}
 	
 	// Exactly the same as Weapon's equals, for redundancy
-	public Boolean equals (Warhammer other)
+	public Boolean equalsTo (Warhammer other)
 	{
 		return name.equals (other.getName ());
 	}
