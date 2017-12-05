@@ -1237,10 +1237,13 @@ public class DND
 					turn++;
 					continue;
 				}
-				else
+				else {
 					// Enemy turn
 					// If the player dies, break out of loop;
+					
 					slowPrint ("\nIt's " + order [turn].getRace () + "'s turn.\n", len);
+					order[turn].
+				}
 			}
 			
 			// Standard wraparound to get back to index 0, start the order over again
