@@ -742,7 +742,8 @@ public class Character implements Comparable <Character>
 	public String printStats ()
 	{
 		return  String.format ("%12s:%4d/%4d\n", "Health",  health, maxhealth) +
-				String.format ("%12s:%4d\n", "Damage", damage) +
+				String.format ("%12s:%9d\n", "Armor Class", AC) +
+				String.format ("%12s:%9d\n", "Damage", damage) +
 				String.format ("%12s:%9d\n", "Strength", Strength) +
 				String.format ("%12s:%9d\n", "Endurance", Endurance) +
 				String.format ("%12s:%9d\n", "Intelligence", Intelligence) +
@@ -886,7 +887,7 @@ public class Character implements Comparable <Character>
 	}
 	// Prints out player's equipped items at the speed len
 	// If none equipped in that slot, says None, does not skip
-	public void equippedCheck (int len)
+	public void equippedCheck (Boolean withnums, int len)
 	{
 		String [] slots = {"Boots: ", "Greaves: ", "Cuirass: ", "Gauntlets: ", "Helm: ", "Weapon: "};
 		
@@ -894,7 +895,11 @@ public class Character implements Comparable <Character>
 		
 		for (int i = 0; i < 6; i++)
 		{
-			DND.slowPrint (slots [i], len);
+			if (withnums)
+				DND.slowPrint (i + ": " + slots [i], len);
+			else
+				DND.slowPrint (slots [i], len);
+			
 			if (equipped [i] == null)
 				DND.slowPrint ("None\n", len);
 			else

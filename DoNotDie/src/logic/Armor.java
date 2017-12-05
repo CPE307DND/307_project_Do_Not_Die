@@ -255,7 +255,7 @@ public class Armor extends Treasure
 	// Prints out descriptive armor statistics, as per the usual RPG style
 	public String toString ()
 	{
-		return name + "\nValue: " + value + "\nArmor Rating: " + ar + "\nWeight: " + weight;
+		return name + "\nArmor Rating: " + ar + "\nWeight: " + weight + "\nValue: " + value;
 	}
 
 	// Checks if this armor is the same type as another armor, returns true if so, false if not
