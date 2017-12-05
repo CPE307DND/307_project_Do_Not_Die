@@ -718,7 +718,6 @@ public class Character implements Comparable <Character>
 	
 	// Methods to print stuff out
 	// Uses either printPlayer or printEnemy, depending on whether its the player or an enemy
-	// Methods for printing
 	public String toString ()
 	{
 		if (name == null)
@@ -758,7 +757,6 @@ public class Character implements Comparable <Character>
 	
 	// Methods for battles. Used by DND.battle
 	// Deals damage to the char and returns if it died
-	// Methods for battle
 	public Boolean attacked (int dmg)
 	{
 		if ((health -= dmg) <= 0)

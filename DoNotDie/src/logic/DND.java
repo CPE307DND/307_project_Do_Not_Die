@@ -52,8 +52,11 @@ public class DND
 			slowPrint (String.format ("%-23s%-23s%-23s\n%-23s%-23s%-23s\n> ",
 					"[(C)hoose Character]", "[C(H)oose Map]", "[(S)ettings]",
 					"[(P)lay]", "[(T)utorial]", "[(Q)uit]"), 0);
-			input = input();
-			if (input == null) {
+			
+			input = input ();
+			//No longer necessary, input() never returns null
+			if (input == null)
+			{
 				System.out.println("INVALID OR NULL INPUT\n");
 				break;
 			}
@@ -131,8 +134,10 @@ public class DND
 			}
 			slowPrint (BASEMSG, textspeeds [textchoice]);
 			slowPrint (prompt + "\n> ", 0);
-			input = input();
-			if (input == null) {
+			
+			input = input ();
+			if (input == null)
+			{
 				System.out.println("INVALID OR NULL INPUT\n");
 				break;
 			}
@@ -357,7 +362,6 @@ public class DND
 	}
 	
 	// Char selection driver
-	// Char selection driver
 	static Character chooseChar (int len, Character p1)
 	{
 		String input;
@@ -574,8 +578,11 @@ public class DND
 		slowPrint ("Ok, Race:\n", len);
 		slowPrint ("0:       Human\n1:         Elf\n2:         Orc\n3:       Gnome\n4:       Dwarf\n" +
 		"5:  Dragonborn\n6:  Half-Troll\n7: Lizard-Folk\n8:    Cat-Folk\n9:    Tiefling\n> ", 0);
-		input = input();
-		if (input == null) {
+		
+		input = input ();
+		//No longer necessary, input() never returns null
+		if (input == null)
+		{
 			System.out.println("INVALID OR NULL INPUT\n");
 			System.exit(0);
 		}
@@ -653,8 +660,11 @@ public class DND
 		// Gender selection
 		slowPrint ("So um, what's.... uh, what's your gender?:\n", len);
 		slowPrint ("0: Male\n1: Female\n> ", 0);
+		
 		input = input ();
-		if (input == null) {
+		//No longer necessary, input() never returns null
+		if (input == null)
+		{
 			System.out.println("INVALID OR NULL INPUT\n");
 			System.exit(0);
 		}
@@ -907,7 +917,9 @@ public class DND
 					out.close ();
 				}
 				catch (IOException g)
-				{ slowPrint ("Error saving character, you can play, but will have to make again.\n\n", 0); }
+				{
+					slowPrint ("Error saving character, you can play, but will have to make again.\n\n", 0);
+				}
 			}
 		}
 	}
@@ -1106,8 +1118,10 @@ public class DND
 				{
 					slowPrint ("\nIt's your turn, what do you want to do?", len);
 					slowPrint ("\n[(A)ttack]   [(C)heck Bag]   [(P)erception Check]\n> ", 0);
-					input = input();
-					if (input == null) {
+					input = input ();
+					//No longer necessary, input() never returns null
+					if (input == null)
+					{
 						System.out.println("INVALID OR NULL INPUT\n");
 						break;
 					}
@@ -1331,22 +1345,26 @@ public class DND
 			
 			try { TimeUnit.MILLISECONDS.sleep (len); }
 			catch (InterruptedException e) { 
-				System.out.println ("Oops, Java messed up."); 
+				System.out.println ("\nOops, Java messed up.\n"); 
 				Thread.currentThread().interrupt();
 			}
 		}
 	}
 	
-	// Input from user
+	// Methods for input
 	// Gets input from the user, and returns it as a String
  	static String input ()
 	{
  		
 		BufferedReader br = new BufferedReader (new InputStreamReader (System.in));
-		String ret = null;
+		String ret = "";
 		
 		try { ret = br.readLine (); }
-		catch (IOException e) { e.printStackTrace (); }
+		catch (IOException e)
+		{
+			System.out.println ("\nOops, Java messed up.\n");
+			e.printStackTrace ();
+		}
 		
 		return ret;
 	}
@@ -1356,16 +1374,20 @@ public class DND
  	// Used by loadChar to read from save file
  	static String input (File f, int toskip) throws IOException
  	{
- 		String ret = "hello";
- 		try (BufferedReader br = new BufferedReader (new FileReader (f))) {
+ 		String ret = "";
+ 		
+ 		try (BufferedReader br = new BufferedReader (new FileReader (f)))
+ 		{
  			ret = br.readLine ();
  		
  			for (int i = 0; i < toskip; i++)
  				ret = br.readLine ();
  			br.close();
  		}
- 		catch (Exception e) {
- 			
+ 		catch (Exception e)
+ 		{
+			System.out.println ("\nOops, Java messed up.\n");
+			e.printStackTrace ();
  		}
 
  		return ret;
