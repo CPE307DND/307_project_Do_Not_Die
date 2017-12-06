@@ -53,15 +53,8 @@ public class DND
 					"[(C)hoose Character]", "[C(H)oose Map]", "[(S)ettings]",
 					"[(P)lay]", "[(T)utorial]", "[(Q)uit]"), 0);
 			
-			input = input ();
-			//No longer necessary, input() never returns null
-			if (input == null)
-			{
-				System.out.println("INVALID OR NULL INPUT\n");
+			if (!inputvalid (input = input ().toLowerCase ()))
 				break;
-			}
-			
-			input = input.toLowerCase ();
 			
 			if (input.equals ("c"))
 			{
@@ -138,13 +131,8 @@ public class DND
 			slowPrint (BASEMSG, textspeeds [textchoice]);
 			slowPrint (prompt + "\n> ", 0);
 			
-			input = input ();
-			if (input == null)
-			{
-				System.out.println("INVALID OR NULL INPUT\n");
+			if (!inputvalid (input = input ().toLowerCase()))
 				break;
-			}
-			input = input.toLowerCase();
 			
 			// Check if user wants to quit. If yes, exit loop, so game ends, if no, continue as normal
 			if (!inputvalid (input))
@@ -631,14 +619,8 @@ public class DND
 		slowPrint ("0:       Human\n1:         Elf\n2:         Orc\n3:       Gnome\n4:       Dwarf\n" +
 		"5:  Dragonborn\n6:  Half-Troll\n7: Lizard-Folk\n8:    Cat-Folk\n9:    Tiefling\n> ", 0);
 		
-		input = input ();
-		//No longer necessary, input() never returns null
-		if (input == null)
-		{
-			System.out.println("INVALID OR NULL INPUT\n");
+		if (!inputvalid (input = input ().toLowerCase ()))
 			System.exit(0);
-		}
-		input = input.toLowerCase();
 		
 		while (inputvalid (input))
 			if (input.equals ("human") || input.equals ("0"))
@@ -713,14 +695,8 @@ public class DND
 		slowPrint ("So um, what's.... uh, what's your gender?:\n", len);
 		slowPrint ("0: Male\n1: Female\n> ", 0);
 		
-		input = input ();
-		//No longer necessary, input() never returns null
-		if (input == null)
-		{
-			System.out.println("INVALID OR NULL INPUT\n");
+		if (!inputvalid (input = input.toLowerCase ()))
 			System.exit(0);
-		}
-		input = input.toLowerCase ();
 		
 		while (inputvalid (input))
 		{
@@ -1165,14 +1141,9 @@ public class DND
 				{
 					slowPrint ("\nIt's your turn, what do you want to do?", len);
 					slowPrint ("\n[(A)ttack]   [(C)heck Bag]   [(P)erception Check]\n> ", 0);
-					input = input ();
-					//No longer necessary, input() never returns null
-					if (input == null)
-					{
-						System.out.println("INVALID OR NULL INPUT\n");
+					
+					if (!inputvalid (input = input ().toLowerCase ()))
 						break;
-					}
-					input = input.toLowerCase ();
 					
 					if (input.equals ("a") || input.equals ("attack"))
 					{
