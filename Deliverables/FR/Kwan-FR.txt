@@ -1,7 +1,0 @@
-James Kwan
-Functional Requirements
-
-1. The system shall provide an option to pause.
-2. The system shall provide a tutorial.
-3. The system shall restart at a checkpoint after a death. 
-

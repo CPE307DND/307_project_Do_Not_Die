@@ -1,5 +1,0 @@
-As a gamer, I want to play a challenging text-based adventure game with minimal learning effort, so that I can enjoy my time.
-
-As a computer user, I want to access this text-based adventure game via any web browser, so that I have something to do when I am bored studying on my computer.
-
-As a younger user, I want to learn how to play text-based adventure games, so that I can improve reading comprehension and strategy.

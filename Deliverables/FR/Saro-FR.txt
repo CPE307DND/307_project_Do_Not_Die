@@ -1,7 +1,0 @@
-Jorge Saro 
-Functional Requirements
-
-The system shall provide the user with all possible responses to a prompt. 
-The system shall provide an option to restart the campaign at any point in time.
-The system shall play music in the background. 
-

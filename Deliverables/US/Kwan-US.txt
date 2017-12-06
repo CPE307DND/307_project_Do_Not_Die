@@ -1,7 +1,0 @@
-James Kwan
-User Stories
-
-1. As a player, I want to play a game, so that I can relax.
-2. As a teacher, I want a game that provides choices, so that I can use it to teach children how to make decisions.
-3. As a psychologist, I want a game that changes soundtracks, so I can study how a player’s mood can change.
-

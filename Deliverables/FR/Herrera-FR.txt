@@ -1,3 +1,0 @@
-The system shall provide choices that influence the game. 
-The system shall provide the choice for a quick start or manual character setup. 
-The system shall provide location information upon user request.
