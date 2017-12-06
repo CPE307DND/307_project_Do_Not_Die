@@ -93,13 +93,11 @@ public class Room
 	{
 		for (int i = 0; i < numenemies; i++)
 		{
-			if (!enemyDead (enemies [i]))
+			if (!enemies [i].isDead ())
 				return false;
 		}
 		return true;
 	}
-	// Check if an enemy is nonexistent or dead
-	public Boolean enemyDead (Character c) { return (c == null || c.getHealth () == 0)? true : false; }
 	// Check if a room has a certain enemy
 	public int hasEnemy (String e)
 	{

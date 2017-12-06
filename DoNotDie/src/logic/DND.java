@@ -1180,7 +1180,7 @@ public class DND
 						
 						// Print out list of living enemies
 						for (int i = 0; i < enemies.length && enemies [i] != null; i++)
-							if (!map.current.enemyDead (enemies [i]))
+							if (!enemies [i].isDead ())
 								slowPrint (i + ": " + enemies [i].printEnemy () + "\n", 0);
 						slowPrint (String.format ("Q: %11s%n> ", "Quit"), 0);
 						
@@ -1195,7 +1195,7 @@ public class DND
 								{
 									slowPrint ("Number not valid. Can you like be nice please?\n", len);
 									for (int i = 0; i < enemies.length && enemies [i] != null; i++)
-										if (!map.current.enemyDead (enemies [i]))
+										if (!enemies [i].isDead ())
 											slowPrint (i + ": " + enemies [i].printEnemy () + "\n", 0);
 								}
 								else
@@ -1212,7 +1212,7 @@ public class DND
 								{
 									slowPrint ("That's not an enemy. Play nice.\n", len);
 									for (int i = 0; i < enemies.length && enemies [i] != null; i++)
-										if (!map.current.enemyDead (enemies [i]))
+										if (!enemies [i].isDead ())
 											slowPrint (i + ": " + enemies [i].printEnemy () + "\n", 0);
 								}
 								else
