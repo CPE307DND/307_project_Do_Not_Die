@@ -741,17 +741,17 @@ public class Character implements Comparable <Character>
 	// Prints out the stats of the char
 	public String printStats ()
 	{
-		return  String.format ("%12s:%4d/%4d\n", "Health",  health, maxhealth) +
-				String.format ("%12s:%9d\n", "Armor Class", AC) +
-				String.format ("%12s:%9d\n", "Damage", damage) +
-				String.format ("%12s:%9d\n", "Strength", Strength) +
-				String.format ("%12s:%9d\n", "Endurance", Endurance) +
-				String.format ("%12s:%9d\n", "Intelligence", Intelligence) +
-				String.format ("%12s:%9d\n", "Willpower", Willpower) +
-				String.format ("%12s:%9d\n", "Agility", Agility) +
-				String.format ("%12s:%9d\n", "Speed", Speed) +
-				String.format ("%12s:%9d\n", "Luck", Luck) +
-				String.format ("%12s:%9d\n", "Level", level);
+		return  String.format ("%12s:%4d/%4d%n", "Health",  health, maxhealth) +
+				String.format ("%12s:%9d%n", "Armor Class", AC) +
+				String.format ("%12s:%9d%n", "Damage", damage) +
+				String.format ("%12s:%9d%n", "Strength", Strength) +
+				String.format ("%12s:%9d%n", "Endurance", Endurance) +
+				String.format ("%12s:%9d%n", "Intelligence", Intelligence) +
+				String.format ("%12s:%9d%n", "Willpower", Willpower) +
+				String.format ("%12s:%9d%n", "Agility", Agility) +
+				String.format ("%12s:%9d%n", "Speed", Speed) +
+				String.format ("%12s:%9d%n", "Luck", Luck) +
+				String.format ("%12s:%9d%n", "Level", level);
 	}
 	// Prints out the description of the enemy
 	public void printDescription (int len) { DND.slowPrint ("\n" + description, len); }
@@ -931,15 +931,15 @@ public class Character implements Comparable <Character>
 	// Checks that item is in the inventory
 	public void equip (Room room, String item)
 	{
-		int ind;
-		if ((ind = inInventory (item)) >= 0)
-			equip (room, ind);
+		int index;
+		if ((index = inInventory (item)) >= 0)
+			equip (room, index);
 	}
 	// Equips an item, removes it from the player's inventory, and modifies the player's stats
-	// Assumes ind is a valid index into the inventory
-	public void equip (Room room, int ind)
+	// Assumes index is a valid index into the inventory
+	public void equip (Room room, int index)
 	{
-		Treasure item = inventory.get (ind);
+		Treasure item = inventory.get (index);
 		
 		if (item instanceof Armor)
 		{
@@ -989,11 +989,11 @@ public class Character implements Comparable <Character>
 		removeFromInventory (room, item);
 	}
 	// Unequips an item, adds it to the player's inventory, and modifies the player's stats
-	// Assumes ind is a valid index into the equipped array
-	public void unequip (int ind)
+	// Assumes index is a valid index into the equipped array
+	public void unequip (int index)
 	{
-		Treasure item = equipped [ind];
-		equipped [ind] = null;
+		Treasure item = equipped [index];
+		equipped [index] = null;
 		
 		if (item instanceof Armor)
 			AC += ((Armor) item.getType ()).getAR ();
